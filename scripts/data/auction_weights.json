@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "updated_at": null,
+  "total_samples": 0,
+  "dimensions": {
+    "price_slope": {
+      "alpha": 1,
+      "beta": 1,
+      "weight": 0.25,
+      "hits": 0,
+      "misses": 0
+    },
+    "volume_accel": {
+      "alpha": 1,
+      "beta": 1,
+      "weight": 0.25,
+      "hits": 0,
+      "misses": 0
+    },
+    "imbalance": {
+      "alpha": 1,
+      "beta": 1,
+      "weight": 0.2,
+      "hits": 0,
+      "misses": 0
+    },
+    "premium": {
+      "alpha": 1,
+      "beta": 1,
+      "weight": 0.15,
+      "hits": 0,
+      "misses": 0
+    },
+    "sector_dev": {
+      "alpha": 1,
+      "beta": 1,
+      "weight": 0.15,
+      "hits": 0,
+      "misses": 0
+    }
+  }
+}

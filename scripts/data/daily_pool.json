@@ -1,0 +1,238 @@
+{
+  "date": "20260602",
+  "generated_at": "2026-06-02T10:29:10.906599",
+  "version": "v2.3",
+  "recommendations": [
+    {
+      "code": "601969",
+      "name": "海南矿业",
+      "event_weight": 4.199999999999999,
+      "source": "announcement",
+      "market_cap": 194.4125389,
+      "factor_scores": {
+        "event": 70,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 55,
+        "research": 50
+      },
+      "total_score": 53.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 9.21,
+        "ratio": -5.0
+      },
+      "sector": "普钢",
+      "operation": "MA20下方-16%，超跌等放量止跌信号后轻仓博弈，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "002119",
+      "name": "康强电子",
+      "event_weight": 2.2,
+      "source": "announcement",
+      "market_cap": 80.498418,
+      "factor_scores": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 65,
+        "research": 50
+      },
+      "total_score": 52.2,
+      "stop_loss": {
+        "method": "default",
+        "price": 20.65,
+        "ratio": -5.0
+      },
+      "sector": "半导体",
+      "operation": "MA20附近(偏离-2%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "603416",
+      "name": "信捷电气",
+      "event_weight": 2.2,
+      "source": "announcement",
+      "market_cap": 84.949145,
+      "factor_scores": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 65,
+        "research": 50
+      },
+      "total_score": 52.2,
+      "stop_loss": {
+        "method": "default",
+        "price": 53.05,
+        "ratio": -5.0
+      },
+      "sector": "电器仪表",
+      "operation": "MA20附近(偏离-0%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "301275",
+      "name": "汉朔科技",
+      "event_weight": 3.3000000000000003,
+      "source": "announcement",
+      "market_cap": 191.43168,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 65,
+        "research": 50
+      },
+      "total_score": 51.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 41.19,
+        "ratio": -7.0
+      },
+      "sector": "元器件",
+      "operation": "创业板MA20附近(偏离+1%)整理，侦察兵⭐确认后建底仓11.1%，止损-7%",
+      "risk_level": "中"
+    },
+    {
+      "code": "688206",
+      "name": "概伦电子",
+      "event_weight": 5.3,
+      "source": "announcement",
+      "market_cap": 158.04153827,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50
+      },
+      "total_score": 51.5,
+      "stop_loss": {
+        "method": "default",
+        "price": 34.92,
+        "ratio": -5.0
+      },
+      "sector": "半导体",
+      "operation": "偏离MA20 +6%偏高，等回踩MA20缩量确认后低吸，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "603213",
+      "name": "镇洋发展",
+      "event_weight": 8.3,
+      "source": "announcement",
+      "market_cap": 63.776610829999996,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50
+      },
+      "total_score": 51.5,
+      "stop_loss": {
+        "method": "default",
+        "price": 13.98,
+        "ratio": -5.0
+      },
+      "sector": "化工原料",
+      "operation": "偏离MA20 +8%偏高，等回踩MA20缩量确认后低吸，止损-5%",
+      "risk_level": "高"
+    },
+    {
+      "code": "600566",
+      "name": "济川药业",
+      "event_weight": 3.3000000000000003,
+      "source": "announcement",
+      "market_cap": 255.5769447,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50
+      },
+      "total_score": 51.5,
+      "stop_loss": {
+        "method": "default",
+        "price": 27.24,
+        "ratio": -5.0
+      },
+      "sector": "中成药",
+      "operation": "偏离MA20 +6%偏高，等回踩MA20缩量确认后低吸，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "001393",
+      "name": "维通利",
+      "event_weight": 1.5,
+      "source": "announcement",
+      "market_cap": 170.94293378999998,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 65,
+        "research": 50
+      },
+      "total_score": 50.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 60.74,
+        "ratio": -5.0
+      },
+      "sector": "电气设备",
+      "operation": "MA20附近(偏离+0%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    }
+  ],
+  "excluded": {
+    "st": 9,
+    "lianban": 1,
+    "suspended": 2,
+    "large_cap": 5,
+    "small_cap": 89,
+    "no_data": 0
+  },
+  "scout_additions": [],
+  "scout_last_update": null,
+  "parliament": {
+    "bias": "中性",
+    "confidence": 0.75,
+    "bull_signals": 1,
+    "bear_signals": 2,
+    "red_flags": [
+      "海南矿业: KB洞察发现风险信号",
+      "镇洋发展: 小市值(64亿)，流动性风险"
+    ],
+    "recommendation": "",
+    "timestamp": ""
+  },
+  "methodology": {
+    "factors": {
+      "event": 0.3,
+      "fund": 0.25,
+      "sentiment": 0.2,
+      "technical": 0.15,
+      "research": 0.1
+    },
+    "data_sources": [
+      "Sina批量行情",
+      "tushare PE/ROE",
+      "历史日线MA20/均量",
+      "KB LLM洞察",
+      "mega_collector公告/龙虎榜"
+    ],
+    "filters": [
+      "ST/*ST",
+      "连板(≥2板)",
+      "停牌",
+      "市值<50亿",
+      "市值>3000亿"
+    ],
+    "max_picks": 9,
+    "reset": "daily"
+  }
+}

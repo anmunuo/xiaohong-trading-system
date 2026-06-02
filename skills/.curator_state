@@ -1,0 +1,9 @@
+{
+  "last_report_path": "/home/pc/.hermes/profiles/xiaohong/logs/curator/20260531-061446",
+  "last_run_at": "2026-05-31T06:14:46.410940+00:00",
+  "last_run_duration_seconds": 31.410424,
+  "last_run_summary": "auto: no changes; llm: ## Analysis\n\nOnly 2 agent-created skills exist. Let me assess them:\n\n| Skill | Domain | Shape |\n|-------|--------|-------|\n| `data-pipeline-automation` | DevOps — general pipeline automation patterns | **Already a class-level umbrella** (re…",
+  "last_run_summary_shown_at": null,
+  "paused": false,
+  "run_count": 3
+}

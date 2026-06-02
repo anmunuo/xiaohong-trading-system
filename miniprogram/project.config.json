@@ -1,0 +1,10 @@
+{
+  "name": "安幕诺家族 · 小红",
+  "version": "1.0.0",
+  "description": "AI 股票交易辅助小程序",
+  "templateInfo": {
+    "name": "default",
+    "typescript": true,
+    "css": "sass"
+  }
+}

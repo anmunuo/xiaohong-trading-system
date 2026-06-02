@@ -1,0 +1,14 @@
+# 安幕诺家族 · Docker build 忽略
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.git/
+logs/
+reports/
+workspace/transactions.csv
+data/transactions.db
+.env
+*.swp
+.DS_Store
+node_modules/

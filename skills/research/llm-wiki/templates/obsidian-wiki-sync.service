@@ -1,0 +1,15 @@
+[Unit]
+Description=Obsidian LLM Wiki Sync
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Replace /path/to/ob with the actual binary path (find with: which ob)
+# Example: /home/pc/.npm-global/bin/ob
+ExecStart=/path/to/ob sync --continuous
+WorkingDirectory=/path/to/wiki
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

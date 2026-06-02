@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-06-02 14:45:20",
+  "indices": {
+    "us": {
+      "dow": [
+        51078.88,
+        0.09
+      ],
+      "sp500": [
+        7599.96,
+        0.26
+      ],
+      "nasdaq": [
+        27086.81,
+        0.42
+      ]
+    },
+    "europe": {
+      "ftse": [
+        10338.95,
+        -0.68
+      ],
+      "dax": [
+        25003.04,
+        -0.4
+      ]
+    },
+    "asia": {
+      "nikkei": [
+        66934.33,
+        0.91
+      ],
+      "hangseng": [
+        25398.18,
+        0.86
+      ],
+      "shanghai": [
+        4083.31,
+        0.63
+      ]
+    }
+  },
+  "north_flow": {
+    "net_flow": 5.37,
+    "status": "🟢 5.4亿元 净流入",
+    "detail": "沪股通:3.0亿, 深股通:2.3亿",
+    "date": "20260526",
+    "data_type": "T-1日终（非实时）",
+    "data_source": "tushare_pro"
+  },
+  "sector_flow": [
+    {
+      "name": "5G概念",
+      "change_pct": 1.52,
+      "net_flow": 0
+    },
+    {
+      "name": "通信技术",
+      "change_pct": 1.62,
+      "net_flow": 0
+    },
+    {
+      "name": "光通信模块",
+      "change_pct": 4.46,
+      "net_flow": 0
+    },
+    {
+      "name": "大盘股",
+      "change_pct": 0.49,
+      "net_flow": 0
+    },
+    {
+      "name": "CPO概念",
+      "change_pct": 4.56,
+      "net_flow": 0
+    }
+  ],
+  "alerts": []
+}

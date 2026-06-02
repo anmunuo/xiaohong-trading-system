@@ -1,0 +1,58 @@
+# 小红 Workflow: 周末深度复盘
+# 对标 tradermonty → workflows/monthly-performance-review.yaml (改周频)
+schema_version: 1
+id: weekly-review
+display_name: 周度深度复盘
+cadence: weekly
+estimated_minutes: 20
+target_users: [a-share-swing-trader, a-share-investor]
+difficulty: intermediate
+api_profile: basic
+
+when_to_run: 每周六 09:00
+
+required_skills:
+  - post-market-review
+  - trade-journal-cn
+  - risk-manager-cn
+optional_skills:
+  - a-share-screener
+
+artifacts:
+  - id: weekly_stats
+    produced_by_step: 1
+    required: true
+  - id: performance_review
+    produced_by_step: 2
+    required: true
+  - id: next_week_plan
+    produced_by_step: 3
+    required: true
+
+steps:
+  - step: 1
+    name: 汇总本周统计
+    skill: trade-journal-cn
+    produces: [weekly_stats]
+
+  - step: 2
+    name: 表现回顾
+    skill: post-market-review
+    consumes: [weekly_stats]
+    produces: [performance_review]
+    decision_gate: false
+
+  - step: 3
+    name: 下周计划
+    skill: risk-manager-cn
+    consumes: [weekly_stats, performance_review]
+    produces: [next_week_plan]
+    decision_gate: true
+    decision_question: >
+      本周胜率是否>40%？盈亏比是否>1.0？
+      若是 → 维持当前策略参数
+      若否 → 调整策略或减少下周仓位
+
+manual_review:
+  - 对比交易日志与实际执行，标记纪律违规
+  - 根据本周市场环境调整下周敞口计划

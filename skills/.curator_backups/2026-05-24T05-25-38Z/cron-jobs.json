@@ -1,0 +1,271 @@
+{
+  "jobs": [
+    {
+      "id": "cabe6204abe6",
+      "name": "\u5c0f\u7ea2\u00b7\u76d8\u524d\u91c7\u96c6",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_pre.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 8 * * 1-5",
+        "display": "30 8 * * 1-5"
+      },
+      "schedule_display": "30 8 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:04.148222+08:00",
+      "next_run_at": "2026-05-25T08:30:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "e8ec764a05d6",
+      "name": "\u5c0f\u7ea2\u00b7\u76d8\u4e2d\u626b\u63cf",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_intra.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 10 * * 1-5",
+        "display": "30 10 * * 1-5"
+      },
+      "schedule_display": "30 10 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:05.152307+08:00",
+      "next_run_at": "2026-05-25T10:30:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "8dfadcc05796",
+      "name": "\u5c0f\u7ea2\u00b7\u76d8\u540e\u590d\u76d8",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_post.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 15 * * 1-5",
+        "display": "30 15 * * 1-5"
+      },
+      "schedule_display": "30 15 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:06.159460+08:00",
+      "next_run_at": "2026-05-25T15:30:00+08:00",
+      "last_run_at": "2026-05-24T12:40:38.259786+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "8ca5688b71fa",
+      "name": "\u5c0f\u7ea2\u00b7\u5468\u5ea6\u590d\u76d8",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_weekly.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 10 * * 6",
+        "display": "0 10 * * 6"
+      },
+      "schedule_display": "0 10 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:07.166288+08:00",
+      "next_run_at": "2026-05-30T10:00:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "92cd9b853a57",
+      "name": "\u5c0f\u7ea2\u00b7\u6bcf\u65e5\u6668\u62a5",
+      "prompt": "\u4f60\u662f\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u5c0f\u7ea2\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u6267\u884c\u6bcf\u65e5\u6668\u62a5\u4efb\u52a1\u3002\n\n## \u4efb\u52a1\n\u8bfb\u53d6 wiki \u77e5\u8bc6\u5e93\u4e2d\u6700\u8fd1\u7684\u5e02\u573a\u6570\u636e\uff0c\u751f\u6210\u4e00\u4efd\u7b80\u6d01\u7684\u4ea4\u6613\u6668\u62a5\u3002\n\n## \u6b65\u9aa4\n1. \u68c0\u67e5 ~/wiki/\u4e0b\u8f7d\u6536\u85cf/ \u76ee\u5f55\u4e0b\u662f\u5426\u6709\u4eca\u65e5\u6216\u6628\u65e5\u7684\u76d8\u540e\u590d\u76d8\u6570\u636e\uff08\u6587\u4ef6\u540d\u542b\u6628\u65e5\u65e5\u671f YYYYMMDD \u7684 json \u6587\u4ef6\uff09\n2. \u5982\u679c\u6ca1\u6709\u6570\u636e\uff0c\u8c03\u7528 `data fetch stock --symbol 600519 --type quote` \u6d4b\u8bd5\u6570\u636e\u5e73\u53f0\u662f\u5426\u53ef\u7528\uff0c\u544a\u8bc9\u7528\u6237\"\u6570\u636e\u5c1a\u672a\u91c7\u96c6\uff0c\u76d8\u540e cron \u542f\u52a8\u540e\u4f1a\u81ea\u52a8\u5165\u5e93\"\n3. \u6709\u6570\u636e\u5219\uff1a\n   - \u67e5\u770b\u7f8e\u80a1\u9694\u591c\u6570\u636e\uff08AAPL, NVDA, TSLA\uff09\n   - \u67e5\u770b\u81ea\u9009\u80a1\u884c\u60c5\uff08\u81f3\u5c11\u68c0\u67e5 600519, 300750, 002594\uff09\n   - \u67e5\u770b\u5317\u5411\u8d44\u91d1\u6570\u636e\n   - \u67e5\u770b\u65b0\u95fb\u4e8b\u4ef6\n4. \u751f\u6210\u7b80\u62a5\u683c\u5f0f\uff1a\n\n```\n\ud83d\udcca \u5c0f\u7ea2\u6668\u62a5 | {\u65e5\u671f}\n\n\ud83c\udf0d \u9694\u591c\u5916\u76d8\n\u7f8e\u80a1\u5173\u952e\u6807\u7684\u6da8\u8dcc\u60c5\u51b5\n\n\ud83d\udcc8 \u81ea\u9009\u80a1\u626b\u63cf\n\u91cd\u70b9\u54c1\u79cd\u884c\u60c5+\u91cf\u80fd\u53d8\u5316\n\n\ud83d\udcb5 \u8d44\u91d1\u9762\n\u5317\u5411\u8d44\u91d1\u6d41\u5411\u3001\u9f99\u864e\u699c\u5f02\u52a8\n\n\ud83d\udcf0 \u4e8b\u4ef6\u5173\u6ce8\n\u91cd\u5927\u65b0\u95fb/\u653f\u7b56\n\n\u26a0\ufe0f \u4eca\u65e5\u5173\u6ce8\n\u6f5c\u5728\u4ea4\u6613\u673a\u4f1a\u6216\u98ce\u9669\u63d0\u793a\n```\n\n5. \u4fdd\u6301\u7b80\u6d01\uff0c\u98ce\u9669\u63d0\u793a\u660e\u786e\u3002\u53e3\u5934\u7985\uff1a\"\u4ece\u57fa\u672c\u9762\u770b\u2026\u2026\"\u3001\"\u5fc3\u91cc\u6709\u6570\u5c31\u597d\"",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 8 * * 1-5",
+        "display": "45 8 * * 1-5"
+      },
+      "schedule_display": "45 8 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:28.920621+08:00",
+      "next_run_at": "2026-05-25T08:45:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file",
+        "web"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "a904cd4aa19b",
+      "name": "\u5c0f\u7ea2\u00b7\u5468\u62a5\u5206\u6790",
+      "prompt": "\u4f60\u662f\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u5c0f\u7ea2\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u6267\u884c\u5468\u5ea6\u6df1\u5ea6\u5206\u6790\u3002\n\n## \u4efb\u52a1\n\u57fa\u4e8e wiki \u77e5\u8bc6\u5e93\u4e2d\u672c\u5468\u79ef\u7d2f\u7684\u6570\u636e\uff0c\u751f\u6210\u4e00\u4efd\u5468\u5ea6\u7b56\u7565\u62a5\u544a\u3002\n\n## \u6b65\u9aa4\n1. \u8bfb\u53d6 ~/wiki/\u4e0b\u8f7d\u6536\u85cf/ \u4e2d\u672c\u5468\u7684\u6240\u6709\u6570\u636e\u6587\u4ef6\n2. \u8bfb\u53d6 ~/wiki/\u80a1\u7968\u7814\u7a76/\u81ea\u9009\u6c60/README.md \u83b7\u53d6\u81ea\u9009\u80a1\u5217\u8868\n3. \u5206\u6790\uff1a\n   - \u672c\u5468\u81ea\u9009\u80a1\u6da8\u8dcc\u5e45\u6392\u884c\n   - \u677f\u5757\u8f6e\u52a8\u65b9\u5411\n   - \u5317\u5411\u8d44\u91d1\u5468\u5ea6\u6d41\u5411\n   - \u5173\u952e\u5b8f\u89c2\u6307\u6807\u53d8\u5316\n   - \u81ea\u9009\u80a1\u8d22\u62a5/\u4f30\u503c\u66f4\u65b0\n4. \u751f\u6210\u5468\u62a5\uff1a\n\n```\n\ud83d\udcca \u5c0f\u7ea2\u5468\u62a5 | {\u5468\u533a\u95f4}\n\n\ud83c\udfc6 \u672c\u5468\u8868\u73b0\n\u81ea\u9009\u80a1\u6da8\u8dcc\u5e45 Top/Bottom 3\n\n\ud83d\udd04 \u677f\u5757\u8f6e\u52a8\n\u8d44\u91d1\u5728\u54ea\u4e9b\u677f\u5757\u8fdb\u51fa\n\n\ud83d\udcb5 \u5317\u5411\u8d44\u91d1\n\u5468\u5ea6\u51c0\u6d41\u5165/\u6d41\u51fa\uff0c\u91cd\u70b9\u4e2a\u80a1\n\n\ud83d\udccb \u81ea\u9009\u6c60\u8bc4\u4f30\n\u6bcf\u53ea\u81ea\u9009\u80a1\uff1a\u65b9\u5411\uff08\u504f\u591a/\u4e2d\u6027/\u504f\u7a7a\uff09+ \u4e00\u53e5\u8bdd\u903b\u8f91 + \u5173\u952e\u4ef7\u4f4d\n\n\ud83d\uded1 \u98ce\u9669\u63d0\u793a\n\u9700\u8981\u8b66\u60d5\u7684\u54c1\u79cd\u6216\u4e8b\u4ef6\n\n\ud83d\udcdd \u4e0b\u5468\u7b56\u7565\n\u5173\u6ce8\u65b9\u5411 + \u6f5c\u5728\u64cd\u4f5c\u8ba1\u5212\n```\n\n5. \u4fdd\u6301\u6570\u636e\u9a71\u52a8\uff0c\u4e0d\u505a\u9884\u6d4b\uff0c\u53ea\u505a\u5206\u6790\u3002\u53e3\u5934\u7985\u4fdd\u6301\u3002",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 10 * * 6",
+        "display": "30 10 * * 6"
+      },
+      "schedule_display": "30 10 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:29.924751+08:00",
+      "next_run_at": "2026-05-30T10:30:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file",
+        "web"
+      ],
+      "workdir": null,
+      "profile": null
+    }
+  ],
+  "updated_at": "2026-05-24T12:40:38.260392+08:00"
+}

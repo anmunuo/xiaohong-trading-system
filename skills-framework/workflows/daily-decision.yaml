@@ -1,0 +1,58 @@
+# 小红 Workflow: 盘中综合决策
+# 对标 tradermonty → workflows/swing-opportunity-daily.yaml
+schema_version: 1
+id: daily-decision
+display_name: 盘中综合决策
+cadence: daily
+estimated_minutes: 10
+target_users: [a-share-swing-trader]
+difficulty: intermediate
+api_profile: pro
+
+when_to_run: 每个交易日 14:30，在收盘前90分钟做出持仓调整决策
+
+required_skills:
+  - decision-officer
+  - risk-manager-cn
+  - position-sizer-cn
+optional_skills:
+  - trade-journal-cn
+
+artifacts:
+  - id: risk_report
+    produced_by_step: 1
+    required: true
+  - id: trading_signals
+    produced_by_step: 2
+    required: true
+  - id: decision_report
+    produced_by_step: 3
+    required: true
+
+steps:
+  - step: 1
+    name: 风控检查
+    skill: risk-manager-cn
+    produces: [risk_report]
+
+  - step: 2
+    name: 获取交易信号
+    skill: decision-officer
+    consumes: [risk_report]
+    produces: [trading_signals]
+
+  - step: 3
+    name: 执行决策
+    skill: decision-officer
+    consumes: [risk_report, trading_signals]
+    produces: [decision_report]
+    decision_gate: true
+    decision_question: >
+      是否有 P0 级（止损触发）或 P1 级（仓位超标）行动项？
+      P0 → 立即执行平仓
+      P1 → 14:57前完成减仓
+      P2 → 留待明日评估
+
+manual_review:
+  - P0 项需人工确认后执行
+  - P1 项需在收盘前完成

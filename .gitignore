@@ -1,0 +1,80 @@
+# ============================================
+# 小红交易系统 · Git 忽略规则
+# ============================================
+
+# ── 敏感凭证（绝不入库）──
+.env
+*.token
+*credentials*
+*secret*
+config.yaml
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Node ──
+node_modules/
+package-lock.json
+
+# ── IDE / 编辑器 ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Hermes 内部运行时 ──
+bin/
+hooks/
+lsp/
+pairing/
+platforms/
+skins/
+memories/
+plans/
+sessions/
+sandboxes/
+workspace/
+cache/
+audio_cache/
+image_cache/
+logs/
+home/
+
+# ── 数据库文件 ──
+*.db
+*.db-wal
+*.db-shm
+
+# ── data 子目录排除 ──
+data/kb/
+data/kb_raw/
+data/knowledge_base/
+data/sniper_logs/
+data/backup_logs/
+data/evolution/
+
+# ── cron 输出（仅保留 jobs.json）──
+cron/output/
+
+# ── 临时文件 ──
+tmp/
+*.tmp
+*.bak
+*.log
+*.pid
+*.lock
+.pytest_cache/
+
+# ── 运行时状态文件 ──
+gateway_state.json
+feishu_seen_message_ids.json
+channel_directory.json
+models_dev_cache.json
+processes.json
+.skills_prompt_snapshot.json

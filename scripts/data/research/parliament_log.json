@@ -1,0 +1,1857 @@
+[
+  {
+    "timestamp": "2026-06-02T01:32:30.666404",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "data": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告349条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(28条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "data": {
+          "debate": {
+            "bull_vs_bear": {
+              "title": "多空辩论",
+              "a_perspective": "🐂: 池内9只标的看多因素",
+              "b_perspective": "🐻: 池内9只标的风险因素",
+              "consensus": [
+                "无明显共识"
+              ],
+              "divergence": [
+                "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+                "🐻独有关注: 海南矿业/小商品城/方大炭素"
+              ]
+            },
+            "fundamental_vs_technical": {
+              "title": "基本面×技术面交叉验证",
+              "a_perspective": "🏢: 公告349条 / 板块0个",
+              "b_perspective": "📈: 池内9只标的形态评估",
+              "consensus": [
+                "无明显共识"
+              ],
+              "divergence": [
+                "🏢独有关注: 压倒减持/活动活跃/上市公司积极信号",
+                "📈独有关注: 池整体技术面中性/均分"
+              ]
+            },
+            "data_verdict": {
+              "verdict": "数据研报置信度 90%",
+              "data_quality_flags": [],
+              "cross_validated_flags": [
+                "海南矿业: KB洞察发现风险信号",
+                "红宝丽: KB洞察发现风险信号",
+                "小商品城: KB洞察发现风险信号",
+                "嘉美包装: KB洞察发现风险信号",
+                "浙文互联: KB洞察发现风险信号"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "data": {
+          "decision": {
+            "timestamp": "2026-06-02T01:32:30.666285",
+            "verdict": {
+              "overall_confidence": 0.75,
+              "bias": "偏空",
+              "bull_strength": 1,
+              "bear_strength": 8,
+              "critical_flags": [
+                "海南矿业: KB洞察发现风险信号",
+                "红宝丽: KB洞察发现风险信号",
+                "小商品城: KB洞察发现风险信号",
+                "嘉美包装: KB洞察发现风险信号",
+                "浙文互联: KB洞察发现风险信号"
+              ],
+              "consolidated_recommendations": [
+                "当前数据源覆盖完整，无需新增",
+                "维持现有持仓基本面评估",
+                "海南矿业: MA20附近整理，可等突破确认",
+                "嘉美包装: MA20附近整理，可等突破确认",
+                "徐工机械: MA20附近整理，可等突破确认"
+              ]
+            },
+            "researcher_credits": {
+              "data": 0.95,
+              "fundamental": 0.86,
+              "technical": 0.73,
+              "bull": 0.93,
+              "bear": 1.0
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T01:33:25.552927",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "data": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告349条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(28条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "data": {
+          "debate": {
+            "bull_vs_bear": {
+              "title": "多空辩论",
+              "a_perspective": "🐂: 池内9只标的看多因素",
+              "b_perspective": "🐻: 池内9只标的风险因素",
+              "consensus": [
+                "无明显共识"
+              ],
+              "divergence": [
+                "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+                "🐻独有关注: 优宁维/徐工机械/方大炭素"
+              ]
+            },
+            "fundamental_vs_technical": {
+              "title": "基本面×技术面交叉验证",
+              "a_perspective": "🏢: 公告349条 / 板块0个",
+              "b_perspective": "📈: 池内9只标的形态评估",
+              "consensus": [
+                "无明显共识"
+              ],
+              "divergence": [
+                "🏢独有关注: 资本运作密集期/压倒减持/上市公司积极信号",
+                "📈独有关注: 均分/池整体技术面中性"
+              ]
+            },
+            "data_verdict": {
+              "verdict": "数据研报置信度 90%",
+              "data_quality_flags": [],
+              "cross_validated_flags": [
+                "红宝丽: KB洞察发现风险信号",
+                "嘉美包装: KB洞察发现风险信号",
+                "海南矿业: KB洞察发现风险信号",
+                "徐工机械: KB洞察发现风险信号",
+                "方大炭素: KB洞察发现风险信号"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "data": {
+          "decision": {
+            "timestamp": "2026-06-02T01:33:25.552866",
+            "verdict": {
+              "overall_confidence": 0.75,
+              "bias": "偏空",
+              "bull_strength": 1,
+              "bear_strength": 8,
+              "critical_flags": [
+                "红宝丽: KB洞察发现风险信号",
+                "嘉美包装: KB洞察发现风险信号",
+                "海南矿业: KB洞察发现风险信号",
+                "徐工机械: KB洞察发现风险信号",
+                "方大炭素: KB洞察发现风险信号"
+              ],
+              "consolidated_recommendations": [
+                "当前数据源覆盖完整，无需新增",
+                "维持现有持仓基本面评估",
+                "海南矿业: MA20附近整理，可等突破确认",
+                "嘉美包装: MA20附近整理，可等突破确认",
+                "徐工机械: MA20附近整理，可等突破确认"
+              ]
+            },
+            "researcher_credits": {
+              "data": 0.95,
+              "fundamental": 0.86,
+              "technical": 0.73,
+              "bull": 0.93,
+              "bear": 1.0
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T01:34:04.786307",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告349条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(28条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 方大炭素/优宁维/小商品城"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告349条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 活动活跃/回购信号/压倒减持",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T01:34:04.786248",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 8,
+            "critical_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.86,
+            "technical": 0.73,
+            "bull": 0.93,
+            "bear": 1.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T01:50:23.362447",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告349条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(28条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 方大炭素/风险评级为/徐工机械"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告349条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 资本运作密集期/活动活跃/上市公司积极信号",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "方大炭素: KB洞察发现风险信号",
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T01:50:23.362384",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 8,
+            "critical_flags": [
+              "方大炭素: KB洞察发现风险信号",
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.86,
+            "technical": 0.73,
+            "bull": 0.93,
+            "bear": 1.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T01:56:38.375759",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告349条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(28条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 方大炭素/浙文互联/小商品城"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告349条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 上市公司积极信号/增持/活动活跃",
+              "📈独有关注: 均分/池整体技术面中性"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T01:56:38.375701",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 8,
+            "critical_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.86,
+            "technical": 0.73,
+            "bull": 0.93,
+            "bear": 1.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T01:56:55.765205",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告349条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(28条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 嘉美包装/小商品城/汉朔科技"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告349条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 上市公司积极信号/回购信号/活动活跃",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T01:56:55.765152",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 8,
+            "critical_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.86,
+            "technical": 0.73,
+            "bull": 0.93,
+            "bear": 1.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T08:42:49.120875",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告353条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(30条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "小商品城: MA20附近整理，可等突破确认",
+              "方大炭素: MA20附近整理，可等突破确认",
+              "浙文互联: MA20附近整理，可等突破确认",
+              "红宝丽: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "海南矿业: 风险评级为「高」",
+              "嘉美包装: 风险评级为「高」",
+              "徐工机械: 风险评级为「高」",
+              "小商品城: 风险评级为「高」",
+              "方大炭素: 风险评级为「高」",
+              "浙文互联: 风险评级为「高」",
+              "红宝丽: 风险评级为「高」",
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "方大炭素: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 风险评级为/徐工机械/嘉美包装"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告353条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 增持/压倒减持/资本运作密集期",
+              "📈独有关注: 均分/池整体技术面中性"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "海南矿业: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T08:42:49.120815",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 8,
+            "critical_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "小商品城: KB洞察发现风险信号",
+              "海南矿业: KB洞察发现风险信号",
+              "浙文互联: KB洞察发现风险信号",
+              "红宝丽: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.86,
+            "technical": 0.73,
+            "bull": 0.93,
+            "bear": 1.0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T10:06:05.398491",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告353条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(30条)，资本运作密集期",
+              "券商覆盖 15 只标的"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认",
+              "概伦电子: MA20附近整理，可等突破确认",
+              "康强电子: MA20附近整理，可等突破确认",
+              "岳阳兴长: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "优宁维: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "汉朔科技: 风险评级为「高」",
+              "优宁维: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 优宁维/风险评级为/汉朔科技"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告353条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 只标的/增持/活动活跃",
+              "📈独有关注: 均分/池整体技术面中性"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "海南矿业: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T10:06:05.398428",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 4,
+            "critical_flags": [
+              "嘉美包装: KB洞察发现风险信号",
+              "徐工机械: KB洞察发现风险信号",
+              "海南矿业: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "嘉美包装: MA20附近整理，可等突破确认",
+              "徐工机械: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.93,
+            "bear": 0.96
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T10:09:54.214612",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告353条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(30条)，资本运作密集期",
+              "券商覆盖 15 只标的"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "济川药业: MA20附近整理，可等突破确认",
+              "赞宇科技: MA20附近整理，可等突破确认",
+              "招商银行: MA20附近整理，可等突破确认",
+              "维通利: MA20附近整理，可等突破确认",
+              "鸿合科技: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "汉朔科技: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 汉朔科技/风险评级为"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告353条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 活动活跃/只标的/回购信号",
+              "📈独有关注: 均分/池整体技术面中性"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "海南矿业: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T10:09:54.214555",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "中性",
+            "bull_strength": 1,
+            "bear_strength": 1,
+            "critical_flags": [
+              "海南矿业: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.78,
+            "bear": 0.83
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T10:13:00.387180",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告353条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(30条)，资本运作密集期",
+              "券商覆盖 15 只标的"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "概伦电子: MA20附近整理，可等突破确认",
+              "镇洋发展: MA20附近整理，可等突破确认",
+              "济川药业: MA20附近整理，可等突破确认",
+              "赞宇科技: MA20附近整理，可等突破确认",
+              "招商银行: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "汉朔科技: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 汉朔科技/风险评级为"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告353条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 回购信号/活动活跃/压倒减持",
+              "📈独有关注: 均分/池整体技术面中性"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "海南矿业: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T10:13:00.387123",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "中性",
+            "bull_strength": 1,
+            "bear_strength": 1,
+            "critical_flags": [
+              "海南矿业: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.78,
+            "bear": 0.83
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T10:14:16.280475",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告353条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(30条)，资本运作密集期",
+              "券商覆盖 15 只标的"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "概伦电子: MA20附近整理，可等突破确认",
+              "镇洋发展: MA20附近整理，可等突破确认",
+              "济川药业: MA20附近整理，可等突破确认",
+              "赞宇科技: MA20附近整理，可等突破确认",
+              "维通利: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "镇洋发展: 风险评级为「高」",
+              "赞宇科技: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "镇洋发展: 小市值(64亿)，流动性风险",
+              "赞宇科技: 小市值(56亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 镇洋发展/赞宇科技/风险评级为"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告353条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 只标的/增持/压倒减持",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "镇洋发展: 小市值(64亿)，流动性风险",
+              "赞宇科技: 小市值(56亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T10:14:16.280420",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "中性",
+            "bull_strength": 1,
+            "bear_strength": 3,
+            "critical_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "镇洋发展: 小市值(64亿)，流动性风险",
+              "赞宇科技: 小市值(56亿)，流动性风险"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.78,
+            "bear": 0.91
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T10:29:10.903277",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告353条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(280条)压倒减持(18条)，上市公司积极信号",
+              "M&A活动活跃(30条)，资本运作密集期",
+              "券商覆盖 15 只标的"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "海南矿业: MA20附近整理，可等突破确认",
+              "中天科技: MA20附近整理，可等突破确认",
+              "永鼎股份: MA20附近整理，可等突破确认",
+              "信捷电气: MA20附近整理，可等突破确认",
+              "汉朔科技: MA20附近整理，可等突破确认",
+              "概伦电子: MA20附近整理，可等突破确认",
+              "镇洋发展: MA20附近整理，可等突破确认",
+              "济川药业: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "镇洋发展: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "镇洋发展: 小市值(64亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 风险评级为/镇洋发展"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告353条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 回购信号/只标的/券商覆盖",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "镇洋发展: 小市值(64亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-02T10:29:10.903224",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "中性",
+            "bull_strength": 1,
+            "bear_strength": 2,
+            "critical_flags": [
+              "海南矿业: KB洞察发现风险信号",
+              "镇洋发展: 小市值(64亿)，流动性风险"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "海南矿业: MA20附近整理，可等突破确认",
+              "中天科技: MA20附近整理，可等突破确认",
+              "永鼎股份: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.78,
+            "bear": 0.83
+          }
+        }
+      }
+    ]
+  }
+]

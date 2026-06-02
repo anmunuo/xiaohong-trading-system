@@ -1,0 +1,65 @@
+[
+  {
+    "action": "market_snapshot 字段扩展",
+    "module": "market_snapshot",
+    "priority": "P2",
+    "rationale": "根据本周消费者反馈，补充缺失字段",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  },
+  {
+    "action": "公告情绪权重调整",
+    "module": "推荐引擎(event)",
+    "priority": "P1",
+    "rationale": "基于本周公告回购/减持比变化，调整event因子中公告权重",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  },
+  {
+    "action": "行业轮动信号增强",
+    "module": "推荐引擎(sentiment)",
+    "priority": "P2",
+    "rationale": "行业新闻与板块资金联动性分析",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  },
+  {
+    "action": "止损参数重新校准",
+    "module": "推荐引擎(stop_loss)",
+    "priority": "P1",
+    "rationale": "本周1条止损失效记录，建议复盘止损价设置",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  },
+  {
+    "action": "MA20偏离阈值优化",
+    "module": "推荐引擎(technical)",
+    "priority": "P2",
+    "rationale": "基于本周跟踪池标的MA20偏离分布，调整打分参数",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  },
+  {
+    "action": "北向资金权重上调",
+    "module": "推荐引擎(fund)",
+    "priority": "P2",
+    "rationale": "如果北向持续流入，建议提升fund因子中北向权重",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  },
+  {
+    "action": "估值分位风险阈值设置",
+    "module": "弹药库(仓位限制)",
+    "priority": "P1",
+    "rationale": "当前指数PE分位偏高，建议设定自动减仓触发线",
+    "source": "research_weekly",
+    "week": "2026-W22",
+    "status": "pending"
+  }
+]

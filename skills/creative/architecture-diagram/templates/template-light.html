@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture Diagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'JetBrains Mono',monospace; background:#f8f9fa; min-height:100vh; padding:2rem; color:#1a1a2e; }
+    .container { max-width:1200px; margin:0 auto; }
+    .header { margin-bottom:2rem; }
+    .header-row { display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem; }
+    .pulse-dot { width:12px; height:12px; background:#e74c3c; border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    h1 { font-size:1.5rem; font-weight:700; color:#1a1a2e; }
+    .subtitle { color:#6c757d; font-size:0.875rem; margin-left:1.75rem; }
+    .diagram-container { background:#ffffff; border-radius:1rem; border:1px solid #dee2e6; padding:1.5rem; overflow-x:auto; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+    svg { width:100%; min-width:900px; display:block; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; margin-top:2rem; }
+    .card { background:#ffffff; border-radius:0.75rem; border:1px solid #dee2e6; padding:1.25rem; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+    .card-header { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; }
+    .card-dot { width:8px; height:8px; border-radius:50%; }
+    .card-dot.cyan { background:#0ea5e9 } .card-dot.emerald { background:#10b981 }
+    .card-dot.violet { background:#8b5cf6 } .card-dot.amber { background:#f59e0b } .card-dot.rose { background:#e11d48 }
+    .card h3 { font-size:0.875rem; font-weight:600; color:#1a1a2e; }
+    .card ul { list-style:none; color:#6c757d; font-size:0.75rem; }
+    .card li { margin-bottom:0.375rem; }
+    .footer { text-align:center; margin-top:1.5rem; color:#adb5bd; font-size:0.75rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header"><div class="header-row"><div class="pulse-dot"></div><h1>[PROJECT NAME] Architecture</h1></div>
+  <p class="subtitle">[Subtitle]</p></div>
+  <div class="diagram-container">
+  <svg viewBox="0 0 1000 600">
+    <defs>
+      <marker id="a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6c757d"/></marker>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e9ecef" stroke-width="0.5"/></pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#grid)"/>
+    <!-- Components go here — use light fills from the skill palette -->
+  </svg>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-header"><div class="card-dot cyan"></div><h3>Card 1</h3></div><ul><li>• Item</li></ul></div>
+    <div class="card"><div class="card-header"><div class="card-dot emerald"></div><h3>Card 2</h3></div><ul><li>• Item</li></ul></div>
+    <div class="card"><div class="card-header"><div class="card-dot violet"></div><h3>Card 3</h3></div><ul><li>• Item</li></ul></div>
+  </div>
+  <p class="footer">[Project] • [Metadata]</p>
+</div>
+</body>
+</html>

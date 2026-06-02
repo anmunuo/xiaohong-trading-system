@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-06-02T16:09:25+08:00",
+  "market_condition": "ranging",
+  "market_context": {
+    "shanghai": "4083.31 (+0.63%)",
+    "hang_seng": "25398.18 (+0.86%)",
+    "nikkei": "66934.33 (+0.91%)",
+    "us": "道琼斯 +0.09% | SP500 +0.26% | 纳斯达克 +0.42%",
+    "north_flow": "5.4亿 净流入 (T-1, 20260526)",
+    "main_vs_retail": "主力-609.7亿 vs 散户+476.1亿 → 机构减仓/散户接盘",
+    "hot_sectors": "CPO +4.71% | 光通信 +4.45% | 通信技术 +1.63%",
+    "valuation": "PE分位 88.3%（偏贵），融资+1.5%（平稳）",
+    "volatility": "low-moderate",
+    "note": "上证+0.63%但主力净流出609亿→权重护盘+题材轮动，典型震荡结构市。CPO/光通信暴涨显示结构性机会，非普涨格局。"
+  },
+  "data_status": {
+    "total_samples": 0,
+    "auction_frames_collected": 0,
+    "days_since_cold_start": 2,
+    "previous_diagnoses": 1,
+    "stage": "cold_start_persistent",
+    "note": "⚠️ 连续第2天零样本。竞价采集器尚未成功运行。auction.db含auction_frames表但0行，无采集日志。需排查09:15 cron触发和东方财富API可达性。"
+  },
+  "weights_current": {
+    "price_slope": {
+      "weight": 0.25,
+      "alpha": 1,
+      "beta": 1,
+      "hits": 0,
+      "misses": 0
+    },
+    "volume_accel": {
+      "weight": 0.25,
+      "alpha": 1,
+      "beta": 1,
+      "hits": 0,
+      "misses": 0
+    },
+    "imbalance": {
+      "weight": 0.2,
+      "alpha": 1,
+      "beta": 1,
+      "hits": 0,
+      "misses": 0
+    },
+    "premium": {
+      "weight": 0.15,
+      "alpha": 1,
+      "beta": 1,
+      "hits": 0,
+      "misses": 0
+    },
+    "sector_dev": {
+      "weight": 0.15,
+      "alpha": 1,
+      "beta": 1,
+      "hits": 0,
+      "misses": 0
+    }
+  },
+  "accuracy_trend": {
+    "price_slope": "no_data",
+    "volume_accel": "no_data",
+    "imbalance": "no_data",
+    "premium": "no_data",
+    "sector_dev": "no_data"
+  },
+  "diagnosis": "连续2天冷启动，竞价采集器未产出任何样本，权重仍处先验等权状态。今日市场虽上证+0.63%表面回暖，但主力净流出609亿而散户接盘476亿——机构在结构性行情中逢高减仓，这是震荡市而非趋势市的典型特征。CPO/光通信暴涨（+4.7%/+4.5%）vs 大盘股仅+0.45%，板块分化极端——若竞价数据开始流入，sector_dev（板块偏离）维度在这种极端分化环境中应迅速展现区分力，imbalance（买卖盘失衡）在主力出货日也更有信号价值。",
+  "recommendation": {
+    "price_slope": 0.25,
+    "volume_accel": 0.25,
+    "imbalance": 0.2,
+    "premium": 0.15,
+    "sector_dev": 0.15
+  },
+  "reasoning": "维持默认权重不变。理由：(1) 0样本下任何调整都是凭感觉，违反Bayesian原则；(2) 当前默认权重已按理论有效性分层（量价0.25 > 失衡0.20 > 溢价/板块0.15），在冷启动期合理；(3) 今日市场特征（极端板块分化+主力出货）暗示 sector_dev 和 imbalance 可能是首批展现信号质量的维度，但需数据验证。⚠️ 优先级更高的问题不是权重调整，而是竞价采集器未运行——需排查：(a) crontab -l 确认09:15任务存在，(b) 手动 python3 auction_collector.py --once 测试东方财富API可达性，(c) 检查默认标的是否有效。采集器不通，学习器永远空转。",
+  "next_review": "2026-06-03T16:05:00+08:00",
+  "watch_items": [
+    "🚨 P0: 竞价采集器为何连续2天未产出数据？排查 cron + API + 标的",
+    "price_slope 在震荡市中的假信号率 → 若 β 增速 > α 需降权",
+    "volume_accel：周二量能应比周一改善，注意区分正常放量和异常放量",
+    "sector_dev：今日CPO+4.7%/大盘+0.45%的极端分化 → 若数据流入，该维度应首先展现信号",
+    "imbalance：主力-609亿出货日，竞价阶段的买卖盘失衡信号质量值得关注",
+    "premium：估值分位88.3%偏贵，溢价维度在估值高位环境中的有效性待验证"
+  ],
+  "cold_start_days": 2,
+  "collector_health": {
+    "status": "down",
+    "auction_frames": 0,
+    "log_exists": false,
+    "last_successful_run": null,
+    "suggested_action": "手动运行 python3 auction_collector.py --once 验证API可达性"
+  }
+}

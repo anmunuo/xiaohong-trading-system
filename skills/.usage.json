@@ -1,0 +1,41 @@
+{
+  "data-pipeline-automation": {
+    "archived_at": null,
+    "created_at": "2026-05-24T04:42:03.915882+00:00",
+    "created_by": "agent",
+    "last_patched_at": "2026-05-27T13:07:02.747078+00:00",
+    "last_used_at": "2026-05-31T06:14:56.476453+00:00",
+    "last_viewed_at": "2026-05-31T06:14:56.470686+00:00",
+    "patch_count": 3,
+    "pinned": false,
+    "state": "active",
+    "use_count": 5,
+    "view_count": 5
+  },
+  "stock-research": {
+    "archived_at": null,
+    "created_at": "2026-05-24T05:27:22.369295+00:00",
+    "created_by": "agent",
+    "last_patched_at": "2026-06-02T09:17:32.005847+00:00",
+    "last_used_at": "2026-06-02T14:16:01.276437+00:00",
+    "last_viewed_at": "2026-06-02T14:16:01.274648+00:00",
+    "patch_count": 298,
+    "pinned": false,
+    "state": "active",
+    "use_count": 193,
+    "view_count": 132
+  },
+  "strategy-trading": {
+    "archived_at": null,
+    "created_at": "2026-05-27T13:08:35.623721+00:00",
+    "created_by": null,
+    "last_patched_at": "2026-06-02T09:17:39.597373+00:00",
+    "last_used_at": "2026-06-02T09:30:08.028197+00:00",
+    "last_viewed_at": "2026-06-02T09:16:30.243672+00:00",
+    "patch_count": 38,
+    "pinned": false,
+    "state": "active",
+    "use_count": 37,
+    "view_count": 31
+  }
+}

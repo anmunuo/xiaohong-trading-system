@@ -1,0 +1,22 @@
+{
+  "name": "xiaohong-mcp-gateway",
+  "version": "2.0.0",
+  "description": "安幕诺家族 · 小红 MCP Gateway — TradingSkill 风格 AI 交易工具协议层",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "trade": "tsx src/run-trading.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

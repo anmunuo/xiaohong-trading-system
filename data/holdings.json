@@ -1,0 +1,104 @@
+{
+  "version": "2026.04.09.version.fix",
+  "updateTime": "2026-06-02T15:30:47+08:00",
+  "accountInfo": {
+    "initialCapital": 100000,
+    "currentNetValue": 100000.0,
+    "availableCash": 100000,
+    "source": "招商证券交割单 20260326",
+    "updateTime": "2026-05-31"
+  },
+  "positionCalculation": {
+    "totalCapital": 100000,
+    "maxPositionPerStock": 33300.0,
+    "initialPosition": 11100.0,
+    "addPosition": 11100.0,
+    "tPosition": 11100.0,
+    "totalBuilds": 3,
+    "description": "单股总仓位≤33.3% (¥33,300)，分3次建仓"
+  },
+  "holdings": [],
+  "closedPositions": [],
+  "rules": {
+    "priceAlert": 5,
+    "maxPositionPerStock": 33.3,
+    "maxTotalPosition": 100,
+    "maxHoldingsCount": 9,
+    "positionStrategy": {
+      "initialPosition": 11.1,
+      "addPosition": 11.1,
+      "tPosition": 11.1,
+      "totalBuilds": 3,
+      "description": "单股总仓位≤33.3%，分 3 次建仓：首次 11.1%、加仓 11.1%、T 仓 11.1%"
+    },
+    "riskManagement": {
+      "riskPerTrade": null,
+      "useKellyFormula": true,
+      "kellyValue": 0.2,
+      "kellyValueSource": "默认保守值（无历史交易记录）",
+      "stopLossStrategies": {
+        "rBasedStopLoss": {
+          "type": "technical_analysis",
+          "description": "R 系数止损：技术面决定止损位，R 值决定仓位（唯一策略）",
+          "status": "active",
+          "priority": 1,
+          "fallback": null
+        },
+        "trailingStopLoss": {
+          "type": "percentage_step",
+          "initialTrigger": 0.2,
+          "triggerStep": 0.1,
+          "moveStep": 0.1,
+          "description": "移动止损：上涨 20% 启动，每上涨 10% 上移 10%",
+          "status": "active",
+          "priority": 2
+        }
+      },
+      "activeStrategy": "rBasedStopLoss",
+      "currentNetValue": 100000.0,
+      "currentRValue": 832.5,
+      "description": "R 值止损：技术面决定止损位，R 值决定仓位；当前 R 值¥832 (净值¥100,000×33.3%×1/8×凯利值0.2)",
+      "lastUpdateTime": "2026-04-06 12:45:00",
+      "useRBasedStopLoss": true,
+      "rValueFormula": {
+        "type": "kelly_based_position",
+        "formula": "R 值 = 总净值 × 单股最大持仓% × 1/8 凯利值",
+        "formulaDetail": "R 值 = 净值 × 单股最大持仓比例 × (凯利值 / 8)",
+        "description": "R 值 = 单股最大可用资金的 1/8 凯利值"
+      },
+      "kellyFraction": 0.125,
+      "maxCapitalPerStock": 277070.89842,
+      "maxPositionPerStockPct": 0.333,
+      "stopLossMethod": "technical_analysis",
+      "stopLossDescription": "不再使用固定百分比止损，止损位由技术面支撑位决定，仓位由 R 值反推",
+      "rValueUpdateTime": "2026-06-02"
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "frequency": "30min",
+    "tradingHours": "9:30-15:00",
+    "realtimeAlert": true
+  },
+  "notes": "2026-03-31 按批次重新导入。当前持仓2只 (55700股)，已平仓29笔。",
+  "netValueHistory": [
+    {
+      "date": "2026-05-31",
+      "value": 100000
+    },
+    {
+      "date": "2026-06-01",
+      "value": 100000.0
+    },
+    {
+      "date": "2026-06-02",
+      "value": 100000.0
+    }
+  ],
+  "peakNetValue": 100000,
+  "peakNetValueDate": "2026-06-01",
+  "currentDrawdown": 0.0,
+  "riskManagement": {
+    "currentNetValue": 100000.0
+  }
+}

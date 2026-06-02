@@ -1,0 +1,164 @@
+# 小红 Skills 元数据索引
+# ======================
+# 权威技能注册表（canonical source of truth）
+# 对标 tradermonty/claude-trading-skills → skills-index.yaml
+#
+# 结构:
+#   schema_version: 索引格式版本
+#   skills: 技能列表（按类别分组）
+#     - id: 唯一标识
+#       name: 中文名称
+#       category: 类别
+#       mcp_tools: 关联的 MCP 工具
+#       dependencies: 依赖的其他技能
+#       api_profile: 所需 API 等级
+#       estimated_minutes: 预估执行时间
+#       tier_required: 最低订阅等级
+
+schema_version: 1
+
+skills:
+  # ═══════════════════════════════════
+  # 市场体制 (Market Regime) — 2
+  # ═══════════════════════════════════
+  - id: a-share-market-regime
+    name: A股市场体制分析
+    category: market-regime
+    description: 分析A股市场宽度、上升趋势参与度、板块轮动，输出市场姿态（偏多/震荡/偏空）和净敞口建议
+    mcp_tools:
+      - get_index_data
+      - get_north_flow
+      - get_sector_flow
+    dependencies: []
+    api_profile: basic
+    estimated_minutes: 10
+    tier_required: free
+
+  - id: watchtower-skill
+    name: 瞭望塔晨报 (合并版)
+    category: market-regime
+    description: 08:45盘前瞭望塔晨报 — 结构化七段数据 + LLM AI深度研判。合并原瞭望塔(no_agent)和每日晨报(LLM)，一份报告覆盖全部盘前需求
+    mcp_tools:
+      - get_index_data
+      - get_north_flow
+      - get_sector_flow
+      - get_top_flow_stocks
+    dependencies: []
+    api_profile: pro
+    estimated_minutes: 5
+    cron: "45 8 * * 1-5"
+    mode: LLM-driven
+
+  # ═══════════════════════════════════
+  # 选股 (Screening) — 2
+  # ═══════════════════════════════════
+  - id: a-share-screener
+    name: A股多因子选股
+    category: screening
+    description: 全市场多因子筛选（PE/PB/ROE/市值/动量/北向），输出 Top N 候选池 + 综合评分
+    mcp_tools:
+      - run_screener
+      - get_stock_quote
+    dependencies: []
+    api_profile: pro
+    estimated_minutes: 15
+    tier_required: free
+
+  - id: breakout-scanner
+    name: 突破形态扫描
+    category: screening
+    description: 基于 VCP/杯柄/平底等形态识别的突破候选扫描
+    mcp_tools:
+      - get_daily_bars
+      - get_stock_quote
+    dependencies: []
+    api_profile: pro
+    estimated_minutes: 10
+    tier_required: pro
+
+  # ═══════════════════════════════════
+  # 仓位与风控 (Position & Risk) — 2
+  # ═══════════════════════════════════
+  - id: position-sizer-cn
+    name: 仓位计算（中国版）
+    category: position-risk
+    description: R值仓位计算：固定分数/ATR/凯利三种方法，含A股交易规则约束（T+1/涨跌停/单股上限）
+    mcp_tools:
+      - calc_position_size
+      - check_position_limit
+    dependencies: []
+    api_profile: basic
+    estimated_minutes: 3
+    tier_required: free
+
+  - id: risk-manager-cn
+    name: 风控管理（中国版）
+    category: position-risk
+    description: 止损检查/移动止盈/仓位合规/凯利公式/组合热度监控
+    mcp_tools:
+      - check_stop_loss
+      - get_risk_report
+      - get_positions
+    dependencies: []
+    api_profile: basic
+    estimated_minutes: 5
+    tier_required: free
+
+  # ═══════════════════════════════════
+  # 交易执行与日志 (Execution & Journal) — 2
+  # ═══════════════════════════════════
+  - id: trade-journal-cn
+    name: 交易日志（中国版）
+    category: execution-journal
+    description: 结构化交易日志：买入/卖出记录、PnL计算、胜率统计、各标的业绩
+    mcp_tools:
+      - get_trade_stats
+      - get_recent_trades
+      - export_trades
+    dependencies: []
+    api_profile: basic
+    estimated_minutes: 3
+    tier_required: free
+
+  - id: decision-officer
+    name: 决策官·盘中决策
+    category: execution-journal
+    description: 14:30综合交易决策：读取当日报告、运行风控分析、生成买卖建议、输出P0/P1/P2行动项
+    mcp_tools:
+      - get_signals
+      - get_risk_report
+      - get_positions
+      - place_order
+    dependencies:
+      - risk-manager-cn
+      - position-sizer-cn
+    api_profile: pro
+    estimated_minutes: 10
+    tier_required: pro
+
+  # ═══════════════════════════════════
+  # 复盘 (Review) — 1
+  # ═══════════════════════════════════
+  - id: post-market-review
+    name: 盘后复盘
+    category: review
+    description: 日终复盘：盈亏统计、持仓概览、交易纪律回顾、明日计划
+    mcp_tools:
+      - get_trade_stats
+      - get_recent_trades
+      - get_positions
+    dependencies: []
+    api_profile: basic
+    estimated_minutes: 5
+    tier_required: free
+
+# ═══════════════════════════════════
+# 全局配置
+# ═══════════════════════════════════
+api_profiles:
+  basic:
+    description: 基础行情+统计，无需额外API
+    required_mcp_servers: [market-data, logging]
+  pro:
+    description: 全功能，需Tushare Token
+    required_mcp_servers: [market-data, strategy, execution, risk, logging]

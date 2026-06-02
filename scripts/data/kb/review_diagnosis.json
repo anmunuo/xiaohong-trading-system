@@ -1,0 +1,109 @@
+[
+  {
+    "timestamp": "2026-06-01T17:14:44+08:00",
+    "market_context": {
+      "shanghai": "4057.74 (-0.27%)",
+      "总涨停数": 120,
+      "推荐池数量": 1,
+      "推荐池唯一标的": "920184 国源科技 (北交所, 评分48.3)",
+      "missed_condition": "池外涨幅≥6%"
+    },
+    "missed_count": 118,
+    "root_causes": {
+      "candidate_pool_blindspot": {
+        "count": 118,
+        "severity": "P0",
+        "detail": "118/120涨停股不在候选池中。候选池仅来源公告事件(111只)，与涨停池交集仅2只。get_top_flow_stocks()返回None，hot_events/broker_views均为空。",
+        "evidence": "涨停板120只 vs 公告池111只，交集=2 (603877太平鸟, 920184国源科技)"
+      },
+      "small_cap_overkill": {
+        "count": 106,
+        "severity": "P0",
+        "detail": "候选池111只中106只被<50亿市值过滤排除(95.5%)。涨停板中35只<50亿也被排除，但可接受。真正的问题是候选池本身就全是小盘股(公告股偏小市值)。",
+        "evidence": "111只候选 → 106被小市值排除 → 仅剩5只。公告池的上市公司以中小盘为主。"
+      },
+      "lianban_overexclusion": {
+        "count": 0,
+        "severity": "P1",
+        "detail": "今日因昨周日无涨停数据，连板排除为0。但正常交易日「含首板」规则会排除当日所有涨停(包括大量首板牛股)。75只中市值首板涨停本应可捕获。",
+        "evidence": "昨日涨停: 0只(Sunday)。规则设置为排除所有连板含首板 → 正常交易日会把全部涨停排除。"
+      },
+      "data_pipeline_postmarket_failure": {
+        "count": 50,
+        "severity": "P1",
+        "detail": "get_top_flow_stocks()盘后返回None。东方财富push2 API在工作日16:00后可能返回空数据。该函数应添加akshere stock_zt_pool_em或stock_hot_rank_em作为fallback。",
+        "evidence": "三次调用均返回None，函数内try/except静默吞错。"
+      }
+    },
+    "optimization": [
+      {
+        "id": 1,
+        "priority": "P0-立即",
+        "title": "候选池增加涨停板源",
+        "action": "在_get_candidates()中新增: 调用ak.stock_zt_pool_em(date=today)获取当日涨停池，所有中市值(50-2000亿)首板涨停直接进入候选池",
+        "expected_impact": "候选池从111只→约180-200只。今日可捕获75只中市值首板涨停中的60+只(排除当日连板≥2的11只)。覆盖率从1.7%提升到50%+。",
+        "code_hint": "在_get_candidates()中添加: zt_pool = ak.stock_zt_pool_em(date=self.date_str); 筛选市值50-2000亿+连板数==1 → 加入candidates"
+      },
+      {
+        "id": 2,
+        "priority": "P0-立即",
+        "title": "放宽连板排除: 含首板 → ≥2板",
+        "action": "修改_apply_filters()中_get_lianban_codes()逻辑: 仅获取连板数≥2的股票，不再排除首板。同时改为取当日涨停池而非昨日。",
+        "expected_impact": "首板涨停不再被过滤。75只中市值首板涨停全部可通过。连板≥2的11只继续排除。预期每日可多捕获40-80只有效候选。",
+        "code_hint": "在_get_lianban_codes()中: df = ak.stock_zt_pool_em(date=self.date_str); lianban = {code for code, lb in zip(df['代码'], df['连板数']) if lb >= 2}"
+      },
+      {
+        "id": 3,
+        "priority": "P1-本周",
+        "title": "小市值阈值从50亿降至30亿",
+        "action": "修改_apply_filters()中的市值下限: mkt_cap < 50 → mkt_cap < 30。30亿以下为微盘股高风险区间，30-50亿为中证2000范围，有挖掘价值。",
+        "expected_impact": "候选池从5只→约15-20只。涨停板中额外释放约15-20只30-50亿首板股进入候选。但需配合基本面深度审查，该区间波动大。",
+        "code_hint": "将两处 mkt_cap < 50 改为 mkt_cap < 30"
+      },
+      {
+        "id": 4,
+        "priority": "P1-本周",
+        "title": "get_top_flow_stocks添加fallback",
+        "action": "当_em_api_get返回None/空时，fallback到ak.stock_hot_rank_em()取前N只，或ak.stock_zt_pool_em当日涨停按成交额排序取TOP N",
+        "expected_impact": "盘后时段也能获取有效候选。资金流候选从0恢复到30-50只。",
+        "code_hint": "在get_top_flow_stocks()的except块中添加ackshare fallback调用"
+      },
+      {
+        "id": 5,
+        "priority": "P2-下周",
+        "title": "龙虎榜净买入作为事件加分源",
+        "action": "在_scoring中添加龙虎榜净买入因子: 净买入>5000万 +10分，>1亿 +20分。龙虎榜数据15:30后可用，适合盘后复用和第二日开盘参考。",
+        "expected_impact": "提升资金面信号质量。今日龙虎榜净买入股44只中20+只有效加分。"
+      }
+    ],
+    "rule_changes_suggested": [
+      {
+        "rule": "连板排除",
+        "current": "排除所有连板(含首板)，取昨日涨停池",
+        "proposed": "仅排除连板≥2板，取当日涨停池",
+        "rationale": "首板是牛股起涨信号，排除首板等于自断一手情报。昨日涨停池在周一失效(Sunday无数据)。改用当日涨停池判断连板数更准确。",
+        "expected_hit_rate_improvement": "+40~80只/日进入候选池"
+      },
+      {
+        "rule": "小市值阈值",
+        "current": "市值<50亿排除",
+        "proposed": "市值<30亿排除",
+        "rationale": "50亿阈值过高，30-50亿区间(中证2000成分)有大量成长股。公告事件池以中小盘为主，50亿阈值导致95%候选被排除。降低至30亿释放该区间。",
+        "expected_hit_rate_improvement": "候选池从5只→约15-20只(+200~300%)"
+      },
+      {
+        "rule": "候选池来源",
+        "current": "仅公告+资金流(TOP50)+热点+券商",
+        "proposed": "新增涨停板首板+龙虎榜净买入+资金流fallback",
+        "rationale": "当前候选池与涨停池交集仅1.7%，严重脱节。新增三大来源覆盖当日最强股票。",
+        "expected_hit_rate_improvement": "覆盖率从1.7%→50%+，候选池从111只→约200-250只"
+      }
+    ],
+    "data_integrity_note": {
+      "涨停板数据": "✅ 真实: akshare stock_zt_pool_em('20260601')=120只",
+      "公告池数据": "✅ 真实: mega_latest.json announcements=137只(盘后), 08:01版=131只",
+      "推荐池数据": "✅ 真实: daily_pool.json=1只(920184国源科技, 评分48.3)",
+      "龙虎榜数据": "✅ 真实: akshare stock_lhb_detail_em=116条记录, 44只≥6%"
+    }
+  }
+]

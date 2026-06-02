@@ -1,0 +1,72 @@
+# 小红 Skillsets — 场景化技能安装包
+# 对标 tradermonty/claude-trading-skills → skillsets/
+# 每个 skillset 是按目标场景预组合的技能集合
+
+schema_version: 1
+
+skillsets:
+  # ═══════════════════════════════════
+  # A股入门套装（免费版）
+  # ═══════════════════════════════════
+  - id: a-share-starter
+    name: A股入门套装
+    description: 适合个人投资者入门使用，包含市场分析、仓位计算、交易日志
+    tier: free
+    skills:
+      - a-share-market-regime
+      - position-sizer-cn
+      - trade-journal-cn
+      - post-market-review
+    workflows:
+      - daily-market-scan
+
+  # ═══════════════════════════════════
+  # A股专业套装（专业版）
+  # ═══════════════════════════════════
+  - id: a-share-pro
+    name: A股专业交易套装
+    description: 全功能交易套装，含选股、策略信号、风控、决策
+    tier: pro
+    skills:
+      - a-share-market-regime
+      - a-share-screener
+      - position-sizer-cn
+      - risk-manager-cn
+      - trade-journal-cn
+      - watchtower-skill
+      - decision-officer
+      - post-market-review
+    workflows:
+      - daily-market-scan
+      - daily-decision
+      - weekly-review
+
+  # ═══════════════════════════════════
+  # 瞭望塔观察套装（免费版）
+  # ═══════════════════════════════════
+  - id: watchtower-observer
+    name: 瞭望塔观察套装
+    description: 只看不交易，每日接收市场分析和选股推荐
+    tier: free
+    skills:
+      - watchtower-skill
+      - a-share-market-regime
+      - a-share-screener
+    workflows:
+      - daily-market-scan
+
+  # ═══════════════════════════════════
+  # 风控优先套装（专业版）
+  # ═══════════════════════════════════
+  - id: risk-first
+    name: 风控优先套装
+    description: 以风控为核心，适合已有持仓需要管理的用户
+    tier: pro
+    skills:
+      - risk-manager-cn
+      - position-sizer-cn
+      - trade-journal-cn
+      - decision-officer
+    workflows:
+      - daily-decision
+      - weekly-review

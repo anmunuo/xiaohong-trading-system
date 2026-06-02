@@ -1,0 +1,300 @@
+{
+  "pools": [
+    {
+      "date": "20260602",
+      "stock_count": 8,
+      "stocks": [
+        "601969",
+        "002119",
+        "603416",
+        "301275",
+        "688206",
+        "603213",
+        "600566",
+        "001393"
+      ]
+    }
+  ],
+  "stocks": [
+    {
+      "code": "601969",
+      "name": "海南矿业",
+      "entry_date": "20260602",
+      "entry_close": 9.7,
+      "entry_score": 53.8,
+      "entry_factors": {
+        "event": 70,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 55,
+        "research": 50
+      },
+      "entry_sector": "普钢",
+      "stop_loss_price": 9.21,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 9.7,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 9.7,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 7894528.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002119",
+      "name": "康强电子",
+      "entry_date": "20260602",
+      "entry_close": 21.74,
+      "entry_score": 52.2,
+      "entry_factors": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 65,
+        "research": 50
+      },
+      "entry_sector": "半导体",
+      "stop_loss_price": 20.65,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 21.74,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 21.74,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 12744205.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603416",
+      "name": "信捷电气",
+      "entry_date": "20260602",
+      "entry_close": 55.84,
+      "entry_score": 52.2,
+      "entry_factors": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 65,
+        "research": 50
+      },
+      "entry_sector": "电器仪表",
+      "stop_loss_price": 53.05,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 55.84,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 55.84,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 2322815.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "301275",
+      "name": "汉朔科技",
+      "entry_date": "20260602",
+      "entry_close": 44.29,
+      "entry_score": 51.8,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 65,
+        "research": 50
+      },
+      "entry_sector": "元器件",
+      "stop_loss_price": 41.19,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 44.29,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 44.29,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 3073174.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "688206",
+      "name": "概伦电子",
+      "entry_date": "20260602",
+      "entry_close": 36.76,
+      "entry_score": 51.5,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50
+      },
+      "entry_sector": "半导体",
+      "stop_loss_price": 34.92,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 36.76,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 36.76,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 4122953.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603213",
+      "name": "镇洋发展",
+      "entry_date": "20260602",
+      "entry_close": 14.72,
+      "entry_score": 51.5,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50
+      },
+      "entry_sector": "化工原料",
+      "stop_loss_price": 13.98,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 14.72,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 14.72,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 4749695.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "600566",
+      "name": "济川药业",
+      "entry_date": "20260602",
+      "entry_close": 28.67,
+      "entry_score": 51.5,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50
+      },
+      "entry_sector": "中成药",
+      "stop_loss_price": 27.24,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 28.67,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 28.67,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 3185400.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "001393",
+      "name": "维通利",
+      "entry_date": "20260602",
+      "entry_close": 63.94,
+      "entry_score": 50.8,
+      "entry_factors": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 65,
+        "research": 50
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 60.74,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260602",
+          "close": 63.94,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-02",
+          "close": 63.94,
+          "change_pct": 0.0,
+          "vs_entry_pct": 0.0,
+          "volume": 4220926.0
+        }
+      ],
+      "exit": {}
+    }
+  ]
+}

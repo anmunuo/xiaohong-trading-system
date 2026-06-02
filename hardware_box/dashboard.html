@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024, height=600, initial-scale=1.0, user-scalable=no">
+<title>安幕诺家族 · 小红 🌹 交易盒子</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, 'PingFang SC', sans-serif;
+  background: #0a0e1a; color: #c8d6e5;
+  width: 1024px; height: 600px; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 60px 1fr 1fr;
+  gap: 8px; padding: 8px;
+}
+.header {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #1a1030, #0f1a2e);
+  border-radius: 10px; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border: 1px solid #2a3040;
+}
+.header h1 { font-size: 22px; font-weight: 700; }
+.header h1 span { color: #f43f5e; }
+.header .status { font-size: 12px; color: #6b7c93; }
+.header .status .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+.header .status .dot.ok { background:#22c55e; box-shadow:0 0 6px #22c55e; }
+.header .status .dot.warn { background:#f59e0b; box-shadow:0 0 6px #f59e0b; }
+
+/* Cards */
+.card {
+  background: #111827; border-radius: 10px; padding: 14px;
+  border: 1px solid #1e293b;
+  display: flex; flex-direction: column;
+}
+.card h3 { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.card .big { font-size: 32px; font-weight: 800; line-height: 1; }
+.card .sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+.green { color: #22c55e; }
+.red { color: #ef4444; }
+.yellow { color: #f59e0b; }
+.blue { color: #3b82f6; }
+
+/* Positions table */
+.positions { grid-row: span 2; overflow-y: auto; }
+.positions table { width:100%; border-collapse:collapse; font-size:12px; }
+.positions th { text-align:left; color:#64748b; font-size:10px; padding:4px 6px; border-bottom:1px solid #1e293b; }
+.positions td { padding:4px 6px; border-bottom:1px solid #0f1320; }
+.positions .pnl-pos { color:#22c55e; } .positions .pnl-neg { color:#ef4444; }
+
+/* Index ticker */
+.ticker { grid-column: span 2; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.ticker .item { text-align:center; }
+.ticker .name { font-size:10px; color:#64748b; }
+.ticker .val { font-size:18px; font-weight:700; }
+.ticker .chg { font-size:12px; }
+
+/* Alerts */
+.alerts { font-size:11px; overflow-y:auto; }
+.alerts .a { padding:4px 0; border-bottom:1px solid #1e293b; display:flex; gap:6px; }
+.alerts .a.p0 { color:#ef4444; } .alerts .a.p1 { color:#f59e0b; } .alerts .a.p2 { color:#3b82f6; }
+
+/* Refresh counter */
+.refresh-bar { font-size:9px; color:#334155; text-align:right; margin-top:2px; }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.pulsing { animation: pulse 2s infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏰 安幕诺家族 · <span>小红 🌹</span></h1>
+  <div class="status">
+    <span class="dot ok" id="sys-dot"></span>
+    <span id="sys-text">系统正常</span> &nbsp;|&nbsp;
+    <span id="clock">--</span> &nbsp;|&nbsp;
+    API: <span id="api-status">—</span>
+  </div>
+</div>
+
+<!-- Row 1: 净值卡片 + 盈亏 + 胜率 -->
+<div class="card">
+  <h3>💰 总净值</h3>
+  <div class="big" id="nav">¥—</div>
+  <div class="sub" id="nav-chg">—</div>
+</div>
+<div class="card">
+  <h3>📊 浮动盈亏</h3>
+  <div class="big" id="pnl">¥0</div>
+  <div class="sub" id="pnl-pct">—</div>
+</div>
+<div class="card">
+  <h3>🎯 胜率</h3>
+  <div class="big" id="winrate">—</div>
+  <div class="sub" id="trades-summary">—</div>
+</div>
+
+<!-- Row 2: 指数行情 + 告警 + 持仓 -->
+<div class="ticker">
+  <div class="item"><div class="name">上证指数</div><div class="val" id="idx-sh">—</div><div class="chg" id="idx-sh-chg">—</div></div>
+  <div class="item"><div class="name">深证成指</div><div class="val" id="idx-sz">—</div><div class="chg" id="idx-sz-chg">—</div></div>
+  <div class="item"><div class="name">创业板指</div><div class="val" id="idx-cy">—</div><div class="chg" id="idx-cy-chg">—</div></div>
+</div>
+
+<div class="card alerts" id="alerts-container">
+  <h3>🔔 实时告警</h3>
+  <div id="alerts">暂无告警</div>
+</div>
+
+<div class="card positions" id="positions-container">
+  <h3>📋 持仓列表 <span style="font-weight:400;color:#64748b;font-size:10px;" id="pos-count"></span></h3>
+  <table>
+    <thead><tr><th>代码</th><th>名称</th><th>数量</th><th>成本</th><th>现价</th><th>盈亏</th></tr></thead>
+    <tbody id="pos-tbody"></tbody>
+  </table>
+  <div class="refresh-bar" id="refresh-time">—</div>
+</div>
+
+<!-- Row 3: 策略信号 + 盈亏比 + 快捷面板 -->
+<div class="card">
+  <h3>🧠 最新信号</h3>
+  <div id="signals" style="font-size:11px;">—</div>
+</div>
+<div class="card">
+  <h3>📈 盈亏比</h3>
+  <div class="big" id="profit-factor">—</div>
+  <div class="sub">最大回撤: <span id="max-dd">—</span></div>
+</div>
+<div class="card" style="display:flex;flex-direction:column;gap:4px;">
+  <h3>⚡ 快捷操作</h3>
+  <button onclick="refresh()" style="padding:6px;background:#1e40af;color:white;border:none;border-radius:4px;cursor:pointer;">🔄 刷新</button>
+  <button onclick="window.open('/docs')" style="padding:6px;background:#1e293b;color:#c8d6e5;border:1px solid #334155;border-radius:4px;cursor:pointer;">📖 API 文档</button>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+let refreshTimer;
+
+async function fetchJSON(url) {
+  try { const r = await fetch(url); return r.json(); }
+  catch(e) { return null; }
+}
+
+async function refresh() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN');
+  
+  // Health
+  const health = await fetchJSON(API + '/health');
+  if (health && health.status === 'ok') {
+    document.getElementById('sys-dot').className = 'dot ok';
+    document.getElementById('sys-text').textContent = '系统正常';
+    document.getElementById('api-status').textContent = '✓';
+    document.getElementById('api-status').className = 'green';
+  } else {
+    document.getElementById('sys-dot').className = 'dot warn';
+    document.getElementById('sys-text').textContent = '异常';
+    document.getElementById('api-status').textContent = '✗';
+    document.getElementById('api-status').className = 'red';
+  }
+  
+  // Stats
+  const stats = await fetchJSON(API + '/log/stats');
+  if (stats) {
+    document.getElementById('winrate').textContent = stats.win_rate + '%';
+    document.getElementById('trades-summary').textContent = `赢${stats.wins}/输${stats.losses} · ${stats.total_trades}笔`;
+    document.getElementById('profit-factor').textContent = stats.profit_factor;
+    document.getElementById('pnl').textContent = '¥' + (stats.total_pnl || 0).toLocaleString();
+    const pnlEl = document.getElementById('pnl');
+    pnlEl.className = 'big ' + (stats.total_pnl >= 0 ? 'green' : 'red');
+  }
+  
+  // Positions
+  const posData = await fetchJSON(API + '/trade/positions');
+  if (posData) {
+    document.getElementById('nav').textContent = '¥' + (posData.total_value || 0).toLocaleString();
+    document.getElementById('nav-chg').textContent = '可用: ¥' + (posData.available_cash || 0).toLocaleString();
+    document.getElementById('pos-count').textContent = `(${posData.position_count}只)`;
+    
+    let totalPnl = 0;
+    const tbody = document.getElementById('pos-tbody');
+    tbody.innerHTML = '';
+    for (const p of posData.positions || []) {
+      totalPnl += p.unrealized_pnl || 0;
+      const pnlClass = p.unrealized_pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+      tbody.innerHTML += `<tr>
+        <td>${p.symbol}</td><td>${p.name||''}</td><td>${p.quantity}</td>
+        <td>${p.avg_cost?.toFixed(2)}</td><td>${p.current_price?.toFixed(2)}</td>
+        <td class="${pnlClass}">${(p.unrealized_pnl||0).toLocaleString()}</td>
+      </tr>`;
+    }
+    document.getElementById('pnl').textContent = '¥' + totalPnl.toLocaleString();
+    const pnlPct = posData.total_value > 0 ? (totalPnl / posData.total_value * 100).toFixed(2) : '0';
+    document.getElementById('pnl-pct').textContent = pnlPct + '%';
+  }
+  
+  // Index
+  const idx = await fetchJSON(API + '/market/index');
+  if (idx) {
+    const sh = idx.asia?.shanghai; if (sh) {
+      document.getElementById('idx-sh').textContent = sh[0]?.toLocaleString();
+      document.getElementById('idx-sh-chg').innerHTML = `<span class="${sh[1]>=0?'green':'red'}">${(sh[1]||0).toFixed(2)}%</span>`;
+    }
+    const sz = idx.asia?.shenzhen; if (sz) {
+      document.getElementById('idx-sz').textContent = sz[0]?.toLocaleString();
+      document.getElementById('idx-sz-chg').innerHTML = `<span class="${sz[1]>=0?'green':'red'}">${(sz[1]||0).toFixed(2)}%</span>`;
+    }
+  }
+  
+  // Signals
+  const sigs = await fetchJSON(API + '/strategy/signals');
+  if (sigs && sigs.length > 0) {
+    document.getElementById('signals').innerHTML = sigs.slice(0,5).map(s => 
+      `<div style="margin-bottom:3px;"><span class="${s.severity==='critical'?'red':s.severity==='warning'?'yellow':'blue'}">●</span> ${s.symbol} ${s.action} — ${s.reason?.slice(0,30)}</div>`
+    ).join('');
+  }
+  
+  document.getElementById('refresh-time').textContent = '更新: ' + now.toLocaleTimeString('zh-CN');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  refresh();
+  refreshTimer = setInterval(refresh, 10000); // 10秒刷新
+});
+</script>
+</body>
+</html>

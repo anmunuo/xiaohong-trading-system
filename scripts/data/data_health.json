@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-06-02 14:39:48",
+  "sources": {
+    "mega_latest": {
+      "ok": true,
+      "age_hours": 0.6,
+      "module_count": 9,
+      "empty_modules": [
+        "hot_events",
+        "broker_views"
+      ],
+      "error": ""
+    },
+    "daily_pool": {
+      "ok": true,
+      "age_hours": 4.2,
+      "stock_count": 8,
+      "error": ""
+    },
+    "market_snapshot": {
+      "ok": true,
+      "age_hours": 3.6
+    },
+    "tracked_pool": {
+      "ok": true,
+      "active_count": 8
+    },
+    "kb_insights": {
+      "ok": true,
+      "age_hours": 0.5,
+      "entry_count": 33
+    }
+  },
+  "overall_status": "healthy",
+  "issues": []
+}

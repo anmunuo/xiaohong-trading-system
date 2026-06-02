@@ -1,0 +1,151 @@
+# 小红 MCP ↔ Skill 桥接映射
+# ============================
+# 定义 Skills 框架如何调用 MCP 工具层
+#
+# 设计原则:
+#   Skills 定义"做什么、何时做、怎么做"（领域知识+决策框架）
+#   MCP Tools 提供"拿什么数据、执行什么操作"（数据获取+执行能力）
+#
+# 对标 tradermonty 的 Alpaca MCP 集成模式
+
+schema_version: 1
+
+# ═══════════════════════════════════════
+# MCP Server → Skills 映射
+# ═══════════════════════════════════════
+
+mcp_servers:
+  market-data:
+    description: 行情数据服务
+    tools:
+      get_index_data:
+        used_by: [a-share-market-regime, watchtower-skill, post-market-review]
+        description: 全球指数实时数据
+      get_stock_quote:
+        used_by: [a-share-screener, position-sizer-cn]
+        description: 个股实时行情
+      get_north_flow:
+        used_by: [a-share-market-regime, watchtower-skill]
+        description: 北向资金流向
+      get_sector_flow:
+        used_by: [a-share-market-regime, watchtower-skill]
+        description: 板块资金排名
+      get_daily_bars:
+        used_by: [a-share-screener]
+        description: 个股历史日线
+
+  strategy:
+    description: 策略引擎服务
+    tools:
+      run_screener:
+        used_by: [a-share-screener]
+        description: 全市场多因子选股
+      get_signals:
+        used_by: [decision-officer]
+        description: 综合交易信号
+      list_strategies:
+        used_by: [decision-officer]
+        description: 可用策略列表
+
+  risk:
+    description: 风控服务
+    tools:
+      check_position_limit:
+        used_by: [position-sizer-cn, risk-manager-cn]
+        description: 仓位上限检查
+      check_stop_loss:
+        used_by: [risk-manager-cn, decision-officer]
+        description: 止损检查
+      calc_position_size:
+        used_by: [position-sizer-cn]
+        description: R值仓位计算
+      get_risk_report:
+        used_by: [risk-manager-cn, decision-officer]
+        description: 综合风控报告
+
+  execution:
+    description: 执行服务
+    tools:
+      place_order:
+        used_by: [decision-officer]
+        description: 下单交易
+      get_positions:
+        used_by: [risk-manager-cn, decision-officer, post-market-review]
+        description: 当前持仓
+
+  logging:
+    description: 日志服务
+    tools:
+      get_trade_stats:
+        used_by: [trade-journal-cn, post-market-review, decision-officer]
+        description: 交易统计
+      get_recent_trades:
+        used_by: [trade-journal-cn, post-market-review]
+        description: 最近交易
+      export_trades:
+        used_by: [trade-journal-cn]
+        description: 导出CSV
+      get_pnl_curve:
+        used_by: [trade-journal-cn, post-market-review]
+        description: PnL曲线
+
+# ═══════════════════════════════════════
+# Skill → MCP Tools 反向映射
+# ═══════════════════════════════════════
+
+skill_mcp_mapping:
+  a-share-market-regime:
+    primary: [market-data.get_index_data, market-data.get_north_flow, market-data.get_sector_flow]
+    secondary: [market-data.get_stock_quote]
+
+  a-share-screener:
+    primary: [strategy.run_screener, market-data.get_stock_quote]
+    secondary: [market-data.get_daily_bars]
+
+  position-sizer-cn:
+    primary: [risk.calc_position_size, risk.check_position_limit]
+    secondary: [market-data.get_stock_quote]
+
+  risk-manager-cn:
+    primary: [risk.check_stop_loss, risk.get_risk_report, execution.get_positions]
+    secondary: [risk.check_position_limit]
+
+  trade-journal-cn:
+    primary: [logging.get_trade_stats, logging.get_recent_trades, logging.export_trades]
+    secondary: [logging.get_pnl_curve]
+
+  watchtower-skill:
+    primary: [market-data.get_index_data, market-data.get_north_flow, market-data.get_sector_flow]
+    secondary: [strategy.run_screener]
+
+  decision-officer:
+    primary: [strategy.get_signals, risk.get_risk_report, execution.get_positions]
+    secondary: [execution.place_order, logging.get_trade_stats]
+
+  post-market-review:
+    primary: [logging.get_trade_stats, logging.get_recent_trades, execution.get_positions]
+    secondary: [logging.get_pnl_curve]
+
+# ═══════════════════════════════════════
+# 工作流 → MCP 工具调用顺序
+# ═══════════════════════════════════════
+
+workflow_mcp_sequence:
+  daily-market-scan:
+    - market-data.get_index_data
+    - market-data.get_north_flow
+    - market-data.get_sector_flow
+    - risk.get_risk_report
+
+  daily-decision:
+    - risk.check_stop_loss
+    - execution.get_positions
+    - strategy.get_signals
+    - risk.get_risk_report
+    - execution.place_order
+
+  weekly-review:
+    - logging.get_trade_stats
+    - logging.get_recent_trades
+    - execution.get_positions
+    - logging.get_pnl_curve

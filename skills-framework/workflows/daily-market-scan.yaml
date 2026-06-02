@@ -1,0 +1,68 @@
+# 小红 Workflow: 每日盘前市场扫描
+# 对标 tradermonty/claude-trading-skills → workflows/market-regime-daily.yaml
+schema_version: 1
+id: daily-market-scan
+display_name: 每日盘前市场扫描
+cadence: daily
+estimated_minutes: 15
+target_users:
+  - a-share-swing-trader
+  - a-share-investor
+difficulty: beginner
+api_profile: basic
+
+when_to_run: >
+  每个交易日 08:30 自动运行。在考虑新开仓之前完成市场环境评估。
+when_not_to_run: >
+  周末/节假日不运行。输出不构成单独的买卖信号。
+
+required_skills:
+  - a-share-market-regime
+  - watchtower-skill
+optional_skills:
+  - a-share-screener
+
+artifacts:
+  - id: market_regime_report
+    produced_by_step: 1
+    required: true
+    downstream_hints:
+      - daily-decision
+  - id: watchtower_report
+    produced_by_step: 2
+    required: true
+    downstream_hints:
+      - daily-decision
+  - id: exposure_decision
+    produced_by_step: 3
+    required: true
+
+steps:
+  - step: 1
+    name: A股市场体制分析
+    skill: a-share-market-regime
+    produces: [market_regime_report]
+    decision_gate: false
+
+  - step: 2
+    name: 瞭望塔盘前宏观
+    skill: watchtower-skill
+    produces: [watchtower_report]
+    decision_gate: false
+
+  - step: 3
+    name: 确定今日敞口
+    skill: risk-manager-cn
+    consumes: [market_regime_report, watchtower_report]
+    produces: [exposure_decision]
+    decision_gate: true
+    decision_question: >
+      综合市场体制评分和瞭望塔评分，今日是否允许新开仓？
+      ≥65分 → 积极进攻
+      50-64分 → 震荡操作
+      35-49分 → 防御为主
+      <35分 → 轻仓观望
+
+manual_review:
+  - 确认输出不构成单独的买卖信号
+  - 如敞口为"防御"或"轻仓"，跳过后续选股流程

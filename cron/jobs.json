@@ -1,0 +1,1332 @@
+{
+  "jobs": [
+    {
+      "id": "cabe6204abe6",
+      "name": "\u5c0f\u7ea2\u00b7\u76d8\u524d\u91c7\u96c6",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_pre.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 8 * * 1-5",
+        "display": "30 8 * * 1-5"
+      },
+      "schedule_display": "30 8 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 7
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:04.148222+08:00",
+      "next_run_at": "2026-06-03T08:30:00+08:00",
+      "last_run_at": "2026-06-02T08:38:35.468052+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "e8ec764a05d6",
+      "name": "\u5c0f\u7ea2\u00b7\u76d8\u4e2d\u626b\u63cf",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_intra.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 10 * * 1-5",
+        "display": "30 10 * * 1-5"
+      },
+      "schedule_display": "30 10 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 7
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:05.152307+08:00",
+      "next_run_at": "2026-06-03T10:30:00+08:00",
+      "last_run_at": "2026-06-02T10:30:25.235726+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "8dfadcc05796",
+      "name": "\u5c0f\u7ea2\u00b7\u76d8\u540e\u590d\u76d8",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_post.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 15 * * 1-5",
+        "display": "30 15 * * 1-5"
+      },
+      "schedule_display": "30 15 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 4
+      },
+      "enabled": false,
+      "state": "paused",
+      "paused_at": "2026-05-27T21:18:56.111334+08:00",
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:06.159460+08:00",
+      "next_run_at": "2026-05-28T15:30:00+08:00",
+      "last_run_at": "2026-05-27T15:30:24.778398+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "8ca5688b71fa",
+      "name": "\u5c0f\u7ea2\u00b7\u5468\u5ea6\u590d\u76d8",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_weekly.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 10 * * 6",
+        "display": "0 10 * * 6"
+      },
+      "schedule_display": "0 10 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": false,
+      "state": "paused",
+      "paused_at": "2026-05-27T21:18:54.098483+08:00",
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:07.166288+08:00",
+      "next_run_at": "2026-05-30T10:00:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "a904cd4aa19b",
+      "name": "\u5c0f\u7ea2\u00b7\u5468\u62a5\u5206\u6790",
+      "prompt": "\u4f60\u662f\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u5c0f\u7ea2\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u6267\u884c\u5468\u5ea6\u6df1\u5ea6\u5206\u6790\u3002\n\n## \u4efb\u52a1\n\u57fa\u4e8e wiki \u77e5\u8bc6\u5e93\u4e2d\u672c\u5468\u79ef\u7d2f\u7684\u6570\u636e\uff0c\u751f\u6210\u4e00\u4efd\u5468\u5ea6\u7b56\u7565\u62a5\u544a\u3002\n\n## \u6b65\u9aa4\n1. \u8bfb\u53d6 ~/wiki/\u4e0b\u8f7d\u6536\u85cf/ \u4e2d\u672c\u5468\u7684\u6240\u6709\u6570\u636e\u6587\u4ef6\n2. \u8bfb\u53d6 ~/wiki/\u80a1\u7968\u7814\u7a76/\u81ea\u9009\u6c60/README.md \u83b7\u53d6\u81ea\u9009\u80a1\u5217\u8868\n3. \u5206\u6790\uff1a\n   - \u672c\u5468\u81ea\u9009\u80a1\u6da8\u8dcc\u5e45\u6392\u884c\n   - \u677f\u5757\u8f6e\u52a8\u65b9\u5411\n   - \u5317\u5411\u8d44\u91d1\u5468\u5ea6\u6d41\u5411\n   - \u5173\u952e\u5b8f\u89c2\u6307\u6807\u53d8\u5316\n   - \u81ea\u9009\u80a1\u8d22\u62a5/\u4f30\u503c\u66f4\u65b0\n4. \u751f\u6210\u5468\u62a5\uff1a\n\n```\n\ud83d\udcca \u5c0f\u7ea2\u5468\u62a5 | {\u5468\u533a\u95f4}\n\n\ud83c\udfc6 \u672c\u5468\u8868\u73b0\n\u81ea\u9009\u80a1\u6da8\u8dcc\u5e45 Top/Bottom 3\n\n\ud83d\udd04 \u677f\u5757\u8f6e\u52a8\n\u8d44\u91d1\u5728\u54ea\u4e9b\u677f\u5757\u8fdb\u51fa\n\n\ud83d\udcb5 \u5317\u5411\u8d44\u91d1\n\u5468\u5ea6\u51c0\u6d41\u5165/\u6d41\u51fa\uff0c\u91cd\u70b9\u4e2a\u80a1\n\n\ud83d\udccb \u81ea\u9009\u6c60\u8bc4\u4f30\n\u6bcf\u53ea\u81ea\u9009\u80a1\uff1a\u65b9\u5411\uff08\u504f\u591a/\u4e2d\u6027/\u504f\u7a7a\uff09+ \u4e00\u53e5\u8bdd\u903b\u8f91 + \u5173\u952e\u4ef7\u4f4d\n\n\ud83d\uded1 \u98ce\u9669\u63d0\u793a\n\u9700\u8981\u8b66\u60d5\u7684\u54c1\u79cd\u6216\u4e8b\u4ef6\n\n\ud83d\udcdd \u4e0b\u5468\u7b56\u7565\n\u5173\u6ce8\u65b9\u5411 + \u6f5c\u5728\u64cd\u4f5c\u8ba1\u5212\n```\n\n5. \u4fdd\u6301\u6570\u636e\u9a71\u52a8\uff0c\u4e0d\u505a\u9884\u6d4b\uff0c\u53ea\u505a\u5206\u6790\u3002\u53e3\u5934\u7985\u4fdd\u6301\u3002",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 10 * * 6",
+        "display": "30 10 * * 6"
+      },
+      "schedule_display": "30 10 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": false,
+      "state": "paused",
+      "paused_at": "2026-05-27T21:18:55.103193+08:00",
+      "paused_reason": null,
+      "created_at": "2026-05-24T12:39:29.924751+08:00",
+      "next_run_at": "2026-05-30T10:30:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file",
+        "web"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "afbbfe5a101e",
+      "name": "\ud83c\udf05 \u77ad\u671b\u5854\u6668\u62a5 v8.0",
+      "prompt": "\n\u4f60\u662f\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u5c0f\u7ea2 \ud83c\udf39\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u662f 08:30\uff0c\u6267\u884c\u77ad\u671b\u5854\u6668\u62a5\u3002\n\n## \u26d4 \u94c1\u5f8b\n\n- **daily_pool.json \u662f\u552f\u4e00\u63a8\u8350\u6e90**\u3002\u4f60\u4e0d\u505a\u4e8c\u6b21\u9009\u80a1\uff0c\u4e0d\u53e6\u8350\u80a1\u7968\u3002\n- \u5982\u679c daily_pool.json \u4e0d\u5b58\u5728\u6216\u63a8\u8350\u4e3a\u7a7a\uff0c\u76f4\u8bf4\u300c\u4eca\u65e5\u65e0\u63a8\u8350\u300d\uff0c\u4e0d\u7f16\u9020\u3002\n- **market_snapshot.json \u662f\u5b8f\u89c2\u4e0a\u4e0b\u6587**\u3002\u5fc5\u987b\u8bfb\uff0c\u4f46\u4e0d\u5bf9\u5176\u505a\u72ec\u7acb\u5224\u65ad\u3002\n- \u7981\u6b62\u51ed\u7a7a\u634f\u9020\u6570\u636e\u3002\n\n## \u6b65\u9aa4\n\n### 1. \u8bfb\u53d6\u6570\u636e\uff08\u5f3a\u5236\uff09\n- `read_file data/daily_pool.json`\n- `read_file data/market_snapshot.json`\n- `read_file data/kb/kb_insights.json` (\u6700\u8fd15\u6761)\n\n### 2. \u751f\u6210\u62a5\u544a\uff08\u81ea\u7136\u4e09\u6bb5\uff09\n\n**\u4e00\u4e2a\u5224\u65ad**\uff08\u2265150\u5b57\uff09\uff1a\n\u5b8f\u89c2\u2192A\u80a1\u2192\u8d44\u91d1\u2192\u677f\u5757\u903b\u8f91\u94fe\u3002\u878d snapshot \u7684\u6307\u6570/\u5317\u5411/\u677f\u5757\u6570\u636e + insights \u7684\u4ea7\u4e1a\u4fe1\u53f7 + parliament \u7684\u504f\u7a7a/\u504f\u591a\u5224\u65ad\u3002\n\n**\u4eca\u5929\u770b\u4ec0\u4e48**\uff1a\n\u63a8\u8350\u6c60\u80a1\u7968\u6309**\u6295\u8d44\u903b\u8f91**\u5206\u7ec4\uff08\u4e0d\u662f\u884c\u4e1a\u5206\u7c7b\uff09\uff0c5\u5217\u8868\u683c(\u4ee3\u7801/\u540d\u79f0/\u9009\u80a1\u903b\u8f91/\u64cd\u4f5c\u7b56\u7565/\u98ce\u9669)\u3002\n\u4e0d\u51fa\u73b0\u56e0\u5b50\u5206\u6570\u5b57\u3002operation \u6309\u80a1\u5dee\u5f02\u5316\u3002\n\n**\u4eca\u5929\u600e\u4e48\u505a**\uff1a\n\u4ed3\u4f4d\u5206\u7c7b\u8868(\u7a7a/\u8f7b/\u4e2d/\u91cd)+ \u7ea0\u9519\u7eaa\u5f8b + \u5173\u952e\u65f6\u95f4\u7a97\u53e3(\u7ade\u4ef7/\u5f00\u76d8/\u76d8\u4e2d/\u5c3e\u76d8)\u3002\n\n### 3. \u7981\u6b62\n- \u51fa\u73b0 event/fund/sentiment \u6570\u5b57\n- insight \u5355\u72ec\u5806 \u26a1 \u6807\u8bb0\n- pool \u4e2d\u505c\u724c\u80a1\u7ed9\u64cd\u4f5c\u5efa\u8bae\n",
+      "skills": [
+        "stock-research"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 8 * * 1-5",
+        "display": "30 8 * * 1-5"
+      },
+      "schedule_display": "30 8 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 7
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T20:54:31.614519+08:00",
+      "next_run_at": "2026-06-03T08:30:00+08:00",
+      "last_run_at": "2026-06-02T08:47:41.361548+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file"
+      ],
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "a6b4e31d3919",
+      "name": "\ud83d\udd0d \u4fa6\u5bdf\u5175\u00b7\u5f00\u76d8\u9009\u80a1",
+      "prompt": "\u57fa\u4e8e\u8d44\u91d1\u6d41\u5411\u7684\u5b9e\u65f6\u9009\u80a1\u63a8\u8350\uff0c\u7b5b\u9009\u4e3b\u529b\u8d44\u91d1\u51c0\u6d41\u5165TOP\u6807\u7684\u3002",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_scout.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25 9 * * 1-5",
+        "display": "25 9 * * 1-5"
+      },
+      "schedule_display": "25 9 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 5
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T20:54:45.853154+08:00",
+      "next_run_at": "2026-06-03T09:25:00+08:00",
+      "last_run_at": "2026-06-02T09:25:49.851829+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "26aababd5d55",
+      "name": "\ud83c\udfaf \u72d9\u51fb\u624b\u00b7\u65e5\u5185\u76d1\u63a7",
+      "prompt": "\u6bcf30\u5206\u949f\u626b\u63cf\u6301\u4ed3\u8d44\u91d1\u6d41\u5411\uff0c\u751f\u6210\u4ea4\u6613\u4fe1\u53f7\uff08\u6301\u4ed3\u76d1\u63a7+\u8d44\u91d1\u6d41\u5411\uff09",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_sniper.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "35,5 9-14 * * 1-5",
+        "display": "35,5 9-14 * * 1-5"
+      },
+      "schedule_display": "35,5 9-14 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 37
+      },
+      "enabled": false,
+      "state": "paused",
+      "paused_at": "2026-06-01T22:30:38.082088+08:00",
+      "paused_reason": null,
+      "created_at": "2026-05-27T20:54:46.857764+08:00",
+      "next_run_at": "2026-06-02T09:05:00+08:00",
+      "last_run_at": "2026-06-01T14:35:17.139994+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "06c961b65425",
+      "name": "\ud83d\udee1\ufe0f \u5f39\u836f\u5e93\u00b7\u6536\u5e02\u98ce\u63a7",
+      "prompt": "\u76d8\u540e\u98ce\u63a7\u68c0\u67e5\uff1a\u6b62\u635f\u9884\u8b66\u3001\u4ed3\u4f4d\u5408\u89c4\u3001\u6301\u4ed3\u76c8\u4e8f\u603b\u89c8\u3002",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_ammo.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 15 * * 1-5",
+        "display": "30 15 * * 1-5"
+      },
+      "schedule_display": "30 15 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 5
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T20:54:47.865262+08:00",
+      "next_run_at": "2026-06-03T15:30:00+08:00",
+      "last_run_at": "2026-06-02T15:30:49.803098+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "1e311b0b42e3",
+      "name": "\ud83c\udfe5 \u6587\u5de5\u56e2\u00b7\u6bcf\u65e5\u590d\u76d8",
+      "prompt": "\u6bcf\u65e5\u4ea4\u6613\u590d\u76d8\uff1a\u76c8\u4e8f\u7edf\u8ba1\u3001\u6301\u4ed3\u6982\u89c8\u3001\u4ea4\u6613\u7eaa\u5f8b\u56de\u987e\u3002",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_review.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 17 * * 1-5",
+        "display": "0 17 * * 1-5"
+      },
+      "schedule_display": "0 17 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 5
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T20:54:48.873662+08:00",
+      "next_run_at": "2026-06-03T17:00:00+08:00",
+      "last_run_at": "2026-06-02T17:01:01.120309+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "1de9a545a043",
+      "name": "\ud83d\udcca \u6587\u5de5\u56e2\u00b7\u5468\u5ea6\u590d\u76d8",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u662f\u5468\u516d 09:00\uff0c\u6267\u884c\u5468\u5ea6\u6df1\u5ea6\u590d\u76d8\u3002\n\n## \u4efb\u52a1\n\n\u8bfb\u53d6\u672c\u5468\u6240\u6709\u4ea4\u6613\u6570\u636e\u3001\u7cfb\u7edf\u65e5\u5fd7\u3001\u5e02\u573a\u73af\u5883\uff0c\u751f\u6210\u4e00\u4efd\u53d9\u4e8b\u6027\u5468\u5ea6\u590d\u76d8\u62a5\u544a\u3002\u4e0d\u662f\u6570\u636e\u6c47\u603b\u2014\u2014\u662f\u5206\u6790\u51b3\u7b56\u8d28\u91cf\u3001\u8bc6\u522b\u884c\u4e3a\u504f\u5dee\u3001\u53d1\u73b0\u7cfb\u7edf\u6539\u8fdb\u70b9\u3002\n\n## \u6570\u636e\u6e90\n\n### 1. \u80a1\u7968\u8ddf\u8e2a\u6c60\n\u8bfb\u53d6 ~/.hermes/profiles/xiaohong/scripts/data/tracked_pool.json\n- \u672c\u5468\u65b0\u589e\u6807\u7684\u3001\u9000\u573a\u6807\u7684\n- \u6b62\u635f\u547d\u4e2d\u7387 vs \u81ea\u7136\u9000\u573a\u7387\n- \u6807\u7684\u7d2f\u8ba1\u6536\u76ca\u5206\u5e03\n\n### 2. \u6301\u4ed3\u4e0e\u4ea4\u6613\n\u8bfb\u53d6 ~/.hermes/profiles/xiaohong/data/holdings.json\n- \u672c\u5468\u5e73\u4ed3\u8bb0\u5f55\uff1a\u80dc\u7387\u3001\u76c8\u4e8f\u6bd4\u3001\u5e73\u5747\u6301\u4ed3\u5929\u6570\n- \u5f53\u524d\u6301\u4ed3\uff1a\u6d6e\u76c8\u6d6e\u4e8f\u5206\u5e03\n\n### 3. \u5e02\u573a\u73af\u5883\n\u8bfb\u53d6 ~/.hermes/profiles/xiaohong/scripts/data/market_snapshot.json\n- \u672c\u5468\u6307\u6570\u6da8\u8dcc\u3001PE\u5206\u4f4d\u53d8\u5316\n- \u5317\u5411\u8d44\u91d1\u5468\u5ea6\u51c0\u6d41\u5411\n- \u677f\u5757\u8f6e\u52a8\u4e3b\u7ebf\n\n### 4. \u7cfb\u7edf\u8fdb\u5316\n\u8bfb\u53d6 ~/.hermes/profiles/xiaohong/scripts/data/evolution_log.json\n- \u672c\u5468\u53d8\u66f4\u7684\u53c2\u6570\u3001\u6a21\u5757\n- \u54ea\u4e9b\u8fdb\u5316\u843d\u5730\u4e86\u3001\u54ea\u4e9b\u88ab\u62d2\u7edd\u4e86\n\n### 5. \u51b3\u7b56\u65e5\u5fd7\n\u641c\u7d22 ~/.hermes/profiles/xiaohong/reports/ \u4e0b\u672c\u5468\u7684\u77ad\u671b\u5854\u6668\u62a5\u3001\u51b3\u7b56\u5b98\u62a5\u544a\n- \u6668\u62a5\u63a8\u8350\u7684\u6807\u7684\u540e\u7eed\u8868\u73b0\u5982\u4f55\n- \u51b3\u7b56\u5b98\u7684\u4e70\u5356\u5efa\u8bae\u662f\u5426\u88ab\u8ddf\u8e2a\n\n## \u8f93\u51fa\uff1a\u53d9\u4e8b\u6027\u5468\u62a5\n\n\u7528 report_formatter.Report \u751f\u6210\u7ed3\u6784\u5316\u62a5\u544a\uff1a\n\n### \u6807\u9898\uff1a\ud83d\udcca \u5c0f\u7ea2\u5468\u5ea6\u590d\u76d8 \u00b7 2026-W{\u5468\u53f7}\n\n### \u4e00\u3001\u5e02\u573a\u56de\u987e\n- \u672c\u5468\u5b8f\u89c2\u73af\u5883\u4e00\u53e5\u8bdd\u603b\u7ed3\n- \u6307\u6570\u8868\u73b0\u3001\u4e3b\u7ebf\u677f\u5757\u3001\u8d44\u91d1\u6d41\u5411\n\n### \u4e8c\u3001\u63a8\u8350\u6c60\u8868\u73b0\n- daily_pool \u6807\u7684\u672c\u5468\u6da8\u8dcc\u5206\u5e03\n- \u6700\u4f73/\u6700\u5dee\u63a8\u8350\u56de\u987e\n- \u8bae\u4f1a\u5224\u5b9a\u51c6\u786e\u7387\n\n### \u4e09\u3001\u4ea4\u6613\u590d\u76d8\n- \u5e73\u4ed3\u80dc\u7387\u3001\u76c8\u4e8f\u6bd4\u3001\u6536\u76ca\u66f2\u7ebf\n- \u6700\u4f73\u4ea4\u6613\uff08\u4ec0\u4e48\u903b\u8f91\u5bf9\u4e86\uff09\n- \u6700\u5dee\u4ea4\u6613\uff08\u4ec0\u4e48\u903b\u8f91\u9519\u4e86\uff0c\u662f\u7cfb\u7edf\u95ee\u9898\u8fd8\u662f\u6267\u884c\u95ee\u9898\uff09\n- \u884c\u4e3a\u504f\u5dee\u8bc6\u522b\uff08\u8ffd\u6da8\uff1f\u625b\u5355\uff1f\u8fc7\u65e9\u6b62\u76c8\uff1f\uff09\n\n### \u56db\u3001\u7cfb\u7edf\u8fdb\u5316\n- \u672c\u5468\u8fdb\u5316\u53d8\u66f4\u6e05\u5355\n- \u54ea\u4e9b\u53c2\u6570\u8c03\u6574\u5df2\u5728\u5b9e\u6218\u4e2d\u9a8c\u8bc1\n\n### \u4e94\u3001\u4e0b\u5468\u5c55\u671b\n- \u57fa\u4e8e\u5f53\u524d\u4fe1\u53f7\u7684\u4ed3\u4f4d\u5efa\u8bae\n- \u9700\u8981\u5173\u6ce8\u7684\u677f\u5757/\u4e8b\u4ef6\n- \u7cfb\u7edf\u6539\u8fdb\u4f18\u5148\u7ea7\uff08P0/P1\uff09\n\n### \u516d\u3001\u7efc\u5408\u8bc4\u5206\n| \u7ef4\u5ea6 | \u8bc4\u5206(1-10) | \u8bf4\u660e |\n|------|:--:|------|\n| \u9009\u80a1\u8d28\u91cf | ? | ... |\n| \u6267\u884c\u7eaa\u5f8b | ? | ... |\n| \u98ce\u63a7\u6709\u6548 | ? | ... |\n| \u8fdb\u5316\u5065\u5eb7 | ? | ... |\n\n## \u5173\u952e\u63d0\u9192\n- \u4f60\u6709 terminal + file \u5de5\u5177\uff0c\u53ef\u4ee5\u8bfb\u53d6\u4efb\u4f55\u9700\u8981\u7684\u6587\u4ef6\n- \u5982\u679c\u6570\u636e\u6587\u4ef6\u4e0d\u5b58\u5728\u6216\u4e3a\u7a7a\uff0c\u8bda\u5b9e\u6807\u6ce8\"\u6570\u636e\u7f3a\u5931\"\u800c\u975e\u7f16\u9020\n- \u91cd\u70b9\u4e0d\u662f\u6570\u5b57\u672c\u8eab\uff0c\u662f\u6570\u5b57\u80cc\u540e\u7684\u51b3\u7b56\u903b\u8f91\u548c\u7cfb\u7edf\u6539\u8fdb\u673a\u4f1a\n",
+      "skills": [
+        "stock-research",
+        "strategy-trading"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 6",
+        "display": "0 9 * * 6"
+      },
+      "schedule_display": "0 9 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T20:54:49.881814+08:00",
+      "next_run_at": "2026-06-06T09:00:00+08:00",
+      "last_run_at": "2026-05-30T09:00:18.776224+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file"
+      ],
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "9fc598ac8da4",
+      "name": "\ud83c\udf39 \u51b3\u7b56\u5b98\u00b7\u76d8\u4e2d\u51b3\u7b56",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u662f 14:30\uff0c\u6267\u884c\u76d8\u4e2d\u51b3\u7b56\u3002\n\n## \u4efb\u52a1\n\n\u4f7f\u7528 `report_formatter.Report` \u751f\u6210\u4e00\u4efd\u7f8e\u5316\u7248\u76d8\u4e2d\u51b3\u7b56\u62a5\u544a\u3002\n\n## \u6b65\u9aa4\n\n### 1. \u8bfb\u53d6\u6570\u636e\uff08\u5f3a\u5236\uff09\n- `read_file data/daily_pool.json` \u2014 \u63a8\u8350\u6c60\uff08\u542b parliament \u7ed3\u8bba\uff09\n- `read_file data/market_snapshot.json` \u2014 \u5e02\u573a\u5feb\u7167\uff08\u5317\u5411+\u677f\u5757\u8d44\u91d1+\u5916\u76d8\uff09\n- `read_file data/tracked_pool.json` \u2014 \u8ddf\u8e2a\u6c60\uff08\u5982\u679c\u6709\uff09\n\n### 2. \u6267\u884c Python \u62c9\u53d6\u76d8\u4e2d\u5b9e\u65f6\u6570\u636e\n- `from data_pipeline import get_index_data, get_north_flow, get_sector_flow_rank`\n- \u5bf9\u6bd4 snapshot \u4e0e\u5b9e\u65f6\u6570\u636e\u7684\u504f\u5dee\n- `from stock_tracker import StockTracker; t=StockTracker(); t.update_snapshots(); t.print_stats()`\n\n### 3. \u51b3\u7b56\u5224\u65ad\n- \u5e02\u573a\u65b9\u5411\u5224\u65ad\uff08\u5bf9\u6bd4 snapshot \u5f00\u76d8\u9884\u671f vs \u76d8\u4e2d\u5b9e\u9645\uff09\n- \u63a8\u8350\u6c60\u8868\u73b0\u56de\u987e\uff08\u6da8\u8dcc\u5e45\u6392\u5e8f\uff09\n- parliament \u7ed3\u8bba\u662f\u5426\u4ecd\u7136\u6210\u7acb\n- \u8ddf\u8e2a\u6c60\u6b62\u635f\u5931\u6548\u68c0\u67e5\n\n### 4. \u8f93\u51fa\n- Report(title=\"\u76d8\u4e2d\u51b3\u7b56\", icon=\"\ud83c\udf39\", color=\"red\")\n- section: \u5e02\u573a\u6982\u89c8\uff08snapshot vs \u5b9e\u65f6\uff09\n- section: \u63a8\u8350\u6c60\u8868\u73b0\n- section: \u8bae\u4f1a\u7ed3\u8bba\u8bc4\u4f30\n- section: \u64cd\u4f5c\u5efa\u8bae\uff08\u4ed3\u4f4d\u8c03\u6574/\u6b62\u635f/\u52a0\u4ed3\uff09\n- alert: \u5173\u952e\u98ce\u9669\n",
+      "skills": [
+        "stock-research",
+        "strategy-trading"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 14 * * 1-5",
+        "display": "30 14 * * 1-5"
+      },
+      "schedule_display": "30 14 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 5
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T21:08:02.831019+08:00",
+      "next_run_at": "2026-06-03T14:30:00+08:00",
+      "last_run_at": "2026-06-02T14:33:37.655617+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "0ca2e6ef7d09",
+      "name": "\ud83d\udcda \u77e5\u8bc6\u5e93\u00b7\u6bcf\u5c0f\u65f6\u91c7\u96c6",
+      "prompt": "\u6bcf\u5c0f\u65f6\u589e\u91cf\u91c7\u96c6\u57fa\u672c\u9762\u6570\u636e\uff08\u516c\u544a/\u65b0\u95fb/\u7814\u62a5/\u653f\u7b56\uff09\uff0c\u81ea\u52a8\u53bb\u91cd\u5b58\u50a8\u5230\u77e5\u8bc6\u5e93",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_kb_collector.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 * * * *",
+        "display": "0 * * * *"
+      },
+      "schedule_display": "0 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 143
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-27T23:06:44.694046+08:00",
+      "next_run_at": "2026-06-02T23:00:00+08:00",
+      "last_run_at": "2026-06-02T22:00:54.727641+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "5c2e0700314f",
+      "name": "\ud83c\udfaf \u9009\u80a1\u63a8\u8350\u5f15\u64ce",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_recommender.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25 8 * * 1-5",
+        "display": "25 8 * * 1-5"
+      },
+      "schedule_display": "25 8 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T17:27:59.537843+08:00",
+      "next_run_at": "2026-06-03T08:25:00+08:00",
+      "last_run_at": "2026-06-02T08:27:36.842636+08:00",
+      "last_status": "error",
+      "last_error": "Script timed out after 120s: /home/pc/.hermes/profiles/xiaohong/scripts/cron_recommender.sh",
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "99d740ca2dc6",
+      "name": "\ud83d\udd2c \u7ade\u4ef7\u91c7\u96c6\u5668",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_auction.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 9 * * 1-5",
+        "display": "15 9 * * 1-5"
+      },
+      "schedule_display": "15 9 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-31T21:45:03.658702+08:00",
+      "next_run_at": "2026-06-03T09:15:00+08:00",
+      "last_run_at": "2026-06-02T09:16:48.045478+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "a5c2dc6414c2",
+      "name": "\ud83e\udde0 \u7ade\u4ef7\u5b66\u4e60\u5668",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_auction_learn.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 16 * * 1-5",
+        "display": "0 16 * * 1-5"
+      },
+      "schedule_display": "0 16 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-31T21:45:04.663786+08:00",
+      "next_run_at": "2026-06-03T16:00:00+08:00",
+      "last_run_at": "2026-06-02T16:01:35.480753+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "5080e4b136db",
+      "name": "\ud83e\udde0 \u77e5\u8bc6\u5e93\u00b7LLM\u6d88\u5316",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u3002\u73b0\u5728\u662f\u6574\u70b9\u8fc7 5 \u5206\uff0c\u77e5\u8bc6\u5e93\u521a\u5b8c\u6210\u589e\u91cf\u91c7\u96c6\u3002\n\n## \u4efb\u52a1\n\n\u8bfb\u53d6\u6700\u65b0\u91c7\u96c6\u6570\u636e\uff0c\u63d0\u70bc 3-5 \u6761\u7ed3\u6784\u5316\u6d1e\u5bdf\uff0c\u5199\u5165 `data/kb/kb_insights.json`\u3002\n\n## \u6b65\u9aa4\n\n### 1. \u8bfb\u53d6\u6570\u636e\n\n```bash\ncat /home/pc/.hermes/profiles/xiaohong/data/kb/mega_latest.json\n```\n\n### 2. \u5206\u6790\u7ef4\u5ea6\n\n\u4ece\u4ee5\u4e0b\u89d2\u5ea6\u63d0\u70bc\u6d1e\u5bdf\uff1a\n\n- **\u4e8b\u4ef6\u5bc6\u5ea6\u5f02\u5e38**\uff1a\u67d0\u677f\u5757\u516c\u544a/\u65b0\u95fb\u6570\u91cf\u662f\u5426\u663e\u8457\u9ad8\u4e8e\u8fd1\u671f\u5747\u503c\uff1f\u5bf9\u6bd4 `kb_insights.json` \u4e2d\u524d\u51e0\u6761\u7684\u540c\u7c7b\u6570\u636e\n- **\u8d44\u91d1\u4fe1\u53f7**\uff1a\u5317\u5411/\u4e3b\u529b\u8d44\u91d1\u6d41\u5411\u4e2d\u662f\u5426\u6709\u7ed3\u6784\u6027\u53d8\u5316\uff08\u5982\u6301\u7eed\u6d41\u5165\u67d0\u677f\u5757\uff09\uff1f\n- **\u60c5\u7eea\u62d0\u70b9**\uff1a\u70ed\u641c/\u9f99\u864e\u699c/\u6da8\u8dcc\u505c\u4e2d\u6709\u6ca1\u6709\u503c\u5f97\u6ce8\u610f\u7684\u60c5\u7eea\u53d8\u5316\uff1f\n- **\u98ce\u9669\u9884\u8b66**\uff1aST \u98ce\u9669\u516c\u544a\u3001\u51cf\u6301\u516c\u544a\u3001\u4e1a\u7ee9\u53d8\u8138\u7b49\u662f\u5426\u96c6\u4e2d\u51fa\u73b0\uff1f\n\n### 3. \u8f93\u51fa\u683c\u5f0f\n\n```json\n{\n  \"timestamp\": \"2026-06-01T09:05:00\",\n  \"insights\": [\n    {\n      \"type\": \"sector_anomaly | fund_signal | sentiment_shift | risk_alert\",\n      \"title\": \"\u4e00\u53e5\u8bdd\u6807\u9898\",\n      \"body\": \"2-3\u53e5\u5206\u6790\uff0c\u5305\u542b\u5177\u4f53\u6570\u5b57\u548c\u677f\u5757\u540d\",\n      \"confidence\": \"high | medium\",\n      \"sources\": [\"announcements\", \"north_flow\"]\n    }\n  ]\n}\n```\n\n### 4. \u4fdd\u5b58\n\n\u7528 execute_code \u5c06 insights \u8ffd\u52a0\u5230 `data/kb/kb_insights.json`\uff08\u4fdd\u7559\u6700\u8fd1 50 \u6761\uff09\u3002\n\n## \u94c1\u5f8b\n\n- \u4e0d\u7f16\u9020\u6570\u636e\uff0c\u6240\u6709\u6570\u5b57\u6765\u81ea mega_latest.json\n- \u5982\u679c\u6ca1\u6709\u503c\u5f97\u63d0\u70bc\u7684\u6d1e\u5bdf\uff0c\u8f93\u51fa\u7a7a\u6570\u7ec4 `\"insights\": []`\n- \u6bcf\u6761 insight \u5fc5\u987b\u6ce8\u660e\u6765\u6e90\u6a21\u5757\n- \u63a7\u5236\u603b\u8f93\u51fa\u5728 500 \u5b57\u4ee5\u5185\n",
+      "skills": [
+        "stock-research"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "5 * * * *",
+        "display": "5 * * * *"
+      },
+      "schedule_display": "5 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 47
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-31T23:36:27.500410+08:00",
+      "next_run_at": "2026-06-02T23:05:00+08:00",
+      "last_run_at": "2026-06-02T22:07:38.228136+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "e91de78f14cb",
+      "name": "\ud83e\udde0 \u7ade\u4ef7\u00b7LLM\u8bca\u65ad",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u3002\u73b0\u5728\u662f 16:05\uff0c\u7ade\u4ef7\u5b66\u4e60\u5668\u521a\u5b8c\u6210\u6743\u91cd\u66f4\u65b0\u3002\n\n## \u4efb\u52a1\n\n\u8bfb\u53d6\u7ade\u4ef7\u6743\u91cd\u6570\u636e + \u9009\u80a1\u590d\u76d8\u65e5\u5fd7\uff0c\u8f93\u51fa\u4e00\u4efd\u6743\u91cd\u8bca\u65ad\u548c\u8c03\u6574\u5efa\u8bae\u3002\n\n## \u6b65\u9aa4\n\n### 1. \u8bfb\u53d6\u6570\u636e\n\n```bash\ncat /home/pc/.hermes/profiles/xiaohong/scripts/data/auction_weights.json\ncat /home/pc/.hermes/profiles/xiaohong/scripts/data/reflection_log.json\n```\n\n### 2. \u8bfb\u53d6\u5927\u76d8\u73af\u5883\n\n\u7528 terminal \u6267\u884c\uff1a\n```python\nimport sys; sys.path.insert(0, '/home/pc/.hermes/profiles/xiaohong/scripts')\nfrom data_pipeline import get_market_money_flow\nmf = get_market_money_flow()\nprint(f\"\u4e0a\u8bc1: {mf.get('sh_change', 0)}%\")\n```\n\n### 3. \u5206\u6790\n\n- \u4e94\u7ef4\u6743\u91cd\u5404\u81ea\u51c6\u786e\u7387\u5982\u4f55\uff1f\u54ea\u4e9b\u7ef4\u5ea6\u672c\u5468\u8868\u73b0\u597d/\u5dee\uff1f\n- \u51c6\u786e\u7387\u53d8\u5316\u8d8b\u52bf\uff1aprice_slope \u662f\u5426\u5728\u9707\u8361\u5e02\u4e2d\u8870\u51cf\uff1fvolume_accel \u662f\u5426\u6301\u7eed\u4e0a\u5347\uff1f\n- \u7ed3\u5408\u5927\u76d8\u73af\u5883\uff1a\u5f53\u524d\u5e02\u573a\u662f\u8d8b\u52bf\u5e02\u8fd8\u662f\u9707\u8361\u5e02\uff1f\u4e0d\u540c\u5e02\u573a\u73af\u5883\u4e0b\u5404\u7ef4\u5ea6\u7684\u6709\u6548\u6027\u4e0d\u540c\n- \u7ed9\u51fa\u5177\u4f53\u7684\u6743\u91cd\u8c03\u6574\u5efa\u8bae\n\n### 4. \u8f93\u51fa\n\n\u5199\u5165 `data/kb/auction_diagnosis.json`\uff1a\n```json\n{\n  \"timestamp\": \"...\",\n  \"market_condition\": \"trending | ranging | volatile\",\n  \"weights_current\": {...},\n  \"accuracy_trend\": {\"price_slope\": \"stable | declining | improving\", ...},\n  \"diagnosis\": \"2-3\u53e5\u8bca\u65ad\uff0c\u8bf4\u660e\u5f53\u524d\u6743\u91cd\u914d\u7f6e\u7684\u95ee\u9898\",\n  \"recommendation\": {\n    \"price_slope\": 0.15,\n    \"volume_accel\": 0.30,\n    ...\n  },\n  \"reasoning\": \"\u4e3a\u4ec0\u4e48\u8fd9\u6837\u8c03\uff0c\u5173\u8054\u5927\u76d8\u73af\u5883\u548c\u8fd1\u671f\u8868\u73b0\"\n}\n```\n\n## \u94c1\u5f8b\n\n- \u5982\u679c auction_weights.json \u4e0d\u5b58\u5728\uff08\u9996\u6b21\u8fd0\u884c\uff09\uff0c\u8f93\u51fa\u9ed8\u8ba4\u914d\u7f6e\u7684\u8bca\u65ad\n- \u6743\u91cd\u8c03\u6574\u5e45\u5ea6\u5355\u6b21\u4e0d\u8d85\u8fc7 \u00b10.10\n- \u4e0d\u7f16\u9020\u6570\u636e\n",
+      "skills": [
+        "stock-research"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "5 16 * * 1-5",
+        "display": "5 16 * * 1-5"
+      },
+      "schedule_display": "5 16 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-31T23:36:39.987814+08:00",
+      "next_run_at": "2026-06-03T16:05:00+08:00",
+      "last_run_at": "2026-06-02T16:09:55.296960+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "152628689a14",
+      "name": "\ud83e\udde0 \u6587\u5de5\u56e2\u00b7LLM\u590d\u76d8",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u3002\u73b0\u5728\u662f 17:05\uff0c\u6587\u5de5\u56e2\u521a\u5b8c\u6210\u6bcf\u65e5\u590d\u76d8\u3002\n\n## \u6838\u5fc3\u4efb\u52a1\n\n\u5bf9\u4ea4\u6613\u7cfb\u7edf **7 \u4e2a\u6a21\u5757**\uff08+ \ud83c\udd95 \u7814\u7a76\u5458\u8bae\u4f1a\uff09\u505a\u5168\u57df\u8bca\u65ad \u2192 \u8f93\u51fa\u7ed3\u6784\u5316\u4f18\u5316\u5efa\u8bae \u2192 \u81ea\u52a8\u89e6\u53d1\u8fdb\u5316\u5f15\u64ce\u3002\n\n## \u7b2c\u4e00\u6b65\uff1a\u6536\u96c6\u6570\u636e\n\n```\n# \u590d\u76d8\u62a5\u544a\ncat ~/reports/daily/$(date +%Y-%m-%d)*.md 2>/dev/null || echo \"\u65e0\u590d\u76d8\u62a5\u544a\"\n\n# \u63a8\u8350\u6c60\ncat ~/scripts/data/daily_pool.json 2>/dev/null\n\n# \ud83c\udd95 \u8bae\u4f1a\u65e5\u5fd7 \u2014 \u4eca\u65e5\u8bae\u4f1a\u8fa9\u8bba\u5168\u8bb0\u5f55\ncat ~/scripts/data/research/parliament_log.json 2>/dev/null\n\n# \ud83c\udd95 \u8bae\u4f1a\u62a5\u544a\ncat ~/scripts/data/research/\u8bae\u4f1a\u62a5\u544a-$(date +%Y%m%d).md 2>/dev/null || echo \"\u65e0\u8bae\u4f1a\u62a5\u544a\"\n\n# \u6301\u4ed3\ncat ~/data/holdings.json 2>/dev/null\n\n# \u53cd\u601d\u65e5\u5fd7\ncat ~/scripts/data/reflection_log.json 2>/dev/null\n\n# \u4ea4\u6613\u65e5\u5fd7\npython3 ~/scripts/transaction_logger.py stats 2>/dev/null\n\n# \u8fdb\u5316\u65e5\u5fd7\npython3 ~/scripts/evolution_engine.py --log 2>/dev/null\n\n# \u7ade\u4ef7\u8bca\u65ad\ncat ~/scripts/kb/auction_diagnosis.json 2>/dev/null || echo \"\u65e0\u7ade\u4ef7\u8bca\u65ad\"\n```\n\n## \u7b2c\u4e8c\u6b65\uff1a7 \u6a21\u5757\u8bca\u65ad\uff08+ \ud83c\udd95 \u8bae\u4f1a\u8bc4\u5ba1\uff09\n\n\u9010\u6a21\u5757\u5206\u6790\u8868\u73b0\uff0c\u8bca\u65ad\u89c4\u5219\u53c2\u6570\u662f\u5426\u9700\u8981\u8c03\u6574\uff1a\n\n### \u2460 \u77ad\u671b\u5854/\u63a8\u8350\u5f15\u64ce\n- \u4eca\u65e5\u63a8\u8350\u6c60\u662f\u5426\u4e3a\u7a7a\uff1f\u5982\u679c\u7a7a\uff0c\u539f\u56e0\u662f\u4ec0\u4e48\uff08\u8fde\u677f\u6392\u9664/\u5e02\u503c\u95e8\u69db/\u65e0\u6570\u636e\uff09\uff1f\n- \u9519\u8fc7\u4e86\u591a\u5c11\u6da8\u5e45 6%+ \u7684\u80a1\u7968\uff1f\u6839\u56e0\u5f52\u7c7b\n- \u53ef\u8c03\u53c2\u6570\uff1a`\u8fde\u677f\u6392\u9664` `\u5e02\u503c\u4e0b\u9650` `\u5e02\u503c\u4e0a\u9650`\n\n### \u2461 \u4fa6\u5bdf\u5175\n- \u53cc\u91cd\u786e\u8ba4\u547d\u4e2d\u7387\uff1f\u65b0\u589e\u5f02\u52a8\u6709\u591a\u5c11\u540e\u6765\u6da8\u4e86\uff1f\n- \u8d44\u91d1\u95e8\u69db\u5728\u5f53\u524d\u5e02\u573a\u73af\u5883\u4e0b\u662f\u5426\u5408\u7406\uff1f\n- \u53ef\u8c03\u53c2\u6570\uff1a`\u8d44\u91d1\u95e8\u69db`\n\n### \u2462 \u72d9\u51fb\u624b\n- P0\u6b62\u635f\u662f\u5426\u53ca\u65f6\u89e6\u53d1\uff1f\u6709\u6ca1\u6709\u6f0f\u6389\u7684\u6b62\u635f\uff1f\n- P1\u9884\u8b66\u662f\u5426\u6709\u6548\uff08\u9884\u8b66\u540e\u771f\u7684\u8dcc\u4e86\u5417\uff09\uff1f\n- P2\u4fe1\u53f7\u6709\u6ca1\u6709\u8bef\u62a5\uff08\u5927\u6da8\u4fe1\u53f7\u5b9e\u9645\u8dcc\u4e86\uff09\uff1f\n- \u5165\u573a\u4fe1\u53f7\u51c6\u786e\u7387\uff1f\n- \u53ef\u8c03\u53c2\u6570\uff1a`P1\u903c\u8fd1` `P2\u6da8\u8dcc` `P2\u91cf\u6bd4` `\u5165\u573a\u91cf\u6bd4` `\u5165\u573a\u504f\u79bb`\n\n### \u2463 \u5f39\u836f\u5e93\n- \u56de\u64a4\u662f\u5426\u8d85\u6807\uff1f\u5355\u80a1\u4ed3\u4f4d\u662f\u5426\u89e6\u53ca\u4e0a\u9650\uff1f\n- \u79fb\u52a8\u6b62\u76c8\u662f\u5426\u53ca\u65f6\u4e0a\u79fb\uff1f\u6b62\u76c8\u542f\u52a8/\u6b65\u957f\u662f\u5426\u5408\u7406\uff1f\n- \u51ef\u5229\u7cfb\u6570\u662f\u5426\u8fc7\u4e8e\u4fdd\u5b88/\u6fc0\u8fdb\uff1f\n- \u53ef\u8c03\u53c2\u6570\uff1a`\u51ef\u5229\u7cfb\u6570` `\u5355\u80a1\u4e0a\u9650` `\u6301\u4ed3\u4e0a\u9650` `\u6b62\u76c8\u542f\u52a8` `\u6b62\u76c8\u6b65\u957f`\n\n### \u2464 \u77e5\u8bc6\u5e93\n- \u91c7\u96c6\u662f\u5426\u6309\u65f6\u5b8c\u6210\uff1f\u6570\u636e\u91cf\u662f\u5426\u5145\u8db3\uff1f\n- \u53bb\u91cd\u662f\u5426\u6b63\u786e\uff08\u6709\u65e0\u5927\u91cf\u91cd\u590d\u6216\u8bef\u53bb\u91cd\uff09\uff1f\n- \u53ef\u8c03\u53c2\u6570\uff1a`\u91c7\u96c6\u95f4\u9694` `\u53bb\u91cd\u7a97\u53e3`\n\n### \u2465 \u7ade\u4ef7\u5b66\u4e60\u5668\n- \u7ade\u4ef7\u4fe1\u53f7\u51c6\u786e\u7387\u8d8b\u52bf\uff1f\u4e94\u7ef4\u6743\u91cd\u662f\u5426\u9700\u8981\u8c03\u6574\uff1f\n- \u8d1d\u53f6\u65af\u5148\u9a8c\u662f\u5426\u9700\u8981\u6536\u7d27\uff08\u6837\u672c\u591a\u4e86\u53ef\u4ee5\u964d\u4f4e\u5148\u9a8c\u5f71\u54cd\uff09\uff1f\n- \u53ef\u8c03\u53c2\u6570\uff1a\u4e94\u7ef4\u6743\u91cd\uff08\u7531 auction_diagnosis.json \u72ec\u7acb\u5904\u7406\uff09\n\n### \u2466 \u6587\u5de5\u56e2\u81ea\u8eab\n- \u6da8\u5e45\u699c\u9608\u503c 6% \u662f\u5426\u5408\u9002\uff08\u592a\u591a/\u592a\u5c11\uff09\uff1f\n- \u7eaa\u5f8b\u6e05\u5355\u662f\u5426\u9700\u8981\u589e\u51cf\u9879\u76ee\uff1f\n- \u53ef\u8c03\u53c2\u6570\uff1a`\u6da8\u5e45\u9608\u503c` `\u6da8\u5e45\u6570\u91cf`\n\n### \ud83c\udd95 \u2467 \u7814\u7a76\u5458\u8bae\u4f1a\n- \u4eca\u65e5\u8bae\u4f1a\u662f\u5426\u8fd0\u884c\uff1f\u5982\u679c\u672a\u8fd0\u884c\uff0c\u539f\u56e0\u662f\u4ec0\u4e48\uff1f\n- \u8bae\u4f1a\u7ed3\u8bba\uff08bias/confidence\uff09\u662f\u5426\u88ab\u77ad\u671b\u5854\u548c\u51b3\u7b56\u5b98\u6b63\u786e\u5f15\u7528\uff1f\n- \u8bae\u4f1a red_flags \u662f\u5426\u6709\u6548\uff08\u6807\u8bb0\u7684\u98ce\u9669\u662f\u5426\u786e\u5b9e\u53d1\u751f\uff09\uff1f\n- \u591a\u7a7a\u5224\u65ad\u51c6\u786e\u7387\uff1a\u725b\u718a\u4fe1\u53f7\u6570\u91cf vs \u5b9e\u9645\u6da8\u8dcc\n- \u662f\u5426\u9700\u8981\u8c03\u6574\u8bae\u4f1a\u8bae\u9898\uff08\u5f53\u524d\uff1a\u63a8\u8350\u6c60\u9a8c\u8bc1 + \u8fdb\u5316\u53c2\u6570\u8bc4\u5ba1\uff09\uff1f\n- \u5982\u679c\u8bae\u4f1a\u8fde\u7eed 3 \u5929\u504f\u7a7a\u4e14\u6b63\u786e\uff0c\u5efa\u8bae\u5c06\u7cfb\u7edf\u98ce\u9669\u504f\u597d\u6574\u4f53\u964d\u4e00\u6863\n\n## \u7b2c\u4e09\u6b65\uff1a\u8f93\u51fa review_diagnosis.json\n\n**\u5fc5\u987b\u5199\u5165** `~/scripts/kb/review_diagnosis.json`\uff1a\n\n```json\n{\n  \"date\": \"YYYYMMDD\",\n  \"diagnosis\": \"\u4e00\u53e5\u8bdd\u5168\u5c40\u8bca\u65ad\",\n  \"module_scores\": {\n    \"recommender\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"scout\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"sniper\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"ammo\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"knowledge_base\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"auction\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"review\": {\"status\": \"ok/warn/error\", \"note\": \"...\"},\n    \"parliament\": {\"status\": \"ok/warn/error\", \"note\": \"...\"}\n  },\n  \"rule_changes_suggested\": [\n    {\n      \"rule\": \"\u5e02\u503c\u4e0b\u9650\",\n      \"change\": \"\u4e0b\u9650\u4ece50\u4ebf\u964d\u4f4e\u523030\u4ebf\",\n      \"reason\": \"...\",\n      \"confidence\": \"high/medium/low\"\n    }\n  ],\n  \"no_change\": false\n}\n```\n\n**rule \u5173\u952e\u8bcd\u5fc5\u987b\u7cbe\u786e\u5339\u914d\u4ee5\u4e0b\u4e4b\u4e00**\uff08\u5426\u5219\u8fdb\u5316\u5f15\u64ce\u65e0\u6cd5\u89e3\u6790\uff09\uff1a\n\n| \u6a21\u5757 | rule \u5173\u952e\u8bcd |\n|------|------------|\n| \u63a8\u8350\u5f15\u64ce | `\u8fde\u677f\u6392\u9664` `\u5e02\u503c\u4e0b\u9650` `\u5e02\u503c\u4e0a\u9650` |\n| \u4fa6\u5bdf\u5175 | `\u8d44\u91d1\u95e8\u69db` |\n| \u72d9\u51fb\u624b | `P1\u903c\u8fd1` `P2\u6da8\u8dcc` `P2\u91cf\u6bd4` `\u5165\u573a\u91cf\u6bd4` `\u5165\u573a\u504f\u79bb` |\n| \u5f39\u836f\u5e93 | `\u51ef\u5229\u7cfb\u6570` `\u5355\u80a1\u4e0a\u9650` `\u6301\u4ed3\u4e0a\u9650` `\u6b62\u76c8\u542f\u52a8` `\u6b62\u76c8\u6b65\u957f` |\n| \u77e5\u8bc6\u5e93 | `\u91c7\u96c6\u95f4\u9694` `\u53bb\u91cd\u7a97\u53e3` |\n| \u6587\u5de5\u56e2 | `\u6da8\u5e45\u9608\u503c` `\u6da8\u5e45\u6570\u91cf` |\n| \ud83c\udd95 \u8bae\u4f1a | `\u8bae\u4f1a\u9891\u7387`(\u63a7\u5236\u6bcf\u65e5\u8bae\u4f1a\u6b21\u6570) |\n\n**change \u5b57\u6bb5\u94c1\u5f8b**\uff1a\u6700\u540e\u4e00\u4e2a\u6570\u5b57 = \u76ee\u6807\u65b0\u503c\u3002\u4f8b\u5982 \"\u4ece50\u4ebf\u964d\u4f4e\u523030\u4ebf\" \u2192 30 \u662f\u65b0\u503c\u3002\n\n## \u7b2c\u56db\u6b65\uff1a\u89e6\u53d1\u8fdb\u5316\n\n\u5199\u5b8c diagnosis \u540e\u6267\u884c\uff1a\n```bash\ncd ~/scripts && python3 evolution_engine.py --dry-run && python3 evolution_engine.py\n```\n\n## \u26a0\ufe0f \u94c1\u5f8b\n- \u4e0d\u51ed\u7a7a\u5efa\u8bae\uff0c\u5fc5\u987b\u6709\u6570\u636e\u652f\u6491\n- confidence=low \u4e0d\u5199\u5165 rule_changes_suggested\n- \u8fde\u7eed 3 \u5929\u65e0\u6539\u8fdb \u2192 \u5efa\u8bae\u56de\u6eda\n- \u5355\u6b21\u53c2\u6570\u8c03\u6574\u4e0d\u8d85\u8fc7 \u00b120%\uff08\u8fdb\u5316\u5f15\u64ce\u4f1a\u81ea\u52a8\u62e6\u622a\u8d85\u9650\u5efa\u8bae\uff09\n- \ud83c\udd95 \u8bae\u4f1a\u6a21\u5757\u5fc5\u987b\u8bc4\u5ba1\u2014\u2014\u5982\u679c parliament_log.json \u4e3a\u7a7a/\u4e0d\u5b58\u5728\uff0cnote \u5199\"\u8bae\u4f1a\u4eca\u65e5\u672a\u8fd0\u884c\"\uff0c\u72b6\u6001 warn\n",
+      "skills": [
+        "stock-research"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "5 17 * * 1-5",
+        "display": "5 17 * * 1-5"
+      },
+      "schedule_display": "5 17 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-31T23:36:56.879004+08:00",
+      "next_run_at": "2026-06-03T17:05:00+08:00",
+      "last_run_at": "2026-06-02T17:13:07.883681+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "e6b2b24c7316",
+      "name": "\ud83e\uddec \u8fdb\u5316\u5f15\u64ce",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\uff0c\u80a1\u7968\u4ea4\u6613\u5458\u3002\u73b0\u5728\u662f 17:30\uff0c\u6267\u884c\u8fdb\u5316\u5f15\u64ce\u8bca\u65ad\u4e0e\u81ea\u52a8\u843d\u5730\u3002\n\n## \u4efb\u52a1\n\n\u8bfb\u53d6\u8fdb\u5316\u5f15\u64ce action_items \u2192 \u9010\u6761\u8bc4\u4f30\u5408\u7406\u6027 \u2192 \u5b89\u5168\u8303\u56f4\u5185\u81ea\u52a8 patch \u2192 \u8bb0\u5f55\u8fdb\u5316\u65e5\u5fd7\u3002\n\n## \u94c1\u5f8b\n\n- \u5355\u6b21\u53c2\u6570\u8c03\u6574\u4e0d\u8d85\u8fc7 \u00b120%\n- \u4efb\u4f55\u53d8\u66f4\u524d\u5fc5\u987b\u5148\u8bfb\u76ee\u6807\u6587\u4ef6\u786e\u8ba4\u4ee3\u7801\u4e0a\u4e0b\u6587\n- \u53ea\u4fee\u6539 EVOLVABLE_PARAMS \u4e2d\u5b9a\u4e49\u7684\u53c2\u6570\uff08\u5177\u4f53\u503c\uff0c\u4e0d\u52a8\u4ee3\u7801\u903b\u8f91\uff09\n- \u53d8\u66f4\u540e\u8dd1 python3 -c \"import py_compile; py_compile.compile('\u76ee\u6807\u6587\u4ef6', doraise=True)\" \u9a8c\u8bc1\u8bed\u6cd5\n- \u6240\u6709\u64cd\u4f5c\u8bb0\u5f55\u5230 evolution_log.json\n\n## \u6b65\u9aa4\n\n### 1. \u8bfb\u53d6 action_items\n```bash\ncat ~/.hermes/profiles/xiaohong/scripts/data/evolution_action_items.json\n```\n\u53ea\u5904\u7406 status=pending \u7684\u6761\u76ee\u3002\n\n### 2. \u9010\u6761\u8bc4\u4f30\n\u5bf9\u6bcf\u4e2a pending action\uff1a\n- \u8bfb\u53d6\u76ee\u6807\u6e90\u6587\u4ef6\uff08\u5982 stock_recommender.py / scout.py / sniperd.py / ammo_risk.py / auction_features.py\uff09\n- \u627e\u5230\u5bf9\u5e94\u7684\u53c2\u6570\u540d\uff08path_in_code\uff09\uff0c\u786e\u8ba4\u5f53\u524d\u503c\n- \u8bc4\u4f30\uff1a\u5728\u5f53\u524d\u5e02\u573a\u73af\u5883\u4e0b\uff08\u8bfb market_snapshot.json\uff09\uff0c\u8fd9\u4e2a\u8c03\u6574\u662f\u5426\u5408\u7406\uff1f\n  - \u5982\u679c\u662f\u98ce\u63a7\u53c2\u6570\u6536\u7d27\uff08ammo_*\uff09\uff0c\u5f53\u524dPE\u5206\u4f4d>80%\u65f6\u901a\u8fc7\n  - \u5982\u679c\u662f\u6743\u91cd\u8c03\u6574\uff0c\u68c0\u67e5\u662f\u5426\u6709\u5145\u8db3\u7684\u6570\u636e\u652f\u6491\n  - \u5982\u679c action \u6765\u81ea research_weekly\uff0c\u68c0\u67e5\u8be5\u7814\u7a76\u5458\u5386\u53f2\u51c6\u786e\u7387\uff08evolution_log \u4e2d\u7684 applied \u8bb0\u5f55\uff09\n- \u5224\u65ad\u901a\u8fc7 \u2192 \u6267\u884c patch\uff1b\u5224\u65ad\u4e0d\u901a\u8fc7 \u2192 \u6807\u8bb0 rejected + \u539f\u56e0\n\n### 3. \u6267\u884c patch\n\u901a\u8fc7\u7684 action\uff0c\u7528 patch \u5de5\u5177\u4fee\u6539\u76ee\u6807\u6587\u4ef6\u4e2d\u7684\u53c2\u6570\u503c\u3002\n- \u627e\u53c2\u6570\u5b9a\u4e49\u884c\uff08\u5982 `WEIGHT_EVENT = 0.30`\uff09\n- \u66ff\u6362\u4e3a\u65b0\u503c\n- \u9a8c\u8bc1\u8bed\u6cd5\n\n### 4. \u8bb0\u5f55\n\u5bf9\u6bcf\u4e2a action\uff0c\u66f4\u65b0 evolution_action_items.json \u4e2d\u8be5\u6761\u76ee\u7684 status\uff1a\n- applied \u2192 \u5199\u5165 evolution_log.json\uff08\u542b version\u3001parameter\u3001old_value\u3001new_value\u3001timestamp\u3001source\uff09\n- rejected \u2192 \u5199\u5165 evolution_log.json\uff0c\u6ce8\u660e\u539f\u56e0\n- \u9700\u8981\u4eba\u5de5\u5224\u65ad \u2192 \u6807\u8bb0 needs_review\n\n### 5. \u8f93\u51fa\u62a5\u544a\n\u7528 report_formatter.Report \u8f93\u51fa\u7ed3\u6784\u5316\u62a5\u544a\uff1a\n- \u6807\u9898\uff1a\ud83e\uddec \u8fdb\u5316\u5f15\u64ce\u8bca\u65ad\n- \u5904\u7406\u4e86\u51e0\u6761 action\n- \u6bcf\u6761\u7684\u72b6\u6001\u3001\u53d8\u66f4\u8be6\u60c5\u3001\u9a8c\u8bc1\u7ed3\u679c\n- \u5982\u6709 needs_review\uff0c\u9ad8\u4eae\u63d0\u793a\n\n## \u5173\u952e\u6587\u4ef6\u8def\u5f84\n- action_items: ~/.hermes/profiles/xiaohong/scripts/data/evolution_action_items.json\n- evolution_log: ~/.hermes/profiles/xiaohong/scripts/data/evolution_log.json\n- market_snapshot: ~/.hermes/profiles/xiaohong/scripts/data/market_snapshot.json\n- \u6e90\u6587\u4ef6\u90fd\u5728: ~/.hermes/profiles/xiaohong/scripts/\n",
+      "skills": [
+        "stock-research",
+        "strategy-trading"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": [
+        "152628689a14"
+      ],
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 17 * * 1-5",
+        "display": "30 17 * * 1-5"
+      },
+      "schedule_display": "30 17 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-31T23:42:02.525338+08:00",
+      "next_run_at": "2026-06-03T17:30:00+08:00",
+      "last_run_at": "2026-06-02T17:32:41.814682+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file"
+      ],
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "1b66ebef7383",
+      "name": "\ud83d\udd0d \u4fa6\u5bdf\u5175\u00b7\u76d8\u4e2d\u626b\u63cf 10:00",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_scout_intraday.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 10 * * 1-5",
+        "display": "0 10 * * 1-5"
+      },
+      "schedule_display": "0 10 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-01T21:59:18.527922+08:00",
+      "next_run_at": "2026-06-03T10:00:00+08:00",
+      "last_run_at": "2026-06-02T10:01:35.097095+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "5a2fe6d21829",
+      "name": "\ud83d\udd0d \u4fa6\u5bdf\u5175\u00b7\u76d8\u4e2d\u626b\u63cf 11:00",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_scout_intraday.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 11 * * 1-5",
+        "display": "0 11 * * 1-5"
+      },
+      "schedule_display": "0 11 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-01T21:59:28.077382+08:00",
+      "next_run_at": "2026-06-03T11:00:00+08:00",
+      "last_run_at": "2026-06-02T11:01:00.600816+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "71c75c2f6880",
+      "name": "\ud83d\udd0d \u4fa6\u5bdf\u5175\u00b7\u76d8\u4e2d\u626b\u63cf 13:00",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_scout_intraday.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 13 * * 1-5",
+        "display": "0 13 * * 1-5"
+      },
+      "schedule_display": "0 13 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-01T21:59:29.083168+08:00",
+      "next_run_at": "2026-06-03T13:00:00+08:00",
+      "last_run_at": "2026-06-02T13:00:42.257479+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "1e07ae5ff254",
+      "name": "\ud83d\udd0d \u4fa6\u5bdf\u5175\u00b7\u76d8\u4e2d\u626b\u63cf 14:00",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_scout_intraday.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 14 * * 1-5",
+        "display": "0 14 * * 1-5"
+      },
+      "schedule_display": "0 14 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-01T21:59:30.092462+08:00",
+      "next_run_at": "2026-06-03T14:00:00+08:00",
+      "last_run_at": "2026-06-02T14:01:07.653427+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "6bf08cd7d6dd",
+      "name": "\ud83d\udc93 \u72d9\u51fb\u624b\u00b7\u5b58\u6d3b\u68c0\u6d4b",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "sniper_healthcheck.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/5 9-14 * * 1-5",
+        "display": "*/5 9-14 * * 1-5"
+      },
+      "schedule_display": "*/5 9-14 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 72
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-01T22:30:56.618125+08:00",
+      "next_run_at": "2026-06-03T09:00:00+08:00",
+      "last_run_at": "2026-06-02T14:55:37.954805+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "8d3712681ab9",
+      "name": "\ud83d\udcda \u7814\u7a76\u5458\u81ea\u4e3b\u7814\u5b66",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_researchers_study.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 2 * * *",
+        "display": "0 2 * * *"
+      },
+      "schedule_display": "0 2 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-02T01:31:30.152922+08:00",
+      "next_run_at": "2026-06-03T02:00:00+08:00",
+      "last_run_at": "2026-06-02T02:01:01.040140+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "911d8e44afb2",
+      "name": "\ud83d\udcca \u80a1\u7968\u8ddf\u8e2a\u5668",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_tracker.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "35 15 * * 1-5",
+        "display": "35 15 * * 1-5"
+      },
+      "schedule_display": "35 15 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-02T10:27:06.779449+08:00",
+      "next_run_at": "2026-06-03T15:35:00+08:00",
+      "last_run_at": "2026-06-02T15:35:50.780737+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "d8a378b20854",
+      "name": "\ud83d\udcca \u5e02\u573a\u7edf\u4e00\u5feb\u7167",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_market_snapshot.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "28 8 * * 1-5",
+        "display": "28 8 * * 1-5"
+      },
+      "schedule_display": "28 8 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-02T10:55:04.830602+08:00",
+      "next_run_at": "2026-06-03T08:28:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "372a6e37f812",
+      "name": "\ud83d\udcf0 \u7814\u7a76\u5458\u5468\u62a5",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cron_research_weekly.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 6",
+        "display": "0 9 * * 6"
+      },
+      "schedule_display": "0 9 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-02T11:12:47.050344+08:00",
+      "next_run_at": "2026-06-06T09:00:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": "/home/pc/.hermes/profiles/xiaohong/scripts",
+      "profile": "xiaohong"
+    },
+    {
+      "id": "1a0ebb16ec85",
+      "name": "\ud83e\udde0 \u7814\u7a76\u5458\u00b7LLM\u6df1\u5ea6\u5206\u6790",
+      "prompt": "\n\u4f60\u662f\u5c0f\u7ea2 \ud83c\udf39\uff0c\u5b89\u5e55\u8bfa\u5bb6\u65cf\u4e8c\u59d0\u3002\u73b0\u5728\u662f\u51cc\u6668 02:05\uff0c\u7814\u7a76\u5458\u7814\u5b66\u521a\u5b8c\u6210\uff0802:00\uff09\uff0c\u4f60\u6765\u6267\u884c\u6df1\u5ea6\u5206\u6790\u3002\n\n## \u4efb\u52a1\n\n\u57fa\u4e8e\u6570\u636e\u5065\u5eb7\u68c0\u67e5 + \u7f3a\u53e3\u53d1\u73b0 + \u7814\u7a76\u5458\u7814\u5b66\u7ed3\u679c\uff0c\u751f\u6210\u4e00\u4efd\u7ed3\u6784\u5316\u7684\u7cfb\u7edf\u8bca\u65ad\u5206\u6790\u3002\n\n## \u6b65\u9aa4\n\n### 1. \u8bfb\u53d6\u6570\u636e\u5065\u5eb7\u68c0\u67e5\u7ed3\u679c\n\u8bfb\u53d6 data_hub.py --health \u7684\u6700\u65b0\u8f93\u51fa\u3002\u5982\u679c\u627e\u4e0d\u5230\u72ec\u7acb\u8f93\u51fa\u6587\u4ef6\uff0c\u76f4\u63a5\u8dd1\u4e00\u6b21\u5065\u5eb7\u68c0\u67e5\uff1a\n```bash\ncd ~/.hermes/profiles/xiaohong/scripts && python3 data_hub.py --health 2>&1 | tail -60\n```\n\n### 2. \u8bfb\u53d6\u7f3a\u53e3\u53d1\u73b0\n```bash\ncd ~/.hermes/profiles/xiaohong/scripts && python3 data_hub.py --discover 2>&1 | tail -40\n```\n\n### 3. \u8bfb\u53d6 KB \u6d1e\u5bdf\n\u8bfb\u53d6 ~/.hermes/profiles/xiaohong/data/kb/kb_insights.json \u4e2d\u6700\u65b0\u7684 5 \u6761\u6d1e\u5bdf\u3002\n\n### 4. \u8bfb\u53d6 market_snapshot\n\u8bfb\u53d6 ~/.hermes/profiles/xiaohong/scripts/data/market_snapshot.json\uff08\u5982\u679c\u6709\uff09\u3002\n\n### 5. \u7efc\u5408\u8bca\u65ad\n\u57fa\u4e8e\u4ee5\u4e0a\u6570\u636e\uff0c\u4ece 5 \u4e2a\u7ef4\u5ea6\u8bca\u65ad\u7cfb\u7edf\u5065\u5eb7\u5ea6\uff1a\n\n| \u7ef4\u5ea6 | \u68c0\u67e5\u9879 |\n|------|------|\n| \u6570\u636e\u5b8c\u6574\u6027 | \u6570\u636e\u6e90\u53ef\u7528\u7387\u3001KB\u6a21\u5757\u8986\u76d6\u7387\u3001\u6570\u636e\u65f6\u6548 |\n| \u4fe1\u53f7\u8d28\u91cf | kb_insights \u4fe1\u566a\u6bd4\u3001\u662f\u5426\u6709\u77db\u76fe\u4fe1\u53f7 |\n| \u6267\u884c\u5065\u5eb7 | \u6700\u8fd1 cron \u9519\u8bef\u7387\u3001sniperd \u5b58\u6d3b |\n| \u63a8\u8350\u8d28\u91cf | daily_pool \u6807\u7684\u8868\u73b0\uff08\u5bf9\u6bd4\u8ddf\u8e2a\u6c60\uff09 |\n| \u7f3a\u53e3\u98ce\u9669 | \u672a\u63a5\u5165\u6570\u636e\u6e90\u7684\u4e1a\u52a1\u5f71\u54cd\u8bc4\u4f30 |\n\n### 6. \u751f\u6210\u5206\u6790\u62a5\u544a\n\u7528 report_formatter.Report \u98ce\u683c\u8f93\u51fa\uff1a\n\n**\u6807\u9898**: \ud83e\udde0 \u7814\u7a76\u5458\u6df1\u5ea6\u8bca\u65ad\n**\u5185\u5bb9**:\n- \u5404\u7ef4\u5ea6\u8bc4\u5206\uff081-10\uff09+ \u7b80\u8981\u8bf4\u660e\n- \u4f18\u5148\u7ea7\u5efa\u8bae\uff1aP0/P1/P2 \u884c\u52a8\u9879\n- \u4e0e\u4e0a\u5468\u5bf9\u6bd4\u7684\u53d8\u5316\u8d8b\u52bf\uff08\u5982\u6709\u5386\u53f2\u8bb0\u5f55\uff09\n\n### 7. \u6301\u4e45\u5316\n\u5199\u5165 ~/.hermes/profiles/xiaohong/scripts/data/research/llm_diagnosis.json\n\n\u683c\u5f0f\uff1a\n```json\n{\n  \"timestamp\": \"...\",\n  \"scores\": {\"data_integrity\": 8, \"signal_quality\": 6, ...},\n  \"top_actions\": [{\"priority\": \"P0\", \"action\": \"...\", \"rationale\": \"...\"}],\n  \"trend\": {\"vs_last_week\": \"improving/declining/stable\"}\n}\n```\n",
+      "skills": [
+        "stock-research"
+      ],
+      "skill": "stock-research",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "5 2 * * *",
+        "display": "5 2 * * *"
+      },
+      "schedule_display": "5 2 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-02T11:30:01.688623+08:00",
+      "next_run_at": "2026-06-03T02:05:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file"
+      ],
+      "workdir": "/home/pc/.hermes/profiles/xiaohong",
+      "profile": "xiaohong"
+    }
+  ],
+  "updated_at": "2026-06-02T22:07:38.228757+08:00"
+}
