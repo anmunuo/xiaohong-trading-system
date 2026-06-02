@@ -55,7 +55,7 @@ cd ~/.hermes/profiles/xiaohong/scripts
 python3 -c "from data_pipeline import get_index_data; print(get_index_data())"
 ```
 
-封装了 Tushare/AKShare/东方财富/Sina 四源聚合，内置 2-5 分钟缓存和自动 fallback。覆盖：全球指数、北向资金、板块排名、个股资金流向、选股推荐。
+封装了 Tushare/AKShare/东方财富/Sina/**BaoStock 五源聚合**，内置 2-5 分钟缓存和自动 fallback。覆盖：全球指数、北向资金、板块排名、个股资金流向、选股推荐、历史K线+MA。
 
 **核心 API 速查**：
 
@@ -72,6 +72,7 @@ python3 -c "from data_pipeline import get_index_data; print(get_index_data())"
 | `get_intraday_volume_alert(code, scale=5)` | 分时量价异动检测 🆕 | code: 纯数字 |
 | `get_financial_indicator(stock_code, period=None)` | 核心财务指标 (ROE/毛利率/负债率/现金流等13项) 🆕 | stock_code: '000001.SZ' |
 | `get_financial_summary(stock_code)` | 财务综合评分(0-100) + 亮点/风险 🆕 | stock_code: 纯数字或不带后缀 |
+| `get_historical_k_with_ma(codes, days=30)` | BaoStock 历史K线+MA5/10/20+peTTM/pbMRQ 🆕 | codes: 代码列表, days: 回溯天数 |
 
 **resource_pool 核心 API**：
 
@@ -149,6 +150,28 @@ GET https://qt.gtimg.cn/q=sz000001,sh600519
 
 47+字段：五档买卖盘口、量比、涨跌停价、换手率、市盈率、总市值。批量查询逗号分隔。竞价期开盘价字段同步更新虚拟匹配价。字段映射见 `references/multi-channel-data-pattern.md`。
 
+### BaoStock 直调（历史K线+MA，推荐引擎快路径）🆕
+
+```python
+import baostock as bs
+bs.login()
+rs = bs.query_history_k_data_plus('sh.600519',
+    "date,open,high,low,close,volume,amount,turn,peTTM,pbMRQ",
+    start_date='2026-05-01', end_date='2026-06-02',
+    frequency='d', adjustflag='2')
+bars = rs.data  # ⚠️ 必须用 rs.data，rs.next() 会阻塞 60s+
+bs.logout()
+```
+
+| 功能 | 字段 | 说明 |
+|------|------|------|
+| 历史K线 | date,open,high,low,close,volume,amount | 前复权(adjustflag='2') |
+| 估值 | peTTM, pbMRQ | 滚动市盈率+市净率 |
+| 活跃度 | turn | 换手率 |
+| **不支持** | ~~ma5,ma10,ma20~~ | ❌ 报错 10004012，需自算 |
+
+**关键陷阱**：`rs.next()` 迭代器阻塞 60s+ → **必须用 `rs.data`（list of lists）**。MA 指标需从 close 自算。详见 `references/baostock-integration.md`。
+
 ---
 
 ## 数据单位陷阱
@@ -195,6 +218,8 @@ PB 分布 (N=3961):
 | akshare 新闻标题为空 | `stock_news_em` 有时截断，改用浏览器直接搜东方财富搜索页 |
 | akshare cron 输出污染 | tqdm 进度条输出到 stdout，在脚本开头加 `os.environ['TQDM_DISABLE'] = '1'` |
 | akshare `stock_notice_report` 历史数据 | 无参调用返回 2022 数据，必须传 `date='YYYYMMDD'` |
+| ⭐ BaoStock `rs.next()` 阻塞 60s+ | **必须用 `rs.data` 直接读 list**。`rs.next()` 是迭代器模式，在生产环境会无限阻塞。正确用法：`for row in rs.data: ...`。字段索引与 `fields` 参数顺序一致，需显式映射。详见 `references/baostock-integration.md` |
+| ⭐ 东方财富 `po` 参数取反 | `po=0` 是**升序**（最小值在前），`po=1` 是**降序**。`get_top_gainers()` 曾用 `po=0` → 取跌幅最大50只 → 从中筛 ≥6% 涨幅永远为空。`get_top_flow_stocks()` / `get_sector_flow_rank()` 都正确用 `po=1`。凡「取TOP N」必须 `po=1` |
 | `data fetch company` 只返回利润表 | `overview`/`balance`/`fina` 三个 category 返回相同数据（仅 income statement），**没有资产负债表和财务比率**。需要 ROE/负债率/毛利率等用 `akshare` 或 `tushare` 直调 |
 | akshare `stock_zt_pool_em` 列名不同于文档 | 涨停板列名是 `封板资金`、`连板数`（非 `封单金额`），最新价列是 `最新价`；跌停用 `stock_zt_pool_dtgc_em` |
 | 东方财富 API 周末/晚间限流 | 非交易时段 `_em_api_get` 返回 None 或 RemoteDisconnected，属正常现象。代码中 `try/except` 兜底即可，不可据此判断 API 故障 |
@@ -549,6 +574,7 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/candidate-pool-p0-fix.md` — 🆕 候选池盲区 P0 修复（多源候选 + 首板/连板分离 + 盘前缓存兜底）
 - `references/evolution-engine-debug.md` — 🆕 进化引擎调试手册（4 种故障模式：路径偏移/格式断层/return误删/沙箱KeyError）
 - `~/docs/全面审计报告-2026-06-01.md` — 🆕 系统全面审计（架构/数据/功能/逻辑/效率/进化）
+- `references/baostock-integration.md` — 🆕 BaoStock 数据源集成（K线快路径/rs.next阻塞/MA字段不支持/字段索引映射）
 - `references/financial-data-integration.md` — 🆕 财务数据集成模式 (tushare fina_indicator → 推荐引擎+研究员)
 - `~/diagrams/架构图-小红交易系统-v8.3-light.html` — 🆕 系统完整架构图 v8.3（亮色白底，含分时+财务+三通道竞价）
 - `~/diagrams/架构图-小红交易系统-v8.1.excalidraw` — 备选手绘版本

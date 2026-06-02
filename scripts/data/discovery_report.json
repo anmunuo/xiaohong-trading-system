@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-06-02 10:57:35",
+  "generated_at": "2026-06-03 02:01:49",
   "missing_sources": [
     {
-      "name": "margin_trading",
-      "note": "融资融券余额/净买入 — akshare.stock_margin_sz/sz 可用，反映杠杆资金情绪",
-      "potential_impact": "高 — 杠杆资金情绪直接反映市场风险偏好，可用于仓位中枢调整"
+      "name": "index_valuation",
+      "note": "指数PE/PB分位数 — 判断市场整体估值水位，决定仓位中枢",
+      "potential_impact": "高 — 指数PE分位数决定整体仓位中枢，是系统级参数"
     },
     {
       "name": "short_selling",
@@ -17,32 +17,12 @@
       "potential_impact": "中 — 季频数据，中期方向信号，辅助板块配置"
     },
     {
-      "name": "index_valuation",
-      "note": "指数PE/PB分位数 — 判断市场整体估值水位，决定仓位中枢",
-      "potential_impact": "高 — 指数PE分位数决定整体仓位中枢，是系统级参数"
-    },
-    {
       "name": "volatility_index",
       "note": "VIX/波指 — 市场恐慌指标，a股可用 50ETF 波指替代",
       "potential_impact": "高 — 恐慌指标可触发行情冷却机制，保护持仓"
     }
   ],
-  "underutilized_sources": [
-    {
-      "name": "industry_news",
-      "current_consumers": [
-        "仅 kb_insights 摘要"
-      ],
-      "note": "5条行业新闻仅被 kb_insights 摘要，未注入推荐引擎或瞭望塔"
-    },
-    {
-      "name": "policy_macro",
-      "current_consumers": [
-        "仅 kb_insights 摘要"
-      ],
-      "note": "85条宏观数据仅摘要处理，未做方向性量化注入推荐引擎"
-    }
-  ],
+  "underutilized_sources": [],
   "weak_sources": [
     {
       "name": "hot_events",
@@ -53,13 +33,10 @@
     }
   ],
   "recommendations": [
-    "[P1] 接入 margin_trading: 融资融券余额/净买入 — akshare.stock_margin_sz/sz 可用，反映杠杆资金情绪",
+    "[P1] 接入 index_valuation: 指数PE/PB分位数 — 判断市场整体估值水位，决定仓位中枢",
     "[P1] 接入 short_selling: 融券余量 — 做空情绪指标，对高估值股预警价值高",
     "[P1] 接入 institutional_holdings: 机构持仓变动(季报) — tushare.fund_portfolio 可用，中期方向信号",
-    "[P1] 接入 index_valuation: 指数PE/PB分位数 — 判断市场整体估值水位，决定仓位中枢",
     "[P1] 接入 volatility_index: VIX/波指 — 市场恐慌指标，a股可用 50ETF 波指替代",
-    "[P2] 激活 industry_news: 当前仅 ['仅 kb_insights 摘要'] 使用，应注入推荐引擎/瞭望塔",
-    "[P2] 激活 policy_macro: 当前仅 ['仅 kb_insights 摘要'] 使用，应注入推荐引擎/瞭望塔",
     "[P0] 修复 hot_events: 数据质量不稳定，影响 ['推荐引擎(sentiment)']"
   ]
 }

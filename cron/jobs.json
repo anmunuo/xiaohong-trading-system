@@ -554,15 +554,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 143
+        "completed": 149
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-27T23:06:44.694046+08:00",
-      "next_run_at": "2026-06-02T23:00:00+08:00",
-      "last_run_at": "2026-06-02T22:00:54.727641+08:00",
+      "next_run_at": "2026-06-03T05:00:00+08:00",
+      "last_run_at": "2026-06-03T04:01:38.031659+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -728,15 +728,15 @@
       "schedule_display": "5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 47
+        "completed": 52
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-31T23:36:27.500410+08:00",
-      "next_run_at": "2026-06-02T23:05:00+08:00",
-      "last_run_at": "2026-06-02T22:07:38.228136+08:00",
+      "next_run_at": "2026-06-03T04:05:00+08:00",
+      "last_run_at": "2026-06-03T03:07:43.484928+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -1127,15 +1127,15 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-02T01:31:30.152922+08:00",
-      "next_run_at": "2026-06-03T02:00:00+08:00",
-      "last_run_at": "2026-06-02T02:01:01.040140+08:00",
+      "next_run_at": "2026-06-04T02:00:00+08:00",
+      "last_run_at": "2026-06-03T02:01:51.079319+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -1301,16 +1301,16 @@
       "schedule_display": "5 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 0
+        "completed": 1
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-02T11:30:01.688623+08:00",
-      "next_run_at": "2026-06-03T02:05:00+08:00",
-      "last_run_at": null,
-      "last_status": null,
+      "next_run_at": "2026-06-04T02:05:00+08:00",
+      "last_run_at": "2026-06-03T02:11:54.447635+08:00",
+      "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
       "deliver": "local",
@@ -1326,7 +1326,50 @@
       ],
       "workdir": "/home/pc/.hermes/profiles/xiaohong",
       "profile": "xiaohong"
+    },
+    {
+      "id": "e0595dd7ea3d",
+      "name": "\ud83d\udcbe GitHub \u6bcf\u65e5\u5907\u4efd",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "backup_to_github.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 4 * * *",
+        "display": "0 4 * * *"
+      },
+      "schedule_display": "0 4 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-02T22:49:33.051178+08:00",
+      "next_run_at": "2026-06-04T04:00:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "chat_name": "oc_a50ad25fd4cfea789c50126166a44c25",
+        "thread_id": null
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "profile": null
     }
   ],
-  "updated_at": "2026-06-02T22:07:38.228757+08:00"
+  "updated_at": "2026-06-03T04:01:38.032225+08:00"
 }

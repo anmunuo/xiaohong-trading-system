@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-06-03T02:05:00+08:00",
+  "scores": {
+    "data_integrity": 6,
+    "signal_quality": 7,
+    "execution_health": 5,
+    "recommendation_quality": 4,
+    "gap_risk": 4
+  },
+  "diagnosis": {
+    "data_integrity": {
+      "score": 6,
+      "detail": "KB采集管道运行正常（9模块，mega_latest每分钟更新），但2个模块空载（hot_events/broker_views）。daily_pool已过期15.5小时（上次08:25推荐引擎超时失败）。holdings无持仓（空仓状态）。market_snapshot 11.3小时未更新。",
+      "pro": ["mega_collector 9/9模块运行", "kb_insights.json 43条历史洞察", "knowledge_base/stock_events 500+股票覆盖"],
+      "con": ["推荐引擎脚本超时(cron_recommender.sh 120s timeout)", "hot_events/broker_views 持续空数据", "daily_pool/market_snapshot 过期"]
+    },
+    "signal_quality": {
+      "score": 7,
+      "detail": "kb_insights 最新洞察质量较高：公告洪峰648条(+83.6%)、ST风险池22家翻倍、美股动能衰减、龙虎榜偏多但振幅极端——四条洞察均有具体数字和板块名，信源标注清晰。但每小时LLM消化几乎全返回[SILENT]，说明增量事件频率低或判断阈值过严。",
+      "pro": ["洞察结构化程度高(类型/标题/正文/信源/置信度)", "最新00:05洞察4条有实质性内容", "mega_latest数据结构规范"],
+      "con": ["LLM每小时消化多为空(25/24=[SILENT])", "hot_events数据源不可靠影响sentiment因子", "无盘中实时信号验证机制"]
+    },
+    "execution_health": {
+      "score": 5,
+      "detail": "核心执行链断裂：推荐引擎cron(08:25)超时→无新daily_pool→瞭望塔缺乏数据源。竞价采集器完全不可用(auction.db=0)，竞价学习器空转。盘中扫描(侦察兵)和ML复盘(17:05)运行正常。弹药库空仓报告正常但无实质内容。",
+      "pro": ["侦察兵4时点扫描正常(10/11/13/14)", "弹药库/文工团/进化引擎 cron正常", "决策官/瞭望塔 LLM cron正常"],
+      "con": ["推荐引擎120s超时(P0)", "竞价采集器完全失败(auction.db=0)(P0)", "狙击手净值¥0(无持仓可管)(P1)", "研究员研学报告为模板(无实际分析内容)(P2)"]
+    },
+    "recommendation_quality": {
+      "score": 4,
+      "detail": "daily_pool.json(v2.3, 06/02)含8只推荐：海南矿业(53.8)、康强电子(52.2)、信捷电气等。因子分布倾向同质化(fund=30全同, research=50全同, sentiment=60集中)，total_score范围49.8-53.8(仅4分跨度)。stop_loss全部-5%(未区分创业板)。operation已有个性化但逻辑仍需验证。池中涨停覆盖率问题未解决(06/01诊断118/120涨停漏入)。",
+      "pro": ["池中有8只推荐(非空)", "operation文案已差异化", "market_cap已正确注入(海南矿业194亿)", "v2.3版本排除逻辑(ST/连板/停牌/市值)"],
+      "con": ["fund/research因子全同(退化)", "stop_loss不区分板别", "评分跨度仅4分(区分度不足)", "候选池盲区未解决(涨停覆盖率<2%)"]
+    },
+    "gap_risk": {
+      "score": 4,
+      "detail": "4项缺失数据源(P1级)：指数PE/PB分位数(影响仓位中枢)、融券余量(做空预警)、机构持仓变动(中期方向)、VIX波指(恐慌保护)。1项弱数据源(P0)：hot_events不可靠直接影响推荐引擎sentiment因子评分。竞价采集器彻底失败导致9:25侦察兵开盘确认缺失竞价信号。",
+      "pro": ["数据资产注册表已建立(21项)", "discovery_report自动发现缺口", "KB补偿性覆盖(公告面+资金面)"],
+      "con": ["hot_events持续空数据(P0—直接影响推荐引擎sentiment因子)", "指数估值缺失(无法判断市场整体水位)", "竞价采集完全中断(无9:15-9:25数据)(P0)", "VIX/做空信号缺失(缺乏恐惧指标)"]
+    }
+  },
+  "top_actions": [
+    {
+      "priority": "P0",
+      "action": "修复推荐引擎cron超时(08:25→120s timeout)",
+      "rationale": "推荐引擎是整个系统的心脏。当前cron_recommender.sh超时导致无daily_pool→瞭望塔/决策官/狙击手全部失去标的源。根因可能是tushare逐只查询(50只×0.5s=25s)超预算，或网络超时。建议:①给cron加timeout 300s ②检查stock_recommender.py日志输出位置 ③替代方案:先用cached daily_pool降级",
+      "module": "stock_recommender.py + cron_recommender.sh"
+    },
+    {
+      "priority": "P0",
+      "action": "修复竞价采集器完全失败(auction.db=0行)",
+      "rationale": "竞价采集器09:16运行时「API预热6轮全失败→批量拉取也失败」。东方财富push2 API在交易时段主动拒绝连接(RemoteDisconnected)。需:①验证API端点是否被限流/封IP ②降级到腾讯qt.gtimg.cn通道(已实现但未正确fallback) ③检查channels统计确认降级是否触发",
+      "module": "auction_collector.py"
+    },
+    {
+      "priority": "P0",
+      "action": "修复hot_events数据源(推荐引擎sentiment因子核心输入)",
+      "rationale": "hot_events和broker_views在mega_latest中持续为空。sentiment因子中hot_events占权重，空数据导致sentiment评分全部回退到change_pct单指标→区分度丧失。需检查东方财富热搜API采集逻辑或切换备用源。",
+      "module": "mega_collector.py (hot_events模块)"
+    },
+    {
+      "priority": "P1",
+      "action": "接入指数PE/PB分位数(index_valuation)",
+      "rationale": "无指数估值数据→弹药库无法判断市场整体水位→仓位中枢恒为100k/33.3%无论牛熊。当前上证约4057点，PE分位数是决策官调整防御/进攻模式的关键参数。实现简单: tushare daily_basic + 历史分位计算。",
+      "module": "market_snapshot.py → data_pipeline.py → 弹药库"
+    },
+    {
+      "priority": "P1",
+      "action": "接入VIX/50ETF波指(volatility_index)",
+      "rationale": "恐慌指标可触发狙击手行情冷却机制，保护持仓。A股可用50ETF期权隐含波动率替代。当波动率突破阈值→自动收紧入场条件/扩大止损缓冲。",
+      "module": "market_snapshot.py → sniperd.py"
+    },
+    {
+      "priority": "P2",
+      "action": "研究员研学报告由模板升级为含实质分析内容",
+      "rationale": "06/02和06/03研学报告均为模板(5角色「自主学习完成」无实际内容)。研究员应在02:00读mega_latest+knowledge_base+review_diagnosis后输出具体发现(如已发现的镇洋发展风险)。",
+      "module": "研究员·LLM cron (02:05)"
+    }
+  ],
+  "trend": {
+    "vs_last_week": "declining",
+    "detail": "相比上周(05/26-05/30有完整瞭望塔+弹药库+文工团报告链)，本周(06/01-06/03)出现推荐引擎超时中断、竞价采集器持续失败、holdings完全清零等回退。系统从「部分运行」退化为「骨架运行」。优先修复推荐引擎管道可恢复80%功能。"
+  },
+  "system_snapshot": {
+    "holdings_count": 0,
+    "daily_pool_count": 8,
+    "kb_insights_count": 43,
+    "cron_jobs_active": 15,
+    "cron_jobs_failing": 2,
+    "mega_modules_healthy": 7,
+    "mega_modules_empty": 2,
+    "api_keys_available": true,
+    "scripts_deployed": true
+  }
+}
