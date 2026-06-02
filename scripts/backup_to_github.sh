@@ -40,30 +40,15 @@ git commit -m "$COMMIT_MSG"
 
 echo "📦 已提交：$(git diff --stat HEAD~1 | tail -1)"
 
-# ── 5. 推送（使用凭证文件）──
-GIT_ASKPASS_SCRIPT="/tmp/git-askpass-xiaohong.sh"
-cat > "$GIT_ASKPASS_SCRIPT" << 'ASKEOF'
-#!/bin/bash
-case "$1" in
-    *Username*) echo "github@anmunuo.cn" ;;
-    *Password*) echo "Anmunuo123456!!" ;;
-    *) exit 1 ;;
-esac
-ASKEOF
-chmod +x "$GIT_ASKPASS_SCRIPT"
+# ── 5. 推送（SSH 密钥认证）──
+export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
 
-export GIT_ASKPASS="$GIT_ASKPASS_SCRIPT"
-export GIT_TERMINAL_PROMPT=0
-
-if git push -u origin main 2>&1; then
+if git push origin main 2>&1; then
     echo "✅ 推送成功 → github.com/anmunuo/xiaohong-trading-system"
 else
     PUSH_EXIT=$?
     echo "⚠️ 推送失败 (exit=$PUSH_EXIT)，本地提交已保留"
-    echo "   检查：仓库是否存在？网络是否可达？"
 fi
-
-rm -f "$GIT_ASKPASS_SCRIPT"
 
 echo "═══════════════════════════════════"
 echo "  备份完成: $(date '+%Y-%m-%d %H:%M:%S')"
