@@ -26,7 +26,7 @@ WORKSPACE = SCRIPT_DIR.parent
 sys.path.insert(0, str(WORKSPACE))
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from data_pipeline import get_top_flow_stocks, get_market_money_flow
+from data_pipeline import get_top_flow_stocks, get_market_money_flow, check_data_health
 
 POOL_PATH = SCRIPT_DIR / 'data' / 'daily_pool.json'
 
@@ -82,8 +82,12 @@ def is_st(name: str) -> bool:
     return 'ST' in str(name)
 
 
-def is_market_cap_ok(code: str) -> bool:
-    """市值过滤：排除 < 50亿 或 > 3000亿（试数据源而定）"""
+def is_market_cap_ok(code: str, pre_fetched_mv: float = None) -> bool:
+    """市值过滤：排除 < 50亿 或 > 3000亿
+
+    v4.1: 优先使用预取市值（东方财富 f20），无预取时 fallback 实时行情"""
+    if pre_fetched_mv is not None and pre_fetched_mv > 0:
+        return 50 <= pre_fetched_mv <= 3000
     try:
         from data_pipeline import get_stock_realtime
         rt = get_stock_realtime([code])
@@ -93,8 +97,8 @@ def is_market_cap_ok(code: str) -> bool:
                 return 50 <= mkt_cap <= 3000
     except Exception:
         pass
-    return True  # 无数据不阻塞
-
+    # 无法获取市值 → 通过（避免误杀）
+    return True
 
 # ═══════════════════════════════════════════
 # 3. 市场自适应资金门槛
@@ -180,6 +184,11 @@ def run_scout() -> dict:
     pool = load_daily_pool()
     pool_codes = set(pool.keys())
 
+    # 🆕 数据源健康检查
+    health = check_data_health()
+    flow_mode = health.get('flow_field', 'momentum')
+    data_status = health.get('status', 'degraded')
+
     threshold = adaptive_flow_threshold()
     lianban_codes = get_lianban_codes()
 
@@ -195,20 +204,30 @@ def run_scout() -> dict:
     for s in raw_stocks:
         code = str(s.get('code', ''))
         name = str(s.get('name', ''))
-        flow = float(s.get('net_flow', 0))
+        flow = s.get('net_flow')         # 可能为 None (fallback模式)
         change = float(s.get('change_pct', 0))
+        quality = s.get('_quality', 'ok')
 
         # 排除
         if code in seen_codes:
             continue
         if is_st(name) or code in lianban_codes:
             continue
-        if not is_market_cap_ok(code):
+        if not is_market_cap_ok(code, s.get('total_mv')):
             continue
-        if flow < threshold:
-            continue
-        if change < -3 or change > 9:
-            continue
+
+        # 资金门槛：fallback模式下放宽（net_flow 不可信）
+        if flow_mode == 'momentum':
+            # 动量模式：用涨跌幅替代资金流，门槛放宽到 ±3%
+            if abs(change) < 3:
+                continue
+            if change < -7 or change > 9:
+                continue
+        else:
+            if flow is not None and flow < threshold:
+                continue
+            if change < -3 or change > 9:
+                continue
 
         seen_codes.add(code)
         stop = calc_stop_loss(code, change)
@@ -217,10 +236,11 @@ def run_scout() -> dict:
 
         entry = {
             'code': code, 'name': name,
-            'net_flow': flow, 'change_pct': change,
+            'net_flow': flow or 0, 'change_pct': change,
             'sector': sector, 'risk_level': risk,
             'stop_loss': stop,
             'operation': pool.get(code, {}).get('operation', ''),
+            '_quality': quality,
         }
 
         if code in pool_codes:
@@ -262,6 +282,8 @@ def run_scout() -> dict:
         'new_alert': new_alert,
         'pending': pending,
         'pool_total': len(pool),
+        'flow_mode': flow_mode,        # 🆕
+        'data_status': data_status,    # 🆕
     }
 
 
@@ -426,7 +448,7 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
             continue
         if not quick_fundamental_check(s['code']):
             continue
-        if not is_market_cap_ok(s['code']):
+        if not is_market_cap_ok(s['code'], s.get('total_mv')):
             continue
         score = score_intraday_candidate(s, hot_sectors)
         candidates.append((score, s))
@@ -463,6 +485,8 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
         new_entries.append({
             'code': code,
             'name': s['name'],
+            'net_flow': s.get('net_flow', 0),
+            'change_pct': s.get('change_pct', 0),
             'sector': s.get('sector', '综合'),
             'operation': f"盘中侦察兵发现 · 综合评分{score:.1f}",
             'risk_level': s.get('risk_level', '中'),
@@ -470,6 +494,7 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
             'total_score': score,
             'source': 'scout_intraday',
             'added_at': ts,
+            '_quality': s.get('_quality', 'ok'),
         })
 
     # 合并：推荐引擎标的 + (盘中标的 ∪ 新候选) → 按 score 排序 → 截取前 9
@@ -585,6 +610,13 @@ def format_report(result: dict) -> str:
     lines.append(f"")
     auction_note = " · 竞价分析" if result.get('auction_enabled') else ""
     lines.append(f"**时间**: {ts}{auction_note}  |  资金门槛: {threshold:.0f}万  |  推荐池: {pool_total}只")
+    # 🆕 数据源状态提示
+    flow_mode = result.get('flow_mode', 'unknown')
+    data_status = result.get('data_status', 'degraded')
+    if flow_mode == 'momentum':
+        lines.append(f"⚠️ 数据源降级: 资金流字段不可用，使用涨跌幅+量比替代")
+    elif flow_mode == 'fallback':
+        lines.append(f"⚠️ 数据源降级: 使用fallback字段  |  健康: {data_status}")
     lines.append(f"")
 
     # ═══ ⭐ 双重确认 ═══

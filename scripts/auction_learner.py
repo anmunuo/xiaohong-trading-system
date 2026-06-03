@@ -18,7 +18,7 @@ auction_learner.py — 竞价贝叶斯学习器 v1.0
   python3 auction_learner.py --show             # 查看当前权重
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 import sys, os, json, sqlite3, math
 from pathlib import Path
@@ -115,6 +115,21 @@ def diagnose_db(date_str: str) -> Dict:
 # ═══════════════════════════════════════════
 # 权重读写
 # ═══════════════════════════════════════════
+
+def _get_latest_date_in_db() -> Optional[str]:
+    """从 auction.db 获取最近一个交易日，无数据时返回 None"""
+    if not DB_PATH.exists():
+        return None
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        cur = conn.cursor()
+        cur.execute("SELECT MAX(date) FROM auction_frames")
+        row = cur.fetchone()
+        conn.close()
+        return row[0] if row and row[0] else None
+    except Exception:
+        return None
+
 
 def load_weights() -> Dict:
     """加载当前权重（含贝叶斯分布参数）"""
@@ -352,8 +367,12 @@ def main():
     if args.date:
         date_str = args.date
     else:
-        yesterday = datetime.now() - timedelta(days=1)
-        date_str = yesterday.strftime('%Y%m%d')
+        # v1.1.1: 从 DB 获取最近交易日，而非盲取昨天（修复跨日/周末空洞）
+        date_str = _get_latest_date_in_db()
+        if not date_str:
+            # DB 为空时才回退到昨天
+            yesterday = datetime.now() - timedelta(days=1)
+            date_str = yesterday.strftime('%Y%m%d')
 
     print(f"🧠 竞价学习器 v{__version__}")
     learn_from_date(date_str)

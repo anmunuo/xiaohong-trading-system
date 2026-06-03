@@ -642,6 +642,28 @@ def build_risk_report(holdings_data: Dict = None,
         for lw in liq_warnings:
             r.alert(lw['detail'], "warning" if lw['impact'] < 10 else "critical")
 
+    # ── 组合层面风控 (v8.6) ──
+    try:
+        from portfolio_risk import run_daily_risk_check
+        pr = run_daily_risk_check()
+        if pr.criticals or pr.warnings or pr.var:
+            r.divider()
+            r.section("组合风控")
+
+            if pr.criticals:
+                for c in pr.criticals:
+                    r.alert(c, "critical")
+            if pr.warnings:
+                for w in pr.warnings:
+                    r.alert(w, "warning")
+
+            if pr.var:
+                r.kv('VaR (95%)', f'¥{abs(pr.var.var_95):,.0f}', f'{abs(pr.var.var_pct):.1f}% 净值')
+                r.kv('CVaR (95%)', f'¥{abs(pr.var.cvar_95):,.0f}', f'{abs(pr.var.cvar_pct):.1f}%')
+                r.kv('历史最大回撤', f'{pr.var.max_drawdown_hist:.1f}%')
+    except Exception:
+        pass
+
     # ── 汇总 ──
     r.divider()
     r.section("持仓汇总")

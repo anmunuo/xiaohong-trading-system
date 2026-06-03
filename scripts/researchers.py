@@ -902,17 +902,40 @@ def run_study_session():
         except Exception as e:
             print(f"  ❌ 研学异常: {e}")
 
-    # 保存研学报告
+    # 保存研学报告（v2.0: 写入实质内容）
     date_str = datetime.now().strftime('%Y-%m-%d')
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     lines = [f"# 📚 研究员自主研学报告", f"> {date_str}", ""]
+    
+    reports_written = 0
     for r in parliament.researchers:
         lines.append(f"## {r.emoji} {r.name}")
-        lines.append(f"_自主学习完成_")
+        try:
+            # 重新 analyze 获取报告（之前的 report 变量作用域受限）
+            ctx = {**context, "topic": f"{r.name}自主研学"}
+            report = r.analyze(ctx)
+            if report.key_findings:
+                lines.append("**核心发现**:")
+                for f in report.key_findings[:3]:
+                    lines.append(f"- {f}")
+                reports_written += 1
+            if report.data_evidence:
+                lines.append("**数据证据**:")
+                for e in report.data_evidence[:3]:
+                    lines.append(f"- {e}")
+            if report.red_flags:
+                lines.append("🚩 **红旗**:")
+                for rf in report.red_flags[:3]:
+                    lines.append(f"- {rf}")
+            lines.append(f"_置信度: {report.confidence:.0%}_")
+        except Exception as e:
+            lines.append(f"_研学异常: {e}_")
         lines.append("")
-    (REPORTS_DIR / f"研学报告-{date_str}.md").write_text('\n'.join(lines))
 
+    (REPORTS_DIR / f"研学报告-{date_str}.md").write_text('\n'.join(lines))
+    
     print(f"\n✅ 研学完成 → {REPORTS_DIR / f'研学报告-{date_str}.md'}")
+    print(f"   实质报告: {reports_written}/{len(parliament.researchers)} 位研究员")
 
 
 # ═══════════════════════════════════════════

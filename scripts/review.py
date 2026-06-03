@@ -42,34 +42,86 @@ REPORTS_DIR = BASE_DIR / "reports" / "daily"
 # ═══════════════════════════════════════════
 
 def get_top_gainers(min_pct: float = None, top_n: int = None) -> list:
-    """获取今日涨幅 ≥ min_pct 的股票"""
+    """获取今日涨幅 ≥ min_pct 的股票
+
+    主通道: 东方财富 push2 (po=0降序) → tushare daily 回退（盘后 push2 关闭时）
+    """
     if min_pct is None:
         min_pct = GAINER_MIN_PCT
     if top_n is None:
         top_n = GAINER_TOP_N
+
+    # ── 主通道: 东方财富 push2 ──
     params = {
-        'pn': 1, 'pz': top_n, 'po': 1, 'np': 1,
+        'pn': 1, 'pz': top_n, 'po': 0, 'np': 1,  # po=0=降序，取涨幅从高到低
         'ut': 'bd1d9ddb04089700cf9c27f6f7426281',
         'fltt': 2, 'invt': 2, 'fid': 'f3',
         'fs': 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23',
         'fields': 'f12,f14,f2,f3,f20,f62',
     }
     data = _em_api_get('https://push2.eastmoney.com/api/qt/clist/get', params)
-    if not data or not data.get('data'):
-        return []
+    if data and data.get('data') and data['data'].get('diff'):
+        items = data['data']['diff']
+        result = [
+            {
+                'code': str(i.get('f12', '')),
+                'name': str(i.get('f14', '')),
+                'price': float(i.get('f2', 0)),
+                'change_pct': float(i.get('f3', 0)),
+                'amount': float(i.get('f20', 0)),
+            }
+            for i in items
+            if float(i.get('f3', 0)) >= min_pct
+        ]
+        if result:
+            return result
 
-    items = data['data'].get('diff', [])
-    return [
-        {
-            'code': str(i.get('f12', '')),
-            'name': str(i.get('f14', '')),
-            'price': float(i.get('f2', 0)),
-            'change_pct': float(i.get('f3', 0)),
-            'amount': float(i.get('f20', 0)),
-        }
-        for i in items
-        if float(i.get('f3', 0)) >= min_pct
-    ]
+    # ── 回退通道: tushare daily（盘后 push2 关闭时可用）──
+    try:
+        import tushare as ts
+        from dotenv import load_dotenv
+        load_dotenv()
+        token = os.environ.get('TUSHARE_TOKEN', '')
+        if token:
+            pro = ts.pro_api(token)
+            today = datetime.now().strftime('%Y%m%d')
+            df = pro.daily(trade_date=today,
+                           fields='ts_code,open,high,low,close,pre_close,vol,amount')
+            if df is not None and not df.empty:
+                # 批量获取名称
+                codes = [str(c)[:6] for c in df['ts_code'].unique()]
+                names = {}
+                try:
+                    df_names = pro.stock_basic(ts_code=','.join(codes[:200]),
+                        fields='ts_code,name')
+                    if df_names is not None and not df_names.empty:
+                        for _, nr in df_names.iterrows():
+                            names[nr['ts_code'][:6]] = nr['name']
+                except Exception:
+                    pass
+
+                result = []
+                for _, row in df.iterrows():
+                    pre = float(row['pre_close'] or 0)
+                    close = float(row['close'] or 0)
+                    if pre <= 0:
+                        continue
+                    chg = round((close - pre) / pre * 100, 2)
+                    if chg >= min_pct:
+                        code = str(row['ts_code'])[:6]
+                        result.append({
+                            'code': code,
+                            'name': names.get(code, ''),
+                            'price': close,
+                            'change_pct': chg,
+                            'amount': float(row['amount'] or 0),
+                        })
+                result.sort(key=lambda x: x['change_pct'], reverse=True)
+                return result[:top_n]
+    except Exception:
+        pass
+
+    return []
 
 
 # ═══════════════════════════════════════════

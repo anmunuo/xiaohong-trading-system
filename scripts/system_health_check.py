@@ -1,698 +1,590 @@
 #!/usr/bin/env python3
 """
-system_health_check.py — 系统全面健康检查 v1.0
-==============================================
-进化引擎完成后自动触发。7 维扫描 + 6 种自修复。
-独立可运行：python3 system_health_check.py [--fix] [--json]
+system_health_check.py — 交易系统健康扫描 v1.0
+=============================================
+7 维自动诊断：数据源 → 估值 → 推荐池 → 持仓 → 进程 → 研究员 → 告警
 
-维度:
-  1. 数据文件完整性
-  2. 跨模块路径一致性
-  3. Cron 健康
-  4. 服务健康 (sniperd)
-  5. 参数一致性
-  6. 认知层闭环
-  7. 账户一致性
+用法:
+  python3 system_health_check.py              # 全扫描 → 终端输出
+  python3 system_health_check.py --json        # JSON 输出
+  python3 system_health_check.py --push        # 推送飞书
+
+Cron: 建议 08:15 / 15:30 / 22:00 各一次
 """
 
-import sys, os, json, subprocess, time
+import json, os, sys, time, gzip
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DATA_DIR = SCRIPT_DIR / "data"
+WORKSPACE = SCRIPT_DIR.parent  # ~/.hermes/profiles/xiaohong/
+DATA_DIR = WORKSPACE / "data"
 KB_DIR = DATA_DIR / "kb"
-PROFILE_DATA_DIR = SCRIPT_DIR.parent / "data"
-PROFILE_KB_DIR = PROFILE_DATA_DIR / "kb"
-REPORTS_DIR = SCRIPT_DIR.parent / "reports" / "daily"
-HEALTH_LOG = DATA_DIR / "health_check_log.json"
+REPORTS_DIR = WORKSPACE / "reports"
 
 __version__ = "1.0.0"
 
 
-# ═══════════════════════════════════════════
-# 工具函数
-# ═══════════════════════════════════════════
+def check_data_freshness() -> dict:
+    """维度1: 数据源新鲜度"""
+    items = {
+        'mega_latest':       (KB_DIR / 'mega_latest.json', 6),
+        'daily_pool':        (SCRIPT_DIR / 'data' / 'daily_pool.json', 24),
+        'kb_insights':       (KB_DIR / 'kb_insights.json', 3),
+        'holdings':          (DATA_DIR / 'holdings.json', 24),
+        'market_snapshot':   (DATA_DIR / 'market_snapshot.json', 8),
+    }
 
-def _ok(msg: str) -> Dict:
-    return {"status": "ok", "message": msg}
+    results = {}
+    for name, (path, max_age_h) in items.items():
+        if path.exists():
+            age_h = (time.time() - path.stat().st_mtime) / 3600
+            status = 'ok' if age_h < max_age_h else 'stale'
+            results[name] = {'age_h': round(age_h, 1), 'status': status}
+        else:
+            results[name] = {'age_h': None, 'status': 'missing'}
+    return results
 
-def _warn(msg: str) -> Dict:
-    return {"status": "warn", "message": msg}
 
-def _err(msg: str) -> Dict:
-    return {"status": "error", "message": msg}
+def check_valuation_sync() -> dict:
+    """维度2: 持仓估值同步"""
+    holdings_path = DATA_DIR / 'holdings.json'
+    if not holdings_path.exists():
+        return {'status': 'missing', 'issues': ['holdings.json 不存在']}
 
-def _load_json(path: Path) -> Optional[dict]:
-    """安全加载 JSON"""
-    if not path.exists():
-        return None
     try:
-        return json.loads(path.read_text())
-    except Exception:
-        return None
-
-def _age_hours(path: Path) -> float:
-    """文件距今小时数"""
-    if not path.exists():
-        return 999
-    return (datetime.now().timestamp() - path.stat().st_mtime) / 3600
-
-
-# ═══════════════════════════════════════════
-# 1. 数据文件完整性
-# ═══════════════════════════════════════════
-
-CRITICAL_FILES = [
-    (DATA_DIR / "daily_pool.json", "推荐池", 24, True),
-    (PROFILE_DATA_DIR / "holdings.json", "持仓数据", 48, True),
-    (PROFILE_KB_DIR / "kb_insights.json", "KB洞察", 6, False),
-    (PROFILE_KB_DIR / "mega_latest.json", "KB最新采集", 2, False),
-    (DATA_DIR / "db" / "auction.db", "竞价DB", 48, False),
-]
-
-
-def check_data_integrity(fix: bool = False) -> Dict:
-    """检查关键数据文件是否存在、有效、时效"""
-    results = []
-    fixes_applied = []
-
-    for path, name, max_age_h, is_critical in CRITICAL_FILES:
-        if not path.exists():
-            if is_critical:
-                if fix:
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    if path.suffix == '.json':
-                        path.write_text('{}')
-                        fixes_applied.append(f"创建空 {name}: {path}")
-                        results.append(_warn(f"{name}: 缺失，已创建空文件"))
-                    else:
-                        results.append(_err(f"{name}: 缺失，无法自动创建"))
-                else:
-                    results.append(_err(f"{name}: 文件不存在"))
-            else:
-                results.append(_warn(f"{name}: 文件不存在"))
-            continue
-
-        # 校验 JSON
-        if path.suffix == '.json':
-            data = _load_json(path)
-            if data is None:
-                if is_critical and fix:
-                    backup = path.with_suffix('.json.bak')
-                    path.rename(backup)
-                    path.write_text('{}')
-                    fixes_applied.append(f"备份损坏 {name} → {backup.name}，重建空文件")
-                    results.append(_warn(f"{name}: JSON损坏，已备份重建"))
-                else:
-                    results.append(_err(f"{name}: JSON 格式损坏"))
-                continue
-
-        # 时效检查
-        age = _age_hours(path)
-        if age > max_age_h:
-            results.append(_warn(f"{name}: 过期 ({age:.1f}h > {max_age_h}h)"))
-        else:
-            results.append(_ok(f"{name}: 正常 ({age:.1f}h)"))
-
-    return {
-        "dimension": "数据文件完整性",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results),
-    }
-
-
-# ═══════════════════════════════════════════
-# 2. 跨模块路径一致性
-# ═══════════════════════════════════════════
-
-PATH_REFERENCES = {
-    "daily_pool.json": {
-        "writers": ["stock_recommender.py", "scout.py"],
-        "readers": ["auction_collector.py", "ammo_risk.py", "scout.py",
-                     "sniperd.py", "review.py", "evolution_engine.py"],
-    },
-    "holdings.json": {
-        "writers": ["ammo_risk.py"],
-        "readers": ["ammo_risk.py", "strategy_bridge.py", "review.py"],
-    },
-    "kb_insights.json": {
-        "writers": [],  # LLM cron writes
-        "readers": ["stock_recommender.py"],
-    },
-    "review_diagnosis.json": {
-        "writers": [],  # LLM cron writes
-        "readers": ["evolution_engine.py"],
-    },
-    "evolution_log.json": {
-        "writers": ["evolution_engine.py"],
-        "readers": ["evolution_engine.py"],
-    },
-}
-
-
-def _resolve_path_from_line(line: str, filename: str, mod_dir: Path) -> Optional[str]:
-    """从代码行中提取变量名，解析为绝对路径"""
-    import re
-    # 匹配 SCRIPT_DIR / 'data' / 'xxx' 或 DATA_DIR / "kb" / "xxx" 等
-    # 提取变量名（SCRIPT_DIR, DATA_DIR, KB_ROOT 等）
-    var_match = re.match(r'\s*(\w+)', line)
-    if not var_match:
-        return None
-    var_name = var_match.group(1)
-
-    # 已知变量 → 绝对路径映射
-    VAR_MAP = {
-        'SCRIPT_DIR': SCRIPT_DIR,
-        'DATA_DIR': DATA_DIR,
-        'KB_DIR': KB_DIR,
-        'KB_ROOT': PROFILE_KB_DIR if var_name == 'KB_ROOT' else None,
-        'BASE_DIR': SCRIPT_DIR.parent,
-        'PROFILE_DATA_DIR': PROFILE_DATA_DIR,
-        'POOL_PATH': DATA_DIR / filename,
-        'LOG_PATH': DATA_DIR / filename,
-    }
-
-    if var_name in VAR_MAP and VAR_MAP[var_name] is not None:
-        base = VAR_MAP[var_name]
-        # 如果行中包含 / 'subdir' / 'filename'，拼接子路径
-        parts = re.findall(r"""['"](\w+(?:\.\w+)?)['"]""", line)
-        if parts:
-            # 第一个是子目录或文件名，最后一个应该是filename
-            subpath = Path(*parts) if len(parts) > 1 else Path(parts[0])
-            resolved = base / subpath
-        else:
-            resolved = base / filename
-        return str(resolved.resolve())
-
-    return None
-
-
-def check_path_consistency(fix: bool = False) -> Dict:
-    """检查各模块对同一文件的读写路径是否一致（基于解析后的绝对路径）"""
-    results = []
-    fixes_applied = []
-
-    for filename, refs in PATH_REFERENCES.items():
-        resolved_paths = set()
-        all_modules = refs.get("writers", []) + refs.get("readers", [])
-
-        for mod in set(all_modules):
-            mod_path = SCRIPT_DIR / mod
-            if not mod_path.exists():
-                continue
-            try:
-                content = mod_path.read_text()
-                for line in content.split('\n'):
-                    if filename in line and '=' in line and any(
-                        kw in line for kw in ['Path(', 'PATH', '_DIR', 'ROOT']
-                    ):
-                        resolved = _resolve_path_from_line(line, filename, mod_path.parent)
-                        if resolved:
-                            resolved_paths.add(resolved)
-            except Exception:
-                pass
-
-        if len(resolved_paths) <= 1:
-            results.append(_ok(f"{filename}: 路径一致 ({len(resolved_paths)}→1处)"))
-        elif len(resolved_paths) == 2 and all(
-            p.replace('/scripts/data/', '/data/') == list(resolved_paths)[0].replace('/scripts/data/', '/data/')
-            for p in resolved_paths
-        ):
-            # scripts/data/ vs data/ — 两个目录但结构相同（已确认无冲突）
-            results.append(_ok(f"{filename}: 路径一致 (scripts/data/ ↔ data/ 对称)"))
-        else:
-            paths_str = ', '.join(p.split('/')[-2]+'/'+p.split('/')[-1] for p in resolved_paths)
-            results.append(_warn(f"{filename}: {len(resolved_paths)}种路径 ({paths_str})"))
-
-    return {
-        "dimension": "跨模块路径一致性",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results) if results else 1,
-    }
-
-
-# ═══════════════════════════════════════════
-# 3. Cron 健康（基于文件产出时间推断）
-
-
-CRON_CHECKS = [
-    # (name, expected_time, path, max_delay_h, is_critical)
-    ("推荐引擎 08:25", (8, 25), DATA_DIR / "daily_pool.json", 1, True),
-    ("竞价采集 09:15", (9, 15), DATA_DIR / "auction.db", 2, False),
-    ("弹药库 15:30", (15, 30), REPORTS_DIR, 2, True),  # 检查目录下最新md
-    ("文工团 17:00", (17, 0), REPORTS_DIR, 2, False),
-    ("进化引擎 17:30", (17, 30), DATA_DIR / "evolution_log.json", 3, True),
-    ("KB采集 每小时", None, PROFILE_KB_DIR / "mega_latest.json", 2, True),
-    ("KB LLM消化 每小时", None, PROFILE_KB_DIR / "kb_insights.json", 3, True),
-    ("瞭望塔 08:30", (8, 30), REPORTS_DIR, 2, True),
-]
-
-
-def check_cron_health(fix: bool = False) -> Dict:
-    """检查 cron 任务基于文件产出的健康状态"""
-    results = []
-    fixes_applied = []
-
-    for name, expected_time, path, max_delay_h, is_critical in CRON_CHECKS:
-        # 处理目录类型：找最新匹配文件
-        check_path = path
-        if path.is_dir():
-            today = datetime.now().strftime('%Y-%m-%d')
-            candidates = sorted(path.glob(f"*{today}*.md"), reverse=True)
-            check_path = candidates[0] if candidates else path  # fallback到目录本身
-
-        if not check_path.exists() or (path.is_dir() and check_path == path):
-            now = datetime.now()
-            if expected_time:
-                expected_dt = now.replace(hour=expected_time[0], minute=expected_time[1], second=0)
-                if now > expected_dt + timedelta(hours=max_delay_h):
-                    results.append(_err(f"{name}: 产出文件不存在"))
-                else:
-                    results.append(_ok(f"{name}: 尚未到运行时间"))
-            else:
-                results.append(_warn(f"{name}: 产出文件不存在"))
-            continue
-
-        age = _age_hours(check_path)
-        if expected_time:
-            now = datetime.now()
-            expected_dt = now.replace(hour=expected_time[0], minute=expected_time[1], second=0)
-            if now < expected_dt:
-                results.append(_ok(f"{name}: 尚未到运行时间"))
-            elif age < max_delay_h:
-                results.append(_ok(f"{name}: 正常 ({age:.1f}h 前)"))
-            else:
-                results.append(_err(f"{name}: 过期 ({age:.1f}h > {max_delay_h}h)"))
-        else:
-            if age < max_delay_h:
-                results.append(_ok(f"{name}: 正常 ({age:.1f}h 前)"))
-            else:
-                results.append(_err(f"{name}: 过期 ({age:.1f}h > {max_delay_h}h)"))
-
-    return {
-        "dimension": "Cron 健康",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results),
-    }
-
-
-# ═══════════════════════════════════════════
-# 4. 服务健康
-# ═══════════════════════════════════════════
-
-def check_service_health(fix: bool = False) -> Dict:
-    """检查 sniperd 等守护进程"""
-    results = []
-    fixes_applied = []
-
-    # sniperd
-    try:
-        r = subprocess.run(
-            ["systemctl", "--user", "is-active", "sniperd.service"],
-            capture_output=True, text=True, timeout=10
-        )
-        if "active" in r.stdout:
-            results.append(_ok("sniperd: 运行中"))
-        else:
-            if fix:
-                subprocess.run(
-                    ["systemctl", "--user", "restart", "sniperd.service"],
-                    capture_output=True, timeout=15
-                )
-                fixes_applied.append("重启 sniperd.service")
-                results.append(_warn("sniperd: 已重启"))
-            else:
-                results.append(_err("sniperd: 未运行"))
+        with open(holdings_path) as f:
+            data = json.load(f)
     except Exception as e:
-        results.append(_err(f"sniperd 检查失败: {e}"))
+        return {'status': 'error', 'issues': [str(e)]}
 
-    # sniperd.timer
-    try:
-        r = subprocess.run(
-            ["systemctl", "--user", "is-enabled", "sniperd.timer"],
-            capture_output=True, text=True, timeout=10
-        )
-        if "enabled" in r.stdout:
-            results.append(_ok("sniperd.timer: 已启用"))
-        else:
-            results.append(_warn("sniperd.timer: 未启用"))
-    except Exception:
-        results.append(_warn("sniperd.timer: 检查失败"))
+    issues = []
+    positions = data.get('positions', data.get('holdings', []))
+    if not positions:
+        return {'status': 'empty', 'issues': ['无持仓记录']}
+
+    no_price = []
+    for p in positions:
+        code = p.get('code', p.get('symbol', '?'))
+        lp = p.get('lastPrice')
+        pnl = p.get('pnlPct')
+        if lp is None or lp == 0:
+            no_price.append(code)
+        if pnl is None and lp not in (None, 0):
+            issues.append(f'{code} 无盈亏数据')
+
+    if no_price:
+        issues.append(f'{len(no_price)} 只持仓无最新价: {",".join(no_price)}')
 
     return {
-        "dimension": "服务健康",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results),
+        'status': 'ok' if not issues else 'degraded',
+        'position_count': len(positions),
+        'no_price_count': len(no_price),
+        'issues': issues,
     }
 
 
-# ═══════════════════════════════════════════
-# 5. 参数一致性
-# ═══════════════════════════════════════════
+def check_parliament_flow() -> dict:
+    """维度3: 研究员议会 → 下游链路"""
+    issues = []
 
-KEY_PARAMS = {
-    "凯利系数": {"path": "ammo_risk.py", "keyword": "KELLY_COEFFICIENT", "default": 0.2},
-    "单股上限": {"path": "ammo_risk.py", "keyword": "SINGLE_STOCK_MAX", "default": 0.333},
-    "仓位上限": {"path": "ammo_risk.py", "keyword": "TOTAL_POSITIONS_MAX", "default": 9},
-    "止盈启动": {"path": "ammo_risk.py", "keyword": "TRAILING_START", "default": 0.20},
-    "止盈步长": {"path": "ammo_risk.py", "keyword": "TRAILING_STEP", "default": 0.10},
-}
-
-
-def check_param_consistency(fix: bool = False) -> Dict:
-    """检查关键参数在进化日志和实际代码中是否一致"""
-    results = []
-    fixes_applied = []
-
-    # 读取进化日志中的最新落地参数
-    evolution_log = _load_json(DATA_DIR / "evolution_log.json")
-    applied_params = {}
-    if evolution_log:
-        for entry in evolution_log:
-            if not entry.get("dry_run"):
-                for detail in entry.get("details", []):
-                    applied_params[detail.get("param", "")] = detail.get("new_value")
-
-    for param_name, info in KEY_PARAMS.items():
-        mod_path = SCRIPT_DIR / info["path"]
-        if not mod_path.exists():
-            results.append(_warn(f"{param_name}: 模块不存在"))
-            continue
-
+    # 3a: daily_pool 含 parliament 字段？
+    pool_path = SCRIPT_DIR / 'data' / 'daily_pool.json'
+    parliament_ok = False
+    if pool_path.exists():
         try:
-            content = mod_path.read_text()
-            found = False
-            for line in content.split('\n'):
-                if info["keyword"] in line and '=' in line:
-                    # 提取值
-                    parts = line.split('=')
-                    if len(parts) >= 2:
-                        val_str = parts[-1].strip().rstrip(',').strip('"').strip("'")
-                        try:
-                            actual_val = float(val_str)
-                            expected = applied_params.get(param_name, info["default"])
-                            if abs(actual_val - expected) < 0.001:
-                                results.append(_ok(f"{param_name}: {actual_val}"))
-                            else:
-                                if fix:
-                                    # 以进化日志为真相源修改代码
-                                    new_line = line.replace(val_str, str(expected))
-                                    content = content.replace(line, new_line)
-                                    fixes_applied.append(f"修正 {param_name}: {actual_val}→{expected}")
-                                    results.append(_warn(f"{param_name}: {actual_val}→{expected} (已修正)"))
-                                else:
-                                    results.append(_err(f"{param_name}: 代码={actual_val} 进化日志={expected}"))
-                            found = True
-                        except ValueError:
-                            pass
-                    break
-            if not found:
-                results.append(_ok(f"{param_name}: 使用默认值 {info['default']}"))
+            with open(pool_path) as f:
+                pool = json.load(f)
+            p = pool.get('parliament', {})
+            if p and p.get('bias'):
+                parliament_ok = True
+            else:
+                issues.append('daily_pool.json 无议会结论（parliament.bias 缺失）')
         except Exception as e:
-            results.append(_err(f"{param_name}: 检查失败 {e}"))
-
-    return {
-        "dimension": "参数一致性",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results),
-    }
-
-
-# ═══════════════════════════════════════════
-# 6. 认知层闭环
-# ═══════════════════════════════════════════
-
-def check_cognitive_closure(fix: bool = False) -> Dict:
-    """检查 review_diagnosis → evolution_log → 参数落地闭环"""
-    results = []
-    fixes_applied = []
-
-    review_path = KB_DIR / "review_diagnosis.json"
-    evolution_path = DATA_DIR / "evolution_log.json"
-
-    # 检查 review_diagnosis
-    if not review_path.exists():
-        results.append(_warn("review_diagnosis.json: 不存在（LLM复盘可能未运行）"))
+            issues.append(f'读取 daily_pool.json 失败: {e}')
     else:
-        age = _age_hours(review_path)
-        if age > 24:
-            results.append(_warn(f"review_diagnosis.json: 过期 ({age:.1f}h)"))
-        else:
-            review_data = _load_json(review_path)
-            if review_data:
-                # 检查是否包含可执行建议
-                entries = review_data if isinstance(review_data, list) else [review_data]
-                has_suggestions = any(
-                    "rule_changes_suggested" in e or "root_causes" in e
-                    for e in entries if isinstance(e, dict)
-                )
-                if has_suggestions:
-                    results.append(_ok(f"review_diagnosis: 有诊断 ({age:.1f}h)"))
-                else:
-                    results.append(_warn("review_diagnosis: 无诊断建议"))
-            else:
-                results.append(_err("review_diagnosis: JSON 损坏"))
+        issues.append('daily_pool.json 不存在')
 
-    # 检查 evolution_log
-    if not evolution_path.exists():
-        results.append(_warn("evolution_log.json: 不存在"))
-    else:
-        age = _age_hours(evolution_path)
-        evolution_data = _load_json(evolution_path)
-        if evolution_data:
-            last_entry = evolution_data[-1] if evolution_data else {}
-            dry = last_entry.get("dry_run", True)
-            applied = last_entry.get("changes_applied", 0)
-            if not dry and applied > 0:
-                results.append(_ok(f"进化引擎: 落地 {applied} 项变更"))
-            elif dry:
-                results.append(_ok(f"进化引擎: dry_run (尝试 {last_entry.get('changes_attempted', 0)} 项)"))
-            else:
-                results.append(_warn("进化引擎: 0 项落地"))
-        else:
-            results.append(_err("evolution_log: JSON 损坏"))
-
-    # 闭环检查
-    if review_path.exists() and evolution_path.exists():
-        review_data = _load_json(review_path)
-        evolution_data = _load_json(evolution_path)
-        if review_data and evolution_data:
-            entries = review_data if isinstance(review_data, list) else [review_data]
-            has_p0 = any(
-                e.get("root_causes", {}).get("candidate_pool_blindspot", {}).get("severity") == "P0"
-                for e in entries if isinstance(e, dict)
-            )
-            last_evo = evolution_data[-1] if evolution_data else {}
-            if has_p0 and last_evo.get("changes_applied", 0) == 0:
-                results.append(_warn("闭环: P0问题已诊断但未通过进化引擎（可能已手动修复）"))
-            else:
-                results.append(_ok("闭环: review → evolution 链路正常"))
-
-    return {
-        "dimension": "认知层闭环",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results) if results else 1,
-    }
-
-
-# ═══════════════════════════════════════════
-# 7. 账户一致性
-# ═══════════════════════════════════════════
-
-def check_account_consistency(fix: bool = False) -> Dict:
-    """检查净值/R值/持仓计算自洽性"""
-    results = []
-    fixes_applied = []
-
-    holdings_path = PROFILE_DATA_DIR / "holdings.json"
-    holdings = _load_json(holdings_path)
-
-    if not holdings:
-        results.append(_err("holdings.json: 无法读取"))
-        return {
-            "dimension": "账户一致性",
-            "checks": results,
-            "fixes": fixes_applied,
-            "score": 0, "total": 1,
-        }
-
-    # 净值一致性
-    account = holdings.get("accountInfo", {})
-    risk = holdings.get("riskManagement", {})
-    pos_net = account.get("currentNetValue", 0)
-    risk_net = risk.get("currentNetValue", 0)
-
-    if abs(pos_net - risk_net) > 0.01:
-        if fix:
-            risk["currentNetValue"] = pos_net
-            holdings["riskManagement"] = risk
-            holdings_path.write_text(json.dumps(holdings, ensure_ascii=False, indent=2))
-            fixes_applied.append(f"修正双重净值: {risk_net}→{pos_net}")
-            results.append(_warn(f"净值: 已修正 {risk_net}→{pos_net}"))
-        else:
-            results.append(_err(f"净值不一致: accountInfo={pos_net} riskManagement={risk_net}"))
-    else:
-        results.append(_ok(f"净值一致: ¥{pos_net:,.0f}"))
-
-    # R值检查
-    r_val = risk.get("currentRValue", 0)
-    expected_r = pos_net * 0.333 * 0.125 * 0.2  # 净值 × 仓位% × 1/8 × 凯利
-    if r_val > 0 and abs(r_val - expected_r) / expected_r > 0.2:
-        results.append(_warn(f"R值偏差: {r_val:.0f} vs 预期 {expected_r:.0f}"))
-    elif r_val > 0:
-        results.append(_ok(f"R值正常: ¥{r_val:,.0f}"))
-    else:
-        results.append(_warn("R值未计算"))
-
-    # 回撤检查
-    peak = risk.get("peakNetValue", 0)
-    drawdown = risk.get("currentDrawdown", 0)
-    if peak > 0:
-        expected_dd = (peak - pos_net) / peak * 100 if pos_net < peak else 0
-        if abs(drawdown - expected_dd) > 2:
-            results.append(_warn(f"回撤偏差: {drawdown:.1f}% vs {expected_dd:.1f}%"))
-        else:
-            results.append(_ok(f"回撤: {drawdown:.1f}% (峰值 ¥{peak:,.0f})"))
-    else:
-        results.append(_ok("回撤: 无历史峰值"))
-
-    return {
-        "dimension": "账户一致性",
-        "checks": results,
-        "fixes": fixes_applied,
-        "score": sum(1 for r in results if r["status"] == "ok"),
-        "total": len(results),
-    }
-
-
-# ═══════════════════════════════════════════
-# 主检查
-# ═══════════════════════════════════════════
-
-def run_health_check(fix: bool = False) -> Dict:
-    """运行 7 维全面健康检查"""
-    checks = [
-        check_data_integrity(fix),
-        check_path_consistency(fix),
-        check_cron_health(fix),
-        check_service_health(fix),
-        check_param_consistency(fix),
-        check_cognitive_closure(fix),
-        check_account_consistency(fix),
-    ]
-
-    total_score = sum(c["score"] for c in checks)
-    total_items = sum(c["total"] for c in checks)
-    all_fixes = []
-    for c in checks:
-        all_fixes.extend(c.get("fixes", []))
-
-    return {
-        "timestamp": datetime.now().isoformat(),
-        "version": __version__,
-        "fix_mode": fix,
-        "dimensions": checks,
-        "summary": {
-            "total_score": total_score,
-            "total_items": total_items,
-            "health_pct": round(total_score / total_items * 100, 1) if total_items > 0 else 0,
-            "fixes_applied": len(all_fixes),
-            "fixes": all_fixes,
-        }
-    }
-
-
-def save_report(report: Dict):
-    """保存健康报告"""
-    HEALTH_LOG.parent.mkdir(parents=True, exist_ok=True)
-
-    # 追加到日志
-    history = []
-    if HEALTH_LOG.exists():
+    # 3b: parliament_log 存在？
+    log_path = DATA_DIR / 'research' / 'parliament_log.json'
+    if log_path.exists():
         try:
-            history = json.loads(HEALTH_LOG.read_text())
+            with open(log_path) as f:
+                log = json.load(f)
         except Exception:
-            pass
+            log = {}
+        issues.append('parliament_log.json 存在但无实质内容' if not log else '')
+    else:
+        issues.append('parliament_log.json 不存在')
 
-    history.append({
-        "timestamp": report["timestamp"],
-        "health_pct": report["summary"]["health_pct"],
-        "fixes": report["summary"]["fixes"],
-    })
-
-    # 只保留最近 90 条
-    if len(history) > 90:
-        history = history[-90:]
-
-    HEALTH_LOG.write_text(json.dumps(history, ensure_ascii=False, indent=2))
+    return {
+        'status': 'ok' if parliament_ok else 'degraded',
+        'parliament_in_pool': parliament_ok,
+        'issues': [i for i in issues if i],
+    }
 
 
-def print_report(report: Dict):
-    """打印健康报告"""
-    s = report["summary"]
-    icon = "🏥" if s["health_pct"] >= 90 else "⚠️" if s["health_pct"] >= 70 else "🚨"
+def check_ammo_risk() -> dict:
+    """维度4: 弹药库风控状态"""
+    hp = DATA_DIR / 'holdings.json'
+    if not hp.exists():
+        return {'status': 'missing', 'issues': ['holdings.json 不存在']}
 
-    print(f"\n{icon} 系统健康检查 · {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    print(f"   版本 {__version__}  ·  fix_mode={report['fix_mode']}  ·  "
-          f"健康度 {s['health_pct']:.0f}%  ({s['total_score']}/{s['total_items']})\n")
+    try:
+        with open(hp) as f:
+            data = json.load(f)
+    except Exception as e:
+        return {'status': 'error', 'issues': [str(e)]}
 
-    for dim in report["dimensions"]:
-        ok_n = dim["score"]
-        total = dim["total"]
-        icon = "✅" if ok_n == total else "⚠️" if ok_n >= total * 0.7 else "❌"
-        print(f"  {icon} {dim['dimension']} ({ok_n}/{total})")
-        for check in dim["checks"]:
-            prefix = {"ok": "    ✓", "warn": "    ⚡", "error": "    ✗"}.get(check["status"], "    ?")
-            print(f"{prefix} {check['message']}")
+    issues = []
 
-    if s["fixes_applied"] > 0:
-        print(f"\n  🔧 自动修复: {s['fixes_applied']} 项")
-        for f in s["fixes"]:
-            print(f"     • {f}")
+    # 检查 R 值
+    rv = data.get('currentRValue') or data.get('riskManagement', {}).get('currentRValue')
+    if rv is None or rv == 0:
+        issues.append('R 值未设置（ammo_risk.py --update 未运行？）')
 
-    print()
+    # 检查回撤
+    drawdown = data.get('currentDrawdown') or data.get('riskManagement', {}).get('currentDrawdown')
+    if drawdown is None:
+        issues.append('回撤数据未计算')
+
+    # 检查净值
+    nv = data.get('currentNetValue') or data.get('accountInfo', {}).get('currentNetValue')
+    if nv is None or nv == 0:
+        issues.append('净值未更新')
+
+    return {
+        'status': 'ok' if not issues else 'degraded',
+        'issues': issues,
+        'r_value': rv,
+        'drawdown': drawdown,
+    }
 
 
-# ═══════════════════════════════════════════
-# CLI
-# ═══════════════════════════════════════════
+def check_data_pipeline() -> dict:
+    """维度5: 数据管线连通性"""
+    results = {}
+    tests = {
+        'push2_list':      ('东方财富 push2 列表API', 'f62 资金流字段'),
+        'sina_realtime':   ('新浪实时行情', '价格/涨跌幅'),
+        'baostock_klines': ('BaoStock 历史K线', 'MA20/PE'),
+        'tushare_basic':   ('tushare 基本面', 'PE/PB/ROE'),
+    }
 
-def main():
+    # 测试 push2 资金流（po=0降序取净流入Top）
+    try:
+        import urllib.request
+        url = 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=5&po=0&np=1&fltt=2&fid=f62&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f12,f3,f62&ut=bd1d9ddb04089700cf9c27f6f7426281'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://data.eastmoney.com/'})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read())
+        items = data.get('data', {}).get('diff', [])
+        f62_ok = sum(1 for i in items if float(i.get('f62', 0) or 0) != 0)
+        results['push2_list'] = 'ok' if f62_ok > 0 else 'degraded (f62=0)'
+    except Exception as e:
+        results['push2_list'] = f'down: {e}'
+
+    # 测试 push2 涨幅榜（po=0降序，验证能取到涨停股）
+    try:
+        url = 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=5&po=0&np=1&fltt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f12,f3&ut=bd1d9ddb04089700cf9c27f6f7426281'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://data.eastmoney.com/'})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read())
+        items = data.get('data', {}).get('diff', [])
+        top_chg = max(float(i.get('f3', 0) or 0) for i in items) if items else 0
+        results['push2_gainers'] = 'ok' if top_chg >= 5 else f'degraded (top_chg={top_chg}%)'
+    except Exception as e:
+        results['push2_gainers'] = f'down: {e}'
+
+    # 测试 Sina
+    try:
+        import urllib.request
+        req = urllib.request.Request('http://hq.sinajs.cn/list=sh000001',
+                                     headers={'Referer': 'https://finance.sina.com.cn'})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            raw = r.read().decode('gbk')
+        results['sina_realtime'] = 'ok' if '上证指数' in raw else 'degraded'
+    except Exception as e:
+        results['sina_realtime'] = f'down: {e}'
+
+    # 测试 tushare
+    try:
+        sys.path.insert(0, str(SCRIPT_DIR))
+        from dotenv import load_dotenv
+        load_dotenv()
+        import tushare as ts
+        pro = ts.pro_api(os.environ.get('TUSHARE_TOKEN', ''))
+        df = pro.daily_basic(ts_code='000001.SZ', trade_date=(datetime.now()-timedelta(days=1)).strftime('%Y%m%d'),
+                             fields='ts_code,trade_date')
+        results['tushare_basic'] = 'ok' if df is not None and not df.empty else 'degraded (无数据)'
+    except Exception as e:
+        results['tushare_basic'] = f'down: {e}'
+
+    # 测试 BaoStock
+    try:
+        import baostock as bs
+        lg = bs.login()
+        if lg.error_code == '0':
+            rs = bs.query_history_k_data_plus('sh.000001', 'date,close',
+                start_date=(datetime.now()-timedelta(days=5)).strftime('%Y-%m-%d'),
+                end_date=datetime.now().strftime('%Y-%m-%d'), frequency='d', adjustflag='2')
+            results['baostock_klines'] = 'ok' if rs.error_code == '0' and rs.data else 'degraded'
+            bs.logout()
+        else:
+            results['baostock_klines'] = 'down: login failed'
+    except Exception as e:
+        results['baostock_klines'] = f'down: {e}'
+
+    total_ok = sum(1 for v in results.values() if v == 'ok')
+    return {
+        'status': 'ok' if total_ok >= 3 else ('degraded' if total_ok >= 1 else 'down'),
+        'providers': results,
+    }
+
+
+def check_scout_sniper() -> dict:
+    """维度6: 侦察兵/狙击手状态"""
+    results = {}
+
+    # 侦察兵最近一次输出
+    scout_dir = SCRIPT_DIR.parent / 'cron' / 'output' / 'a6b4e31d3919'
+    if scout_dir.exists():
+        files = sorted(scout_dir.glob('*.md'), key=lambda p: p.stat().st_mtime, reverse=True)
+        if files:
+            latest = files[0]
+            age_h = (time.time() - latest.stat().st_mtime) / 3600
+            # 读最后输出看数据源状态
+            content = latest.read_text()[:1000]
+            has_degraded = '数据源降级' in content
+            results['scout'] = {
+                'last_run_h': round(age_h, 1),
+                'status': 'degraded' if has_degraded else 'ok',
+            }
+        else:
+            results['scout'] = {'last_run_h': None, 'status': 'no_output'}
+    else:
+        results['scout'] = {'last_run_h': None, 'status': 'no_dir'}
+
+    return results
+
+
+def check_researcher_reports() -> dict:
+    """维度7: 研究员报告质量 + 旧数据源检测"""
+    research_dir = REPORTS_DIR / 'research'
+    issues = []
+
+    # 🆕 检测废弃 openclaw workspace 旧数据
+    stale_holdings = Path('/home/pc/.openclaw/workspace/anmunuo-family/xiaohong/holdings.json')
+    if stale_holdings.exists():
+        issues.append('废弃 openclaw workspace 仍有旧 holdings.json（需删除避免混淆）')
+    stale_backup = Path('/home/pc/.openclaw/workspace.backup.20260419_233239/anmunuo-family/xiaohong/holdings.json')
+    if stale_backup.exists():
+        issues.append('备份 workspace 仍有旧 holdings.json（需删除）')
+
+    study_path = research_dir / f'研学报告-{datetime.now().strftime("%Y-%m-%d")}.md'
+    if study_path.exists():
+        content = study_path.read_text()
+        if '_自主学习完成_' in content and '发现:' not in content:
+            issues.append('研学报告为空壳（仅"自主学习完成"，无实质发现）')
+    else:
+        issues.append('今日研学报告未生成')
+
+    parliament_path = research_dir / f'议会报告-{datetime.now().strftime("%Y-%m-%d")}.md'
+    if parliament_path.exists():
+        content = parliament_path.read_text()
+        if '小红终审' not in content:
+            issues.append('议会报告未完成（缺少小红终审）')
+    else:
+        issues.append('今日议会报告未生成')
+
+    return {
+        'status': 'ok' if not issues else 'degraded',
+        'issues': issues,
+    }
+
+
+def check_factor_quality() -> dict:
+    """维度8: 因子有效性"""
+    ic_path = SCRIPT_DIR / 'data' / 'factor_ic.json'
+    if not ic_path.exists():
+        return {'status': 'degraded', 'issues': ['factor_ic.json 未生成（需运行 factor_evaluator.py）']}
+
+    try:
+        data = json.loads(ic_path.read_text())
+        records = data.get('records', [])
+        if not records:
+            return {'status': 'degraded', 'issues': ['factor_ic.json 无记录']}
+
+        # 统计有效因子数
+        from collections import defaultdict
+        by_factor = defaultdict(list)
+        for r in records[-500:]:  # 最近500条
+            by_factor[r['factor_id']].append(r.get('rank_ic', 0))
+
+        active = 0
+        deprecated = 0
+        for fid, ics in by_factor.items():
+            if len(ics) < 5:
+                continue
+            mean_ic = sum(ics) / len(ics)
+            std_ic = (sum((x - mean_ic)**2 for x in ics) / len(ics)) ** 0.5
+            icir = mean_ic / std_ic if std_ic > 0 else 0
+            if abs(icir) >= 0.02:
+                active += 1
+            else:
+                deprecated += 1
+
+        issues = []
+        if deprecated > active:
+            issues.append(f'低效因子过多: {active} 有效 vs {deprecated} 待淘汰')
+        if active < 3:
+            issues.append('有效因子不足3个，评分体系可能退化为噪声')
+
+        return {
+            'status': 'degraded' if issues else 'ok',
+            'active_factors': active,
+            'deprecated_factors': deprecated,
+            'issues': issues,
+        }
+    except Exception as e:
+        return {'status': 'degraded', 'issues': [f'读取 factor_ic.json 失败: {e}']}
+
+
+def check_portfolio_risk() -> dict:
+    """维度9: 组合风险健康度"""
+    pr_path = SCRIPT_DIR / 'data' / 'portfolio_risk.json'
+    if not pr_path.exists():
+        return {'status': 'ok', 'issues': [], 'note': 'portfolio_risk.json 未生成（无可检查项）'}
+
+    try:
+        data = json.loads(pr_path.read_text())
+        issues = []
+        criticals = data.get('criticals', [])
+        warnings = data.get('warnings', [])
+
+        if criticals:
+            issues.extend(criticals)
+        if warnings:
+            issues.extend(warnings)
+
+        var = data.get('var')
+        if var and abs(var.get('var_pct', 0)) > 3:
+            issues.append(f'VaR超标: {abs(var["var_pct"]):.1f}% > 3%')
+
+        return {
+            'status': 'critical' if criticals else ('degraded' if issues else 'ok'),
+            'criticals': len(criticals),
+            'warnings': len(warnings),
+            'issues': issues,
+        }
+    except Exception as e:
+        return {'status': 'degraded', 'issues': [f'读取 portfolio_risk.json 失败: {e}']}
+
+
+def check_silver_quality() -> dict:
+    """维度10: Silver 层数据质量"""
+    date = datetime.now().strftime('%Y-%m-%d')
+    silver_path = (SCRIPT_DIR.parent / 'data' / 'silver' / 'stock_daily' /
+                   datetime.now().strftime('%Y') / f'{datetime.now().month:02d}' /
+                   f'{datetime.now().day:02d}' / 'all.json.gz')
+    if not silver_path.exists():
+        return {'status': 'degraded', 'issues': [f'Silver {date} 未生成']}
+
+    try:
+        data = json.loads(gzip.decompress(silver_path.read_bytes()))
+        n = len(data)
+        if n < 100:
+            return {'status': 'degraded', 'issues': [f'Silver 行数过少: {n}']}
+        suspended = sum(1 for r in data if r.get('is_suspended'))
+        outliers = sum(1 for r in data if r.get('quality_flags'))
+        return {
+            'status': 'ok' if outliers < n * 0.05 else 'degraded',
+            'n_rows': n,
+            'n_suspended': suspended,
+            'n_outliers': outliers,
+            'issues': [f'{outliers}只异常标记'] if outliers > n * 0.05 else [],
+        }
+    except Exception as e:
+        return {'status': 'down', 'issues': [f'Silver 读取失败: {e}']}
+
+
+def check_gold_quality() -> dict:
+    """维度11: Gold 特征层数据质量"""
+    gold_root = SCRIPT_DIR.parent / 'data' / 'gold'
+    if not gold_root.exists():
+        return {'status': 'degraded', 'issues': ['Gold 数据目录不存在']}
+
+    issues = []
+    date = datetime.now().strftime('%Y-%m-%d')
+    d = datetime.now()
+
+    # 1. 因子面板存在？
+    fp_dir = gold_root / 'factor_panel' / d.strftime('%Y') / f'{d.month:02d}' / f'{d.day:02d}'
+    panel_exists = (fp_dir / 'v3.parquet').exists() or (fp_dir / 'v3.json.gz').exists()
+    n_factors = 0
+    if panel_exists:
+        try:
+            panel = None
+            pq = fp_dir / 'v3.parquet'
+            if pq.exists():
+                import pandas as pd
+                df = pd.read_parquet(pq)
+                n_factors = len(df.columns) - 2  # 减 code, date
+            else:
+                jz = fp_dir / 'v3.json.gz'
+                data = json.loads(gzip.decompress(jz.read_bytes()))
+                if data:
+                    n_factors = len(data[0].get('factors', {}))
+        except Exception as e:
+            issues.append(f'因子面板读取失败: {e}')
+    else:
+        issues.append(f'Gold 因子面板 {date} 不存在')
+
+    # 2. ML 数据集存在？
+    safe_date = date.replace('-', '')
+    ml_train = gold_root / 'ml_datasets' / f'train_{safe_date}_v3.npz'
+    ml_eval = gold_root / 'ml_datasets' / f'eval_{safe_date}_v3.npz'
+    ml_ok = ml_train.exists() and ml_eval.exists()
+    if not ml_ok:
+        issues.append('ML 数据集未生成 (数据量不足或首次运行)')
+
+    # 3. daily_pool 归档
+    pool_path = gold_root / 'daily_pool' / d.strftime('%Y') / f'{d.month:02d}' / f'{d.day:02d}.json'
+    pool_ok = pool_path.exists()
+
+    # 综合判定
+    if panel_exists and not issues:
+        status = 'ok'
+    elif panel_exists:
+        status = 'degraded'
+    else:
+        status = 'missing'
+
+    return {
+        'status': status,
+        'panel_exists': panel_exists,
+        'n_factors': n_factors,
+        'ml_ok': ml_ok,
+        'pool_ok': pool_ok,
+        'issues': issues,
+    }
+
+
+def run_full_check() -> dict:
+    """执行全维扫描"""
+    checks = {
+        '1_data_freshness':    check_data_freshness(),
+        '2_valuation_sync':    check_valuation_sync(),
+        '3_parliament_flow':   check_parliament_flow(),
+        '4_ammo_risk':         check_ammo_risk(),
+        '5_data_pipeline':     check_data_pipeline(),
+        '6_scout_sniper':      check_scout_sniper(),
+        '7_researcher_quality': check_researcher_reports(),
+        '8_factor_quality':    check_factor_quality(),
+        '9_portfolio_risk':    check_portfolio_risk(),
+        '10_silver_quality':   check_silver_quality(),
+        '11_gold_quality':     check_gold_quality(),
+    }
+
+    # 汇总
+    statuses = [v.get('status', 'unknown') for v in checks.values()]
+    overall = 'critical' if 'down' in statuses else ('degraded' if 'degraded' in statuses else 'ok')
+
+    return {
+        'version': __version__,
+        'checked_at': datetime.now().isoformat(),
+        'overall': overall,
+        'checks': checks,
+        'issue_count': sum(len(v.get('issues', [])) for v in checks.values()),
+    }
+
+
+def format_report(result: dict) -> str:
+    """格式化健康报告"""
+    lines = []
+    status_icon = {'ok': '✅', 'degraded': '⚠️', 'down': '🔴', 'critical': '🚨'}
+    icon = status_icon.get(result['overall'], '❓')
+
+    lines.append(f"# {icon} 交易系统健康扫描  v{__version__}")
+    lines.append(f"> {result['checked_at'][:19]}")
+    lines.append(f"> 综合状态: **{result['overall']}**  |  问题: {result['issue_count']} 项")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    labels = {
+        '1_data_freshness': '📦 数据新鲜度',
+        '2_valuation_sync': '💰 持仓估值',
+        '3_parliament_flow': '🏛️ 议会链路',
+        '4_ammo_risk': '🛡️ 弹药库风控',
+        '5_data_pipeline': '🔌 数据管线',
+        '6_scout_sniper': '🔍 侦察兵',
+        '7_researcher_quality': '🧠 研究员质量',
+        '8_factor_quality': '📊 因子有效性',
+        '9_portfolio_risk': '🛡️ 组合风险',
+        '10_silver_quality': '🥈 Silver质量',
+        '11_gold_quality':   '🏆 Gold质量',
+    }
+
+    for key, label in labels.items():
+        check = result['checks'].get(key, {})
+        status = check.get('status', 'unknown')
+        s_icon = status_icon.get(status, '❓')
+        lines.append(f"### {s_icon} {label}")
+        lines.append("")
+
+        if key == '5_data_pipeline':
+            providers = check.get('providers', {})
+            for name, state in providers.items():
+                p_icon = '✅' if state == 'ok' else ('⚠️' if 'degraded' in str(state) else '🔴')
+                lines.append(f"- {p_icon} {name}: {state}")
+        elif key == '1_data_freshness':
+            for name, info in check.items():
+                if isinstance(info, dict):
+                    age = info.get('age_h')
+                    status = info.get('status', '?')
+                    icon2 = '✅' if status == 'ok' else '⚠️'
+                    age_str = f'{age:.1f}h' if age is not None else '缺失'
+                    lines.append(f"- {icon2} {name}: {age_str}")
+        else:
+            for issue in check.get('issues', []):
+                lines.append(f"- ⚠️ {issue}")
+            other = {k: v for k, v in check.items() if k not in ('status', 'issues')}
+            if other:
+                for k, v in other.items():
+                    if v is not None:
+                        lines.append(f"- {k}: {v}")
+
+        lines.append("")
+
+    lines.append("---")
+    lines.append(f"*system_health_check v{__version__} · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
+    return "\n".join(lines)
+
+
+if __name__ == '__main__':
     import argparse
-    p = argparse.ArgumentParser(description='系统健康检查 v1.0')
-    p.add_argument('--fix', action='store_true', help='自动修复发现的问题')
-    p.add_argument('--json', action='store_true', help='JSON 输出')
-    p.add_argument('--no-save', action='store_true', help='不保存日志')
-    args = p.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--json', action='store_true')
+    parser.add_argument('--push', action='store_true')
+    args = parser.parse_args()
 
-    report = run_health_check(fix=args.fix)
+    result = run_full_check()
 
     if args.json:
-        print(json.dumps(report, ensure_ascii=False, indent=2))
+        print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     else:
-        print_report(report)
+        print(format_report(result))
 
-    if not args.no_save:
-        save_report(report)
+    if args.push:
+        try:
+            from feishu_push import push_text
+            report = format_report(result)
+            push_text(report)
+        except Exception as e:
+            print(f"推送失败: {e}")
 
-    # 退出码：健康度 < 70% 时非零
-    if report["summary"]["health_pct"] < 70:
+    # 仅 down/critical 时非零退出，degraded 是"需要注意"不是"故障"
+    if result['overall'] in ('down', 'critical'):
         sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()
+    sys.exit(0)

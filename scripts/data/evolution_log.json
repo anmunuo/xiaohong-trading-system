@@ -1,29 +1,91 @@
 [
   {
-    "version": 1,
-    "date": "2026-06-01",
-    "timestamp": "2026-06-01T17:23:39.480433",
-    "dry_run": true,
-    "changes_attempted": 1,
-    "changes_applied": 0,
-    "details": []
-  },
-  {
-    "version": 2,
-    "date": "2026-06-02",
-    "timestamp": "2026-06-02T00:32:57.657574",
-    "dry_run": true,
-    "changes_attempted": 6,
-    "changes_applied": 0,
-    "details": []
-  },
-  {
-    "version": 3,
-    "date": "2026-06-02",
-    "timestamp": "2026-06-02T00:42:47.285509",
-    "dry_run": true,
-    "changes_attempted": 6,
-    "changes_applied": 0,
-    "details": []
+    "version": 4,
+    "date": "2026-06-03",
+    "timestamp": "2026-06-03T17:35:00",
+    "dry_run": false,
+    "changes_attempted": 7,
+    "changes_applied": 3,
+    "changes_rejected": 4,
+    "weight_sum_warning": "五因子权重合计 1.13 ≠ 1.0，推荐评分绝对值偏高但不影响排序",
+    "details": [
+      {
+        "action": "公告情绪权重调整",
+        "param_id": "recommender_weight_event",
+        "old_value": 0.30,
+        "new_value": 0.35,
+        "change_pct": "16.7%",
+        "status": "applied",
+        "reason": "研究员: 公告信号密度变化 - PE分位90%高位，适当提升事件因子权重合理",
+        "validation": "范围[0.15,0.50]✅ 幅度16.7%≤20%✅",
+        "file": "stock_recommender.py"
+      },
+      {
+        "action": "行业轮动信号增强",
+        "param_id": "recommender_weight_sentiment",
+        "old_value": 0.20,
+        "new_value": 0.25,
+        "change_pct": "25.0%",
+        "status": "rejected",
+        "reason": "变更幅度 25.0% 超出 MAX_CHANGE_PCT(20%) 上限",
+        "suggestion": "建议分两次调整：先调整到 0.22(10%)，3天后验证再调"
+      },
+      {
+        "action": "止损参数重新校准",
+        "param_id": "sniper_stop_approach_pct",
+        "old_value": 3.0,
+        "new_value": 0.04,
+        "status": "rejected",
+        "reason": "值 0.04 超出范围 [1.0, 8.0]。疑似 action_param_map 单位 bug：sniperd.py 用 percent 单位(3.0=3%)，但映射写入 0.04。正确值可能为 2.5(收紧) 或 4.0(放宽)。",
+        "suggestion": "需人工确认正确值后重新提交"
+      },
+      {
+        "action": "MA20偏离阈值优化",
+        "param_id": "recommender_weight_technical",
+        "old_value": 0.15,
+        "new_value": 0.18,
+        "change_pct": "20.0%",
+        "status": "applied",
+        "reason": "研究员: MA20偏离分布优化 - 技术因子从0.15→0.18(边界值)",
+        "validation": "范围[0.05,0.30]✅ 幅度20.0%≤20%✅(边界)",
+        "file": "stock_recommender.py"
+      },
+      {
+        "action": "北向资金权重上调",
+        "param_id": "recommender_weight_fundamental",
+        "old_value": 0.25,
+        "new_value": 0.30,
+        "change_pct": "20.0%",
+        "status": "applied",
+        "reason": "研究员: 北向资金持续性 - 今日北向净流入5.38亿确认流入趋势，上调基本面因子权重至0.30",
+        "validation": "范围[0.10,0.40]✅ 幅度20.0%≤20%✅(边界)",
+        "file": "stock_recommender.py"
+      },
+      {
+        "action": "估值分位风险阈值设置",
+        "param_id": "ammo_total_position_limit",
+        "old_value": null,
+        "new_value": 0.70,
+        "status": "rejected",
+        "reason": "参数 ammo_total_position_limit 未在 EVOLVABLE_PARAMS 中定义。当前PE分位90%确实需要风控参数，但需先在 ammo_risk.py 中实现该参数后才能调整。",
+        "suggestion": "需在 EVOLVABLE_PARAMS 中添加 ammo_total_position_limit 参数定义，并在 ammo_risk.py 中实现 PE 分位自动减仓逻辑"
+      },
+      {
+        "action": "market_snapshot 字段扩展",
+        "param_id": null,
+        "old_value": null,
+        "new_value": null,
+        "status": "rejected",
+        "reason": "无对应可进化参数。这是功能新增（非参数调优），需人工代码开发",
+        "suggestion": "提交为 feature request，由开发工程师实现"
+      }
+    ],
+    "market_context": {
+      "shanghai": "4,075 (+0.43%)",
+      "hangseng": "26,038 (+2.52%)",
+      "pe_percentile": "90.0%",
+      "position_signal": "轻仓/防御（整体偏贵）",
+      "north_flow": "净流入 5.38亿"
+    }
   }
 ]

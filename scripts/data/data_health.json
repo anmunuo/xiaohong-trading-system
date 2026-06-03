@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-03 02:01:49",
+  "checked_at": "2026-06-04 02:01:27",
   "sources": {
     "mega_latest": {
       "ok": true,
@@ -13,22 +13,22 @@
     },
     "daily_pool": {
       "ok": true,
-      "age_hours": 15.5,
+      "age_hours": 0.5,
       "stock_count": 8,
       "error": ""
     },
     "market_snapshot": {
       "ok": true,
-      "age_hours": 11.3
+      "age_hours": 17.5
     },
     "tracked_pool": {
       "ok": true,
-      "active_count": 8
+      "active_count": 26
     },
     "kb_insights": {
       "ok": true,
       "age_hours": 0.9,
-      "entry_count": 43
+      "entry_count": 50
     }
   },
   "overall_status": "healthy",

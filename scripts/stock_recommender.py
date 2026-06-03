@@ -94,7 +94,7 @@ def _guess_sector(name: str, code: str = '', kb_modules: Dict = None) -> str:
 
 
 class StockRecommender:
-    """选股推荐引擎 v2.1"""
+    """选股推荐引擎 v2.2 — 六类因子（五因子+新增因子）"""
 
     def __init__(self):
         self.date_str = datetime.now().strftime('%Y%m%d')
@@ -103,6 +103,8 @@ class StockRecommender:
         self._quote_cache = {}
         self._indicators = {}      # 预计算技术指标
         self._insights_index = {}  # KB LLM 洞察索引
+        self._new_factors = {}     # 🆕 新增因子面板 {code: {factor_id: value}}
+        self._factor_weights = {}  # 🆕 IC 动态权重
 
     # ═══════════════════════════════════════════
     # 主流程
@@ -112,6 +114,7 @@ class StockRecommender:
         """生成每日推荐池"""
         kb = self._load_kb()
         self._load_insights()      # 🆕 加载 LLM 洞察
+        self._load_factor_weights() # 🆕 加载 IC 动态权重
 
         # Step 1: 候选池
         candidates = self._get_candidates(kb)
@@ -121,10 +124,12 @@ class StockRecommender:
         if all_codes:
             from data_pipeline import get_stock_realtime
             self._quote_cache = get_stock_realtime(all_codes)
-            self._prefetch_indicators(all_codes)  # 🆕 MA20/均量/PE
+            self._prefetch_indicators(all_codes)  # MA20/均量/PE
+            self._prefetch_new_factors(all_codes) # 🆕 新因子面板
         else:
             self._quote_cache = {}
             self._indicators = {}
+            self._new_factors = {}
 
         # Step 2: 排除过滤
         valid = self._apply_filters(candidates)
@@ -292,29 +297,160 @@ class StockRecommender:
 
         # ── tushare 基本面 PE/PB/市值 ──
         # 注意: daily_basic 不支持 roe 字段，且多码批量查询不稳定，逐只查询
+        # v8.5: ThreadPoolExecutor 并行（10 workers，避免触发 tushare 限流）
         try:
             import tushare as ts
             token = os.environ.get('TUSHARE_TOKEN', '')
             if token:
-                pro = ts.pro_api(token)
                 yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y%m%d')
-                for code in codes:
+
+                def _fetch_fundamental(code):
+                    """单只查询基本面（独立 pro_api 实例，线程安全）"""
                     try:
+                        _pro = ts.pro_api(token)
                         ts_code = code + '.SZ' if code.startswith(('0','3')) else code + '.SH'
-                        df = pro.daily_basic(
+                        df = _pro.daily_basic(
                             ts_code=ts_code, trade_date=yesterday,
                             fields='ts_code,pe_ttm,pb,total_mv,circ_mv'
                         )
                         if df is not None and not df.empty:
                             row = df.iloc[0]
-                            if code in self._indicators:
-                                ind = self._indicators[code]
-                                ind['pe'] = float(row.get('pe_ttm', 0) or 0)
-                                ind['pb'] = float(row.get('pb', 0) or 0)
-                                ind['total_mv'] = float(row.get('total_mv', 0) or 0) / 1e4  # 万元→亿元
-                                ind['circ_mv'] = float(row.get('circ_mv', 0) or 0) / 1e4
+                            return (code, {
+                                'pe': float(row.get('pe_ttm', 0) or 0),
+                                'pb': float(row.get('pb', 0) or 0),
+                                'total_mv': float(row.get('total_mv', 0) or 0) / 1e4,  # 万元→亿元
+                                'circ_mv': float(row.get('circ_mv', 0) or 0) / 1e4,
+                            })
                     except Exception:
-                        continue
+                        pass
+                    return (code, None)
+
+                with ThreadPoolExecutor(max_workers=10) as ex:
+                    futures = {ex.submit(_fetch_fundamental, c): c for c in codes}
+                    for fut in as_completed(futures):
+                        code, fund = fut.result()
+                        if fund and code in self._indicators:
+                            self._indicators[code].update(fund)
+        except Exception:
+            pass
+
+    def _prefetch_new_factors(self, codes: List[str]):
+        """🆕 从已预取的 indicators 中直接计算新增因子（避免重复拉K线）"""
+        if not codes:
+            return
+        self._new_factors = {}
+        try:
+            for code in codes:
+                ind = self._indicators.get(code, {})
+                closes = ind.get('close_history', [])
+                if not closes or len(closes) < 20:
+                    continue
+
+                n = len(closes)
+                nf = {}
+
+                # ── 动量 ──
+                if n >= 6 and closes[-6] > 0:
+                    nf['mom_5d'] = round((closes[-1] / closes[-6] - 1) * 100, 2)
+                if n >= 21 and closes[-21] > 0:
+                    nf['mom_20d'] = round((closes[-1] / closes[-21] - 1) * 100, 2)
+                if n >= 61 and closes[-61] > 0:
+                    nf['mom_60d'] = round((closes[-1] / closes[-61] - 1) * 100, 2)
+
+                # ── 波动（简化：从 close 算日内振幅代理）──
+                if n >= 21:
+                    rets = [(closes[i] - closes[i-1]) / closes[i-1] for i in range(n-20, n)]
+                    if rets:
+                        mu = sum(rets) / len(rets)
+                        var = sum((r - mu) ** 2 for r in rets) / len(rets)
+                        nf['vol_20d'] = round(var ** 0.5 * 100, 2)
+
+                # ── 筹码 ──
+                ma20 = ind.get('ma20', 0)
+                if ma20 > 0:
+                    nf['ma20_deviation'] = round((closes[-1] / ma20 - 1) * 100, 2)
+
+                avg_vol_5 = ind.get('avg_vol_5', 0)
+                if avg_vol_5 > 0 and n >= 21:
+                    avg_vol_all = sum(ind.get('close_history', [])[-21:]) / 21  # 简化为价格
+                    pass  # 量比需在 indicators 中有 volumes
+
+                if nf:
+                    self._new_factors[code] = nf
+
+            print(f'   [NewFactors] {len(self._new_factors)}/{len(codes)} codes enriched from indicators')
+        except Exception as e:
+            print(f'   [NewFactors] skipped: {e}')
+
+    def _score_new_factors_bonus(self, c: Dict) -> float:
+        """🆕 新增因子加分：动量/波动 0-100 分"""
+        code = str(c.get('code', ''))
+        nf = self._new_factors.get(code, {})
+        if not nf:
+            return 0
+
+        bonus = 0
+        n_signals = 0
+
+        # ── 动量：短中期趋势确认 ──
+        mom_5 = nf.get('mom_5d')
+        mom_20 = nf.get('mom_20d')
+        if mom_5 is not None and mom_20 is not None:
+            if 0 < mom_5 < 15 and 0 < mom_20 < 30:
+                bonus += 25
+                n_signals += 1
+            elif mom_5 > 15:
+                bonus += 10
+                n_signals += 1
+            elif mom_5 < -5:
+                bonus -= 15
+
+        # ── 波动 ──
+        vol20 = nf.get('vol_20d')
+        if vol20 is not None:
+            if 2 < vol20 < 5:
+                bonus += 20
+                n_signals += 1
+            elif vol20 > 8:
+                bonus -= 10
+
+        # ── MA20偏离 ──
+        dev = nf.get('ma20_deviation')
+        if dev is not None:
+            if -3 < dev < 3:
+                bonus += 20  # 贴近MA20，安全
+                n_signals += 1
+            elif dev > 10:
+                bonus -= 10  # 偏离过大
+
+        if n_signals == 0:
+            return 0
+        return min(max(bonus, 0), 100)
+
+    def _load_factor_weights(self):
+        """🆕 从 factor_ic.json 加载 IC 动态权重"""
+        self._factor_weights = {}
+        ic_path = SCRIPT_DIR / 'data' / 'factor_ic.json'
+        if not ic_path.exists():
+            return
+        try:
+            data = json.loads(ic_path.read_text())
+            records = data.get('records', [])
+            if not records:
+                return
+            from collections import defaultdict
+            by_factor = defaultdict(list)
+            for r in records:
+                by_factor[r['factor_id']].append(r.get('rank_ic', 0))
+            for fid, ics in by_factor.items():
+                recent = ics[-20:]
+                if len(recent) < 5:
+                    continue
+                mean_ic = sum(recent) / len(recent)
+                std_ic = (sum((x - mean_ic)**2 for x in recent) / len(recent)) ** 0.5
+                icir = mean_ic / std_ic if std_ic > 0 else 0
+                weight = max(0.5, min(1.5, 1.0 + icir))
+                self._factor_weights[fid] = round(weight, 3)
         except Exception:
             pass
 
@@ -563,16 +699,71 @@ class StockRecommender:
             scores['technical'] = self._score_technical(c)
             scores['research'] = self._score_research(c, modules)
 
+            # 🆕 新因子加分：动量/波动/筹码 → 独立模块，加权叠加
+            new_factor_bonus = self._score_new_factors_bonus(c)
+
             c['factor_scores'] = scores
-            c['total_score'] = round(
-                scores['event'] * 0.30 +       # WEIGHT_EVENT
-                scores['fund'] * 0.25 +        # WEIGHT_FUNDAMENTAL
-                scores['sentiment'] * 0.20 +   # WEIGHT_SENTIMENT
-                scores['technical'] * 0.15 +   # WEIGHT_TECHNICAL
-                scores['research'] * 0.10, 1   # WEIGHT_RESEARCH
+
+            # 五因子 + 新因子加权融合 (新因子权重~15%)
+            base_score = (
+                scores['event'] * 0.30 +
+                scores['fund'] * 0.25 +
+                scores['sentiment'] * 0.18 +
+                scores['technical'] * 0.15 +
+                scores['research'] * 0.07
             )
+            # 新因子加成：最高 +15 分
+            new_bonus = round(new_factor_bonus * 0.15, 1)
+
+            c['total_score'] = round(base_score + new_bonus, 1)
+            # 记录已加权的新因子贡献（方便显示和调试）
+            scores['new_factors'] = new_bonus
+
+        # 🆕 ML 预测批量增强：模型预测分流入 Total Score
+        self._apply_ml_boost(candidates)
 
         return candidates
+
+    def _apply_ml_boost(self, candidates: List[Dict]):
+        """🆕 用 ML 预测器给候选池批量打分"""
+        try:
+            from ml_predictor import MLPredictor
+            predictor = MLPredictor()
+            if predictor.model is None:
+                return  # 模型未训练，静默跳过
+
+            codes = [c['code'] for c in candidates]
+            # 构建因子面板
+            factor_panels = {}
+            for c in candidates:
+                code = str(c['code'])
+                fp = self._new_factors.get(code, {})
+                # 补充 PE/PB 到因子面板
+                ind = self._indicators.get(code, {})
+                fp['pe'] = ind.get('pe', 0)
+                fp['pb'] = ind.get('pb', 0)
+                fp['total_mv'] = ind.get('total_mv', 0)
+                factor_panels[code] = fp
+
+            preds = predictor.predict_batch(codes, factor_panels, self._indicators)
+
+            boosted = 0
+            for c in candidates:
+                code = str(c['code'])
+                pred = preds.get(code)
+                if pred and pred.score_boost != 0:
+                    c['total_score'] = round(c['total_score'] + pred.score_boost, 1)
+                    c['factor_scores']['ml_boost'] = round(pred.score_boost, 1)
+                    c['ml_signal'] = pred.signal
+                    c['ml_prob'] = pred.up_prob
+                    boosted += 1
+
+            if boosted:
+                print(f'   [ML] {boosted}/{len(candidates)} boosted')
+        except ImportError:
+            pass  # lightgbm 未安装
+        except Exception as e:
+            print(f'   [ML] skipped: {e}')
 
     def _score_event(self, c: Dict, modules: Dict) -> float:
         score = 50

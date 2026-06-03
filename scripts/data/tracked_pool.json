@@ -13,6 +13,60 @@
         "600566",
         "001393"
       ]
+    },
+    {
+      "date": "20260603",
+      "stock_count": 7,
+      "stocks": [
+        "301367",
+        "002206",
+        "605507",
+        "000423",
+        "300888",
+        "000100",
+        "600323"
+      ]
+    },
+    {
+      "date": "20260603",
+      "stock_count": 3,
+      "stocks": [
+        "601686",
+        "002452",
+        "301376"
+      ]
+    },
+    {
+      "date": "20260603",
+      "stock_count": 3,
+      "stocks": [
+        "688377",
+        "603969",
+        "603899"
+      ]
+    },
+    {
+      "date": "20260603",
+      "stock_count": 1,
+      "stocks": [
+        "603344"
+      ]
+    },
+    {
+      "date": "20260603",
+      "stock_count": 1,
+      "stocks": [
+        "601600"
+      ]
+    },
+    {
+      "date": "20260604",
+      "stock_count": 3,
+      "stocks": [
+        "603861",
+        "688100",
+        "603529"
+      ]
     }
   ],
   "stocks": [
@@ -47,6 +101,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 7894528.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 9.72,
+          "change_pct": 0.21,
+          "vs_entry_pct": 0.21,
+          "volume": 15220100.0
         }
       ],
       "exit": {}
@@ -82,6 +143,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 12744205.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 24.11,
+          "change_pct": 10.9,
+          "vs_entry_pct": 10.9,
+          "volume": 46723596.0
         }
       ],
       "exit": {}
@@ -117,6 +185,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 2322815.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 56.37,
+          "change_pct": 0.95,
+          "vs_entry_pct": 0.95,
+          "volume": 5043597.0
         }
       ],
       "exit": {}
@@ -152,6 +227,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 3073174.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 43.81,
+          "change_pct": -1.08,
+          "vs_entry_pct": -1.08,
+          "volume": 5983180.0
         }
       ],
       "exit": {}
@@ -187,6 +269,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 4122953.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 36.77,
+          "change_pct": 0.03,
+          "vs_entry_pct": 0.03,
+          "volume": 9982750.0
         }
       ],
       "exit": {}
@@ -222,6 +311,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 4749695.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 14.3,
+          "change_pct": -2.85,
+          "vs_entry_pct": -2.85,
+          "volume": 8576812.0
         }
       ],
       "exit": {}
@@ -257,6 +353,13 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 3185400.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 27.59,
+          "change_pct": -3.77,
+          "vs_entry_pct": -3.77,
+          "volume": 4051886.0
         }
       ],
       "exit": {}
@@ -292,6 +395,577 @@
           "change_pct": 0.0,
           "vs_entry_pct": 0.0,
           "volume": 4220926.0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 66.86,
+          "change_pct": 4.57,
+          "vs_entry_pct": 4.57,
+          "volume": 10211041.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "301367",
+      "name": "瑞迈特",
+      "entry_date": "20260603",
+      "entry_close": 45.45,
+      "entry_score": 67.5,
+      "entry_factors": {
+        "event": 55,
+        "fund": 77.0,
+        "sentiment": 70,
+        "technical": 85,
+        "research": 50
+      },
+      "entry_sector": "医疗保健",
+      "stop_loss_price": 42.27,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 45.45,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 44.73,
+          "change_pct": -1.58,
+          "vs_entry_pct": -1.58,
+          "volume": 914362.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002206",
+      "name": "海利得",
+      "entry_date": "20260603",
+      "entry_close": 5.51,
+      "entry_score": 67.2,
+      "entry_factors": {
+        "event": 65,
+        "fund": 71.8,
+        "sentiment": 60,
+        "technical": 85,
+        "research": 50
+      },
+      "entry_sector": "化纤",
+      "stop_loss_price": 5.23,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 5.51,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 5.48,
+          "change_pct": -0.54,
+          "vs_entry_pct": -0.54,
+          "volume": 19525800.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "605507",
+      "name": "国邦医药",
+      "entry_date": "20260603",
+      "entry_close": 15.64,
+      "entry_score": 67.0,
+      "entry_factors": {
+        "event": 65,
+        "fund": 72.2,
+        "sentiment": 70,
+        "technical": 70,
+        "research": 50
+      },
+      "entry_sector": "化学制药",
+      "stop_loss_price": 14.86,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 15.64,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 15.72,
+          "change_pct": 0.51,
+          "vs_entry_pct": 0.51,
+          "volume": 4683217.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "000423",
+      "name": "东阿阿胶",
+      "entry_date": "20260603",
+      "entry_close": 50.37,
+      "entry_score": 66.7,
+      "entry_factors": {
+        "event": 55,
+        "fund": 73.80000000000001,
+        "sentiment": 70,
+        "technical": 85,
+        "research": 50
+      },
+      "entry_sector": "中成药",
+      "stop_loss_price": 47.85,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 50.37,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 49.32,
+          "change_pct": -2.08,
+          "vs_entry_pct": -2.08,
+          "volume": 4408684.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300888",
+      "name": "稳健医疗",
+      "entry_date": "20260603",
+      "entry_close": 28.97,
+      "entry_score": 66.1,
+      "entry_factors": {
+        "event": 65,
+        "fund": 77.4,
+        "sentiment": 70,
+        "technical": 55,
+        "research": 50
+      },
+      "entry_sector": "医疗保健",
+      "stop_loss_price": 26.94,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 28.97,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 28.31,
+          "change_pct": -2.28,
+          "vs_entry_pct": -2.28,
+          "volume": 3559420.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "000100",
+      "name": "TCL科技",
+      "entry_date": "20260603",
+      "entry_close": 4.43,
+      "entry_score": 65.6,
+      "entry_factors": {
+        "event": 65,
+        "fund": 71.4,
+        "sentiment": 60,
+        "technical": 75,
+        "research": 50
+      },
+      "entry_sector": "元器件",
+      "stop_loss_price": 4.21,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 4.43,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 4.74,
+          "change_pct": 7.0,
+          "vs_entry_pct": 7.0,
+          "volume": 2385333349.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "600323",
+      "name": "瀚蓝环境",
+      "entry_date": "20260603",
+      "entry_close": 31.0,
+      "entry_score": 65.5,
+      "entry_factors": {
+        "event": 65,
+        "fund": 73.8,
+        "sentiment": 60,
+        "technical": 70,
+        "research": 50
+      },
+      "entry_sector": "环境保护",
+      "stop_loss_price": 29.45,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 31.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-03",
+          "close": 30.73,
+          "change_pct": -0.87,
+          "vs_entry_pct": -0.87,
+          "volume": 7274823.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "601686",
+      "name": "友发集团",
+      "entry_date": "20260603",
+      "entry_close": 5.56,
+      "entry_score": 63.0,
+      "entry_factors": {
+        "event": 65,
+        "fund": 71.8,
+        "sentiment": 60,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 0
+      },
+      "entry_sector": "钢加工",
+      "stop_loss_price": 5.28,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 5.56,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002452",
+      "name": "长高电气",
+      "entry_date": "20260603",
+      "entry_close": 11.26,
+      "entry_score": 61.5,
+      "entry_factors": {
+        "event": 60,
+        "fund": 79.0,
+        "sentiment": 50,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 0
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 10.7,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 11.26,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "301376",
+      "name": "致欧科技",
+      "entry_date": "20260603",
+      "entry_close": 18.26,
+      "entry_score": 61.2,
+      "entry_factors": {
+        "event": 60,
+        "fund": 73.8,
+        "sentiment": 60,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 0
+      },
+      "entry_sector": "家居用品",
+      "stop_loss_price": 16.98,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 18.26,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "688377",
+      "name": "迪威尔",
+      "entry_date": "20260603",
+      "entry_close": 31.69,
+      "entry_score": 68.6,
+      "entry_factors": {
+        "event": 60,
+        "fund": 58.6,
+        "sentiment": 55,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 65
+      },
+      "entry_sector": "专用机械",
+      "stop_loss_price": 30.11,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 31.69,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603969",
+      "name": "银龙股份",
+      "entry_date": "20260603",
+      "entry_close": 8.34,
+      "entry_score": 68.0,
+      "entry_factors": {
+        "event": 55,
+        "fund": 76.6,
+        "sentiment": 60,
+        "technical": 55,
+        "research": 50,
+        "new_factors": 65
+      },
+      "entry_sector": "其他建材",
+      "stop_loss_price": 7.92,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 8.34,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603899",
+      "name": "晨光股份",
+      "entry_date": "20260603",
+      "entry_close": 22.55,
+      "entry_score": 66.9,
+      "entry_factors": {
+        "event": 60,
+        "fund": 70.6,
+        "sentiment": 50,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 40
+      },
+      "entry_sector": "文教休闲",
+      "stop_loss_price": 21.42,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 22.55,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603344",
+      "name": "星德胜",
+      "entry_date": "20260603",
+      "entry_close": 30.6,
+      "entry_score": 68.2,
+      "entry_factors": {
+        "event": 55,
+        "fund": 59.400000000000006,
+        "sentiment": 60,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 65
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 29.07,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 30.6,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "601600",
+      "name": "中国铝业",
+      "entry_date": "20260603",
+      "entry_close": 12.01,
+      "entry_score": 66.8,
+      "entry_factors": {
+        "event": 65,
+        "fund": 71.8,
+        "sentiment": 60,
+        "technical": 55,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "entry_sector": "铝",
+      "stop_loss_price": 11.41,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260603",
+          "close": 12.01,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603861",
+      "name": "白云电器",
+      "entry_date": "20260604",
+      "entry_close": 16.44,
+      "entry_score": 67.0,
+      "entry_factors": {
+        "event": 65,
+        "fund": 59.0,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 15.62,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260604",
+          "close": 16.44,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "688100",
+      "name": "威胜信息",
+      "entry_date": "20260604",
+      "entry_close": 34.85,
+      "entry_score": 66.4,
+      "entry_factors": {
+        "event": 60,
+        "fund": 71.4,
+        "sentiment": 50,
+        "technical": 55,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 33.11,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260604",
+          "close": 34.85,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603529",
+      "name": "爱玛科技",
+      "entry_date": "20260604",
+      "entry_close": 21.19,
+      "entry_score": 65.7,
+      "entry_factors": {
+        "event": 60,
+        "fund": 74.6,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 20.13,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260604",
+          "close": 21.19,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
         }
       ],
       "exit": {}

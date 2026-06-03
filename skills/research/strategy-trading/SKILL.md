@@ -15,7 +15,7 @@ triggers:
   - "Docker.*部署|docker-compose|容器化"
   - "硬件.*盒子|树莓派|Raspberry"
   - 狙击手|弹药库|文工团|交易规则|规则体系|R值|凯利
-  - 进化引擎|自我进化|自动调参|参数优化
+  - 进化引擎|自我进化|自动调参|参数优化|broker|券商|xtquant|实盘下单
   - 账户.*重置|清空.*持仓|重置.*净值
 category: research
 ---
@@ -149,7 +149,40 @@ logger.export_filtered("workspace/btc-only.csv", symbol="600519")
 }
 ```
 
-## 决策官工作流
+## 每日数据管线时间线 (v8.7+)
+
+```
+15:00 收盘
+15:05 ⏱️  分时K线冻结 → Bronze intraday/
+15:30 🛡️  弹药库风控
+15:30 🏥  文工团复盘
+15:35 📊  股票跟踪器
+15:40 🗄️  Bronze全量采集 → daily_kline + fund_flow + events
+15:45 🥈  Silver ETL      → Bronze→清洗→统一格式 (5524只)
+15:50 🏆  Gold ETL        → Silver→26维因子面板+ML+Pool归档
+17:00 📊  因子IC评估      → 读 Gold factor_panel
+17:10 🤖  ML增量训练      → 读 Gold ml_datasets
+17:20 📈  组合回测        → 读 Gold daily_pool 历史
+17:30 🧬  进化引擎
+```
+
+## 分层数据架构 (v8.7+)
+
+```
+Bronze (不可变)          Silver (清洗)            Gold (特征)
+═══════════════          ════════════            ═══════════════
+bronze_ingest.py    →    silver_pipeline.py  →    gold_pipeline.py
+  (15:40)                   (15:45)                 (15:50)
+
+数据源:                   数据源:                  数据源:
+  · 外部API               · Bronze only            · Silver (主)
+  · 6类数据                · 5524只全A主表           · Bronze (启动期补充)
+                            · 质量标记               · 26维因子计算
+                            · 不可变清洗              · ML数据集构建
+                                                     · daily_pool归档
+```
+
+> Gold 层产出 `factor_panel/v3.parquet` + `ml_datasets/*.npz`，供因子IC、ML训练、组合回测消费。因子覆盖从~24%起步随Silver积累60天后达100%。详见 `stock-research` → `references/gold-layer-design.md`。
 
 决策官 (14:30 cron) 的标准化流程：
 
@@ -249,27 +282,31 @@ sim.update_market_prices({"600519": 1850})
 > 加上小红原生 4 策略（CMP-001/SEL-001/POS-002/STP-001），共 9 策略可用。
 > Skills 框架设计详见 `stock-research` → `references/external-skills-ecosystem.md`
 
-## 弹药库风控 v4.1
+## 弹药库风控 v8.6
 
 ```bash
-# cron 自动 (15:30): 同步 + 报告一步完成
+# cron 自动 (15:30): 同步 + 报告一步完成（含🆕组合风控）
 python3 scripts/ammo_risk.py --update
-
-# 手动：
-python3 scripts/ammo_risk.py               # 仅报告
-python3 scripts/ammo_risk.py --update      # 同步 + 报告
-python3 scripts/ammo_risk.py --update-only # 仅同步
 ```
 
-一次 `--update` 完成七项操作（v4.1）：
-1. **市值同步**：写入 `lastPrice / marketValue / unrealizedPnL / pnlPct`
-2. **净值修正**：`currentNetValue = availableCash + sum(marketValue)`，写入单一真相源 `accountInfo.currentNetValue`
-3. **移动止盈**：涨 ≥20% 启动，每涨 10% 上移 10%；含 3% 动态缓冲（止损距现价至少保留 3%）
-4. **回撤追踪**：更新 `peakNetValue` 和 `currentDrawdown`
-5. **R 值自动计算**：`R = 净值 × 仓位上限% × 1/8 × 凯利值`，每次 --update 写入
-6. **V8.0 池交叉标记**：`inPool` / `poolCheckedAt`，不在推荐池的持仓提前标记
-7. **净值历史追加**：`netValueHistory[]` 数组（最近 30 天），替代正则解析旧报告
+一次 `--update` 完成八项操作：
 
+1. **市值同步** / 2. **净值修正** / 3. **移动止盈** / 4. **回撤追踪**
+5. **R 值自动计算** / 6. **V8.0 池交叉标记** / 7. **净值历史追加**
+8. 🆕 **组合层面风控**：VaR + 相关性告警（集成 `portfolio_risk.py`）
+
+### 新增组合风控模块 (v8.6)
+
+| 工具 | 命令 | 说明 |
+|------|------|------|
+| 因子IC评估 | `python3 factor_evaluator.py` | 22因子日频IC/ICIR + 月度淘汰 |
+| 组合风控 | `python3 portfolio_risk.py --daily` | 日频: 相关性+VaR |
+| 压力测试 | `python3 portfolio_risk.py --weekly` | 周频: 5场景压力测试 |
+| 组合回测 | `python3 portfolio_backtest.py --days 60` | 推荐池等权→夏普/回撤 |
+| ML预测 | `python3 ml_predictor.py --train` | 增量训练涨跌模型 |
+| 券商网关 | `python3 broker_gateway.py --status` | paper/live账户状态 |
+| TWAP拆单 | `python3 algo_executor.py --twap CODE QTY` | 等时间片拆单 |
+| VWAP拆单 | `python3 algo_executor.py --vwap CODE QTY` | 按量分布拆单 |
 ### 弹药库 v4.1 关键修复（2026-06-01）
 
 | 问题 | 严重度 | 修复 |
@@ -317,11 +354,19 @@ python3 scripts/ammo_risk.py --update-only # 仅同步
 - **竞价数据空窗**：`auction_collector.py` 在 09:15-09:25 运行，侦察兵（09:25）和狙击手 v4.0 守护进程（09:30 起实时运行）可以读到竞价数据，但更早的任务（08:25推荐引擎、08:30瞭望塔）无法访问竞价数据——这是正常的，不要在盘前任务中尝试读取 auction.db。
 - **狙击手 v4.0 守护进程**：已从 cron 定时触发升级为 systemd 实时守护进程（`sniperd.py`）。用 `systemctl --user status sniperd.service` 检查状态，用 `python3 sniperd.py --once` 手动测试。存活检测 cron（`sniper_healthcheck.sh`）每 5 分钟自动检查并恢复。旧 v3.0 `sniper.py` 保留作为手动备用。
 - **裸 `except:` 禁止使用**：吞掉 `KeyboardInterrupt`/`SystemExit` 等系统异常，进程无法正常终止。全部改为 `except Exception:`。2026-06-01 已全局修复 knowledge_base(11处)/resource_pool(6处)/data_pipeline(2处)。
-- **`get_stock_realtime()` 现在有 Sina 批量快路径**：优先用 `_sina_batch_fetch()` 单次 HTTP 请求查全部股票（~800只上限，0.03s/批），失败时 fallback 到逐只 `data fetch` CLI。内置 2 分钟模块级缓存。不要再在循环中逐只调 subprocess。
+- **`get_stock_realtime()` now has Sina bulk fast-path**: Priority Sina batch HTTP (single request, ~800 stocks, <0.05s), falls back to subprocess. Built-in 2 min cache. Never call in a loop.
+- **BaoStock `rs.next()` blocks 60s+**: Must use `rs.data` (list of lists). `rs.next()` is iterator mode that hangs in production.
+- **BaoStock not thread-safe**: Shared global HTTP session → ThreadPool causes utf-8 decode errors. Must use ProcessPoolExecutor with per-process `bs.login()`/`bs.logout()`.
+- **`data_pipeline.py` now a compatibility shell (15 lines)**: Real logic in `data_pipeline/_core.py`. New code: `from data_pipeline.market import get_stock_realtime`.
+- **Bronze layer auto-records**: `_core.py` has `_bronze_write()` hooks on 5 key functions (index/north/flow/stocks/realtime). Set `XIAOHONG_BRONZE=0` to disable.
+- **ML predictor sklearn fallback**: `ml_predictor.py` auto-degrades to sklearn RandomForest when lightgbm unavailable. Install: `pip install lightgbm --no-build-isolation`.
+- **New factor computation**: Must use already-prefetched `_indicators[code]['close_history']` — do NOT re-call `get_historical_k_with_ma()` (ProcessPool deadlock + 80s waste).
 - **MACD dea 对齐 bug**：见下方完整记录
 - **Docker TA-Lib 编译**：Raspberry Pi ARM 架构编译慢，建议用预编译 wheel 或 `--build-arg` 跳过；x86 机器正常
 - **auto_executor 只在策略桥接返回信号时才执行**，空仓无信号时静默。若需强制测试，用 `process_signal()` 直接注入 Signal 对象
-- **Paper Trading numpy import 缺失**：`paper_trading.py` 中 `StrategyPaperTrader.run_cycle` 的类型注解用了 `np.ndarray` 但模块顶部未 `import numpy as np`。务必在 dataclass 模块级 import numpy。
+- **`get_stock_realtime()` now has Sina bulk fast-path**
+
+> 🆕 v8.6 执行层升级: ML预测器 (`ml_predictor.py`)、算法执行 (`algo_executor.py`)、券商网关 (`broker_gateway.py`) 详见 `references/v8.6-execution-layer.md``paper_trading.py` 中 `StrategyPaperTrader.run_cycle` 的类型注解用了 `np.ndarray` 但模块顶部未 `import numpy as np`。务必在 dataclass 模块级 import numpy。
 - **进化引擎 0 变更（静默失败）**：`extract_changes()` 返回空通常由三重 bug 导致：(1) 路径偏移 — cron workdir 是 `scripts/`，`DATA_DIR.parent/"kb"` 实际指向 `scripts/kb/` 而非 `scripts/data/kb/`，(2) 格式断层 — 诊断文件是 `list[{root_causes}]` 但代码期望 `dict{rule_changes_suggested}`，(3) `return changes` 在补丁操作中被误删。调试：手动验证 `load_diagnosis()` 返回类型和文件存在性。详见 `stock-research` → `references/evolution-engine-debug.md`。
 - **进化引擎沙箱 KeyError: 'old_metric'**：`sandbox_test()` 返回 dict 不含 `old_metric`/`new_metric`/`improvement`。v2.0 沙箱有 4 种策略，仅 `reflection_log` 策略返回这些键。打印语句已改为 `test_result.get('details', 'ok')`。
 - **竞价采集器 09:15 cron error**：(1) 东方财富 `push2.eastmoney.com/api/qt/stock/get` 在非交易时段拒绝连接，(2) `f43`/`f2`/`f46`/`f60` 字段单位是**分**需 ÷100，(3) `exec` 在 cron 脚本中可能使进程跟踪丢失。修复：6轮指数退避预热 + 批量拉取兜底 + 干净退出 + 去 exec。详见 `stock-research` → `references/candidate-pool-p0-fix.md`。

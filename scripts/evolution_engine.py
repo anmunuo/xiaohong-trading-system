@@ -404,6 +404,103 @@ EVOLVABLE_PARAMS = {
         "description": "P0止损确认tick数（防误报）",
         "source_diagnosis": "review_diagnosis.json"
     },
+
+    # ── 🆕 v2.3 新增: ML模型 (4) ──
+    "ml_boost_weight": {
+        "file": "stock_recommender.py",
+        "path_in_code": "ML_BOOST_WEIGHT",
+        "default": 1.0, "min": 0.3, "max": 2.5,
+        "description": "ML预测器得分权重（倍数）",
+        "source_diagnosis": "factor_ic.json"
+    },
+    "ml_confidence_threshold": {
+        "file": "ml_predictor.py",
+        "path_in_code": "CONFIDENCE_THRESHOLD",
+        "default": 0.6, "min": 0.5, "max": 0.85,
+        "description": "ML信号置信度阈值",
+        "source_diagnosis": "factor_ic.json"
+    },
+    "ml_retrain_interval": {
+        "file": "ml_predictor.py",
+        "path_in_code": "RETRAIN_INTERVAL_DAYS",
+        "default": 1, "min": 1, "max": 7,
+        "description": "ML增量训练间隔（天）",
+        "source_diagnosis": "factor_ic.json"
+    },
+    "ml_feature_count": {
+        "file": "ml_predictor.py",
+        "path_in_code": "FEATURE_COUNT",
+        "default": 32, "min": 16, "max": 64,
+        "description": "ML特征数量",
+        "source_diagnosis": "factor_ic.json"
+    },
+
+    # ── 🆕 v2.3 新增: 组合管理 (6) ──
+    "var_threshold_pct": {
+        "file": "portfolio_risk.py",
+        "path_in_code": "VAR_THRESHOLD_PCT",
+        "default": 3.0, "min": 1.5, "max": 8.0,
+        "description": "VaR告警阈值（%净值）",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "cvar_threshold_pct": {
+        "file": "portfolio_risk.py",
+        "path_in_code": "CVAR_THRESHOLD_PCT",
+        "default": 4.0, "min": 2.0, "max": 10.0,
+        "description": "CVaR告警阈值（%净值）",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "corr_warning_threshold": {
+        "file": "portfolio_risk.py",
+        "path_in_code": "CORR_WARNING",
+        "default": 0.70, "min": 0.50, "max": 0.85,
+        "description": "相关性警告阈值",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "corr_critical_threshold": {
+        "file": "portfolio_risk.py",
+        "path_in_code": "CORR_CRITICAL",
+        "default": 0.80, "min": 0.65, "max": 0.95,
+        "description": "相关性严重告警阈值",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "max_sector_concentration": {
+        "file": "ammo_risk.py",
+        "path_in_code": "SECTOR_MAX_PCT",
+        "default": 30.0, "min": 15.0, "max": 50.0,
+        "description": "行业集中度上限（%）",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "stress_test_frequency": {
+        "file": "portfolio_risk.py",
+        "path_in_code": "STRESS_FREQUENCY",
+        "default": 7, "min": 3, "max": 30,
+        "description": "压力测试频率（天）",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+
+    # ── 🆕 v2.3 新增: 算法执行 (3) ──
+    "twap_default_slices": {
+        "file": "algo_executor.py",
+        "path_in_code": "TWAP_DEFAULT_SLICES",
+        "default": 10, "min": 5, "max": 30,
+        "description": "TWAP默认切片数",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "vwap_volume_profile_days": {
+        "file": "algo_executor.py",
+        "path_in_code": "VWAP_PROFILE_DAYS",
+        "default": 5, "min": 3, "max": 20,
+        "description": "VWAP历史量分布天数",
+        "source_diagnosis": "review_diagnosis.json"
+    },
+    "max_impact_bps": {
+        "file": "algo_executor.py",
+        "path_in_code": "MAX_IMPACT_BPS",
+        "default": 50, "min": 20, "max": 100,
+        "description": "最大冲击成本（bps）",
+        "source_diagnosis": "review_diagnosis.json"
+    },
 }
 
 # ── 安全边界 ──
@@ -479,6 +576,29 @@ INFRA_PARAMS = {  # 基础设施参数 → 仅安全校验
     "sniper_alert_cooldown_market",
     "infra_data_cache_ttl",
     "infra_ma_refresh_interval",
+}
+
+# 🆕 v2.3 新增参数类别
+ML_PARAMS = {  # ML模型参数
+    "ml_boost_weight",
+    "ml_confidence_threshold",
+    "ml_retrain_interval",
+    "ml_feature_count",
+}
+
+PORTFOLIO_PARAMS = {  # 组合管理参数
+    "var_threshold_pct",
+    "cvar_threshold_pct",
+    "corr_warning_threshold",
+    "corr_critical_threshold",
+    "max_sector_concentration",
+    "stress_test_frequency",
+}
+
+ALGO_PARAMS = {  # 算法执行参数
+    "twap_default_slices",
+    "vwap_volume_profile_days",
+    "max_impact_bps",
 }
 
 
@@ -603,7 +723,7 @@ def extract_research_actions() -> List[Dict]:
     action_param_map = {
         "公告情绪权重调整": ("recommender_weight_event", 0.35, "研究员: 公告信号密度变化"),
         "行业轮动信号增强": ("recommender_weight_sentiment", 0.25, "研究员: 行业新闻与资金联动"),
-        "止损参数重新校准": ("sniper_stop_approach_pct", 0.04, "研究员: 止损失效率分析"),
+        "止损参数重新校准": ("sniper_stop_approach_pct", 2.5, "研究员: 止损失效率分析"),  # 2026-06-03 fix: 0.04→2.5 (unit bug, 原值超出range [1.0,8.0])
         "MA20偏离阈值优化": ("recommender_weight_technical", 0.18, "研究员: MA20偏离分布"),
         "北向资金权重上调": ("recommender_weight_fundamental", 0.30, "研究员: 北向资金持续性"),
         "估值分位风险阈值设置": ("ammo_total_position_limit", 0.70, "研究员: 指数PE分位偏高"),

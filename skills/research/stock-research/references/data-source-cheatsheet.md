@@ -34,12 +34,18 @@ python3 -c "import tushare as ts; pro = ts.pro_api(); print(pro.FUNC(PARAMS))"
 | `stock_hsgt_hist_em` | 北向历史 | `symbol='沪股通'`/`'深股通'` | 2026-05-24 |
 | `stock_sh_a_spot_em` | 沪A实时行情 | 无 | ⚠️ 触发限流 |
 
-### tushare
-| 函数 | 用途 | 关键字段 | 验证日期 |
-|------|------|----------|----------|
-| `stock_basic` | 全A股列表 | ts_code, name, industry | 2026-05-24 |
-| `daily_basic` | 全市场日估值 | pe_ttm, pb, total_mv | 2026-05-24 |
-| `fina_indicator` | 财务指标 | roe, roa, tr_yoy, debt_to_assets | 2026-05-24 |
+### tushare（ETF 专属函数）
+
+ETF 查询与个股使用**不同的 API**，不可混用：
+
+| 函数 | 用途 | 关键字段 |
+|------|------|----------|
+| `fund_basic(ts_code='515120.SH', market='E')` | ETF 基本信息 | name, management, benchmark, m_fee, c_fee, found_date |
+| `fund_daily(ts_code='515120.SH', start_date, end_date)` | ETF 日线 OHLCV | pre_close, open, high, low, close, vol, amount |
+| `fund_portfolio(ts_code='515120.SH')` | 持仓明细 | symbol, mkv, stk_mkv_ratio, stk_float_ratio |
+| `fund_nav(ts_code='515120.SH', start_date, end_date)` | 单位净值 | unit_nav, accum_nav, adj_nav |
+
+**常见坑**：`fund_portfolio` 列名是 `symbol` 和 `mkv`（非 `sec_code`/`name`/`ratio`），持仓名需另调 `stock_basic` 补全。
 
 ---
 

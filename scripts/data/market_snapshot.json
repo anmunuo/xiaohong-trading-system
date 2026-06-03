@@ -1,131 +1,105 @@
 {
-  "generated_at": "2026-06-02 14:45:17",
+  "generated_at": "2026-06-03 08:28:21",
   "generated_by": "market_snapshot.py v1.0",
   "global_indices": {
     "us": {
       "dow": [
-        51078.88,
-        0.09
+        51307.79,
+        0.45
       ],
       "sp500": [
-        7599.96,
-        0.26
+        7609.78,
+        0.13
       ],
       "nasdaq": [
-        27086.81,
-        0.42
+        27093.9,
+        0.03
       ]
     },
     "europe": {
       "ftse": [
-        10338.95,
-        -0.68
+        10373.51,
+        0.33
       ],
       "dax": [
-        25003.04,
-        -0.4
+        25124.17,
+        0.48
       ]
     },
     "asia": {
       "nikkei": [
-        66934.33,
-        0.91
+        66734.24,
+        -0.3
       ],
       "hangseng": [
-        25398.18,
-        0.86
+        26038.32,
+        2.52
       ],
       "shanghai": [
-        4083.31,
-        0.63
+        4075.1,
+        0.43
       ]
     }
   },
   "north_flow": {
-    "net_flow": 5.37,
+    "net_flow": 5.38,
     "status": "🟢 5.4亿元 净流入",
-    "detail": "沪股通:3.0亿, 深股通:2.3亿",
-    "date": "20260526",
+    "detail": "沪股通:3.1亿, 深股通:2.3亿",
+    "date": "20260602",
     "data_type": "T-1日终（非实时）",
     "data_source": "tushare_pro"
   },
   "market_money": {
-    "main_net": -609.7,
-    "retail_net": 476.13
+    "main_net": -61.91,
+    "retail_net": 135.87
   },
   "index_valuation": {
-    "avg_pe_ttm": 27.3,
-    "avg_percentile": 88.3,
+    "avg_pe_ttm": 27.7,
+    "avg_percentile": 90.0,
     "undervalued_count": 0,
     "overvalued_count": 3,
     "position_signal": "轻仓/防御（整体偏贵）",
     "details": {
       "000016.SH": {
         "name": "上证50",
-        "pe_ttm": 11.2,
-        "percentile": 68.7,
+        "pe_ttm": 11.3,
+        "percentile": 70.9,
         "signal": "🟠 合理偏高",
-        "history_points": 723
+        "history_points": 724
       },
       "000300.SH": {
         "name": "沪深300",
-        "pe_ttm": 14.5,
-        "percentile": 96.1,
+        "pe_ttm": 14.7,
+        "percentile": 98.6,
         "signal": "🔴 偏贵",
-        "history_points": 723
+        "history_points": 724
       },
       "000905.SH": {
         "name": "中证500",
-        "pe_ttm": 36.4,
-        "percentile": 90.0,
+        "pe_ttm": 36.5,
+        "percentile": 91.0,
         "signal": "🔴 偏贵",
-        "history_points": 723
+        "history_points": 724
       },
       "399006.SZ": {
         "name": "创业板指",
-        "pe_ttm": 47.3,
-        "percentile": 98.5,
+        "pe_ttm": 48.3,
+        "percentile": 99.6,
         "signal": "🔴 偏贵",
-        "history_points": 723
+        "history_points": 724
       }
     }
   },
   "margin_trading": {
-    "balance": 14896.0,
-    "buy_amount": 1449.0,
-    "short_balance": 141.0,
-    "buy_ratio": 9.7,
-    "trend_5d_pct": 1.46,
+    "balance": 14722.0,
+    "buy_amount": 1513.0,
+    "short_balance": 140.0,
+    "buy_ratio": 10.3,
+    "trend_5d_pct": 0.22,
     "signal": "🟡 平稳"
   },
-  "sector_flow_top5": [
-    {
-      "name": "5G概念",
-      "change_pct": 1.52,
-      "net_flow": 0
-    },
-    {
-      "name": "通信技术",
-      "change_pct": 1.63,
-      "net_flow": 0
-    },
-    {
-      "name": "光通信模块",
-      "change_pct": 4.45,
-      "net_flow": 0
-    },
-    {
-      "name": "大盘股",
-      "change_pct": 0.45,
-      "net_flow": 0
-    },
-    {
-      "name": "CPO概念",
-      "change_pct": 4.71,
-      "net_flow": 0
-    }
-  ],
+  "sector_flow_top5": [],
   "external_futures": {},
-  "narrative": "亚太: nikkei+0.9% | hangseng+0.9% | shanghai+0.6% | 美股: dow+0.09% | sp500+0.26% | nasdaq+0.42% | 北向净流入5.4亿 | 资金热: 5G概念/通信技术/光通信模块 | 估值: 轻仓/防御（整体偏贵）(分位88.3%) | 融资: 🟡 平稳 (+1.5%)",
+  "narrative": "亚太: nikkei-0.3% | hangseng+2.5% | shanghai+0.4% | 美股: dow+0.45% | sp500+0.13% | nasdaq+0.03% | 北向净流入5.4亿 | 估值: 轻仓/防御（整体偏贵）(分位90.0%) | 融资: 🟡 平稳 (+0.2%)",
   "alerts": []
 }

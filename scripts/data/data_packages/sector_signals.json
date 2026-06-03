@@ -1,57 +1,6 @@
 {
-  "generated_at": "2026-06-02 14:45:20",
-  "hot_sectors": [
-    {
-      "name": "5G概念",
-      "change_pct": 1.52,
-      "net_flow": 0
-    },
-    {
-      "name": "通信技术",
-      "change_pct": 1.63,
-      "net_flow": 0
-    },
-    {
-      "name": "光通信模块",
-      "change_pct": 4.45,
-      "net_flow": 0
-    },
-    {
-      "name": "大盘股",
-      "change_pct": 0.45,
-      "net_flow": 0
-    },
-    {
-      "name": "CPO概念",
-      "change_pct": 4.71,
-      "net_flow": 0
-    },
-    {
-      "name": "大盘成长",
-      "change_pct": 1.45,
-      "net_flow": 0
-    },
-    {
-      "name": "光纤概念",
-      "change_pct": 3.69,
-      "net_flow": 0
-    },
-    {
-      "name": "HS300_",
-      "change_pct": 0.04,
-      "net_flow": 0
-    },
-    {
-      "name": "基金重仓",
-      "change_pct": 1.21,
-      "net_flow": 0
-    },
-    {
-      "name": "富时罗素",
-      "change_pct": -0.47,
-      "net_flow": 0
-    }
-  ],
+  "generated_at": "2026-06-03 08:28:28",
+  "hot_sectors": [],
   "cold_sectors": [],
-  "fund_flow_summary": "TOP3资金流入: 5G概念, 通信技术, 光通信模块"
+  "fund_flow_summary": "TOP3资金流入: "
 }

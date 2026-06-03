@@ -1,42 +1,47 @@
 {
-  "version": "1.0.0",
-  "updated_at": null,
-  "total_samples": 0,
+  "version": "1.1.1",
+  "updated_at": "2026-06-03T16:11:30.156963",
+  "total_samples": 5,
   "dimensions": {
     "price_slope": {
-      "alpha": 1,
+      "alpha": 2,
       "beta": 1,
-      "weight": 0.25,
-      "hits": 0,
-      "misses": 0
+      "weight": 0.2941,
+      "hits": 1,
+      "misses": 0,
+      "accuracy": 0.6667
     },
     "volume_accel": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.25,
+      "weight": 0.2206,
       "hits": 0,
-      "misses": 0
+      "misses": 0,
+      "accuracy": 0.5
     },
     "imbalance": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.2,
+      "weight": 0.1765,
       "hits": 0,
-      "misses": 0
+      "misses": 0,
+      "accuracy": 0.5
     },
     "premium": {
-      "alpha": 1,
+      "alpha": 2,
       "beta": 1,
-      "weight": 0.15,
-      "hits": 0,
-      "misses": 0
+      "weight": 0.1765,
+      "hits": 1,
+      "misses": 0,
+      "accuracy": 0.6667
     },
     "sector_dev": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.15,
+      "weight": 0.1324,
       "hits": 0,
-      "misses": 0
+      "misses": 0,
+      "accuracy": 0.5
     }
   }
 }

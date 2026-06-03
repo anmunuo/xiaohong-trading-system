@@ -43,3 +43,4 @@ KB LLM 消化 cron (每小时 :05)
 - 无匹配 code 的洞察（纯宏观/板块分析）不参与个股评分
 - 盘后非交易时段 kb_insights.json 可能包含当天最后一批洞察
 - 推荐引擎不生成洞察，只消费
+- ⚙️ 完整消化工作流（对比增量/洞察决策/静默规则）→ `references/kb-digestion-workflow.md`

@@ -1,6 +1,6 @@
 # BaoStock 集成文档
 
-> 小红交易系统 v8.4 — BaoStock 作为 K 线快路径接入 `_prefetch_indicators`
+> 小红交易系统 v8.5 — BaoStock 作为 K 线快路径接入 `_prefetch_indicators`，ProcessPool 并行化
 
 ---
 
@@ -59,7 +59,7 @@ error_msg: 日线指标参数传入错误:ma5
 | 8 | peTTM | float |
 | 9 | pbMRQ | float |
 
-### 4. 登录态管理
+### 4. ⚠️ 登录态管理 + 并发限制
 
 ```python
 import baostock as bs
@@ -75,28 +75,93 @@ bs.logout()  # 必须调用，否则连接泄漏
 
 - 免 API Key，免注册
 - `login()` / `logout()` 成对调用
-- **不要在 ThreadPool 内并行调用**（登录态不共享）
+- **ThreadPoolExecutor 不可用**：baostock 底层共享全局 HTTP session，多线程并发导致 utf-8 解码乱码 + 数据交叉读取。现象：`'utf-8' codec can't decode byte 0x8a`、`Error -3 while decompressing data`
+
+### 5. ⚠️ ProcessPoolExecutor 并行化（v8.5）
+
+```python
+# ✅ 正确：ProcessPoolExecutor + 模块级 worker
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import multiprocessing
+
+def _baostock_batch_worker(args):
+    """模块级函数（非闭包，可 pickle）"""
+    batch_codes, start_d, end_d, day_limit = args
+    import baostock as bs
+    batch_results = {}
+    lg = bs.login()
+    if lg.error_code == '0':
+        for code in batch_codes:
+            # ... 查询 + 自算 MA ...
+        bs.logout()
+    return batch_results
+
+# 分批：每进程 ~50 只，最多 8 进程
+batch_size = max(50, len(codes) // multiprocessing.cpu_count())
+batches = [codes[i:i+batch_size] for i in range(0, len(codes), batch_size)]
+tasks = [(b, start_date, end_date, days) for b in batches]
+
+with ProcessPoolExecutor(max_workers=min(8, len(batches))) as ex:
+    futures = {ex.submit(_baostock_batch_worker, t): t for t in tasks}
+    for fut in as_completed(futures):
+        results.update(fut.result())
+```
+
+**为什么不用 ThreadPool？** baostock 非线程安全。ThreadPool 尝试过（40 workers → 乱码 → 15 workers → 仍乱码），根源是 `bs.login()` 设置的全局 HTTP session 被多线程交叉读取响应数据。
+
+**为什么不用闭包？** `ProcessPoolExecutor` 需要 pickle worker 函数。`def _worker()...` 嵌套在函数内部时 `Can't pickle local object`。必须提到模块级。
+
+**worker 数**：8 进程已验证安全，更高的并发可能导致服务端拒绝。batch 大小 ~50 只/进程，每进程独立 `login()` → 查询 → `logout()`。
+
+| 并发方案 | 结果 | 原因 |
+|:--|:--|:--|
+| 串行 for 循环 | 528码 87.8s | 原始实现，稳定但慢 |
+| ThreadPoolExecutor 40w | 乱码海 + 超时 | 共享全局 HTTP session |
+| ThreadPoolExecutor 15w | 仍有乱码 | 同上 |
+| ProcessPoolExecutor + 闭包 | pickle 失败 | 不能序列化局部函数 |
+| **ProcessPoolExecutor 8w + 模块级函数** | **528码 10.8s ✅** | 进程隔离 + 可 pickle |
 
 ---
 
-## 推荐引擎集成（v8.4）
+## 推荐引擎集成（v8.5）
 
 ### 数据流
 
 ```
 _prefetch_indicators(codes)
-  ├─ BaoStock get_historical_k_with_ma()  ← 快路径
-  ├─ subprocess data fetch CLI            ← fallback
-  └─ tushare daily_basic PE/PB/市值        ← 不变
+  ├─ BaoStock get_historical_k_with_ma()  ← ProcessPool 8procs (v8.5)
+  │   └─ _baostock_batch_worker(args)     ← 模块级，每进程独立 login/logout
+  ├─ subprocess data fetch CLI            ← fallback（仅补漏 ~15% 代码）
+  └─ tushare daily_basic PE/PB/市值       ← ThreadPool 10procs (v8.5)
+      └─ _fetch_fundamental()             ← 独立 pro_api 实例/线程
 ```
 
 ### 性能对比
 
-| 场景 | 旧方案 (subprocess) | 新方案 (BaoStock) |
+| 场景 | 旧方案 (串行) | v8.5 (ProcessPool) |
 |:--|:--|:--|
-| 8 只 | ~40s | 3.3s |
-| 50 只 | ~94s | ~12s |
-| 提速比 | — | **~12x** |
+| 528 只 | 87.8s | **10.8s** |
+| 200 只 | ~34s | ~4s |
+| 提速比 | — | **~8x** |
+
+### tushare 并行化（v8.5）
+
+`stock_recommender.py` `_prefetch_indicators()` 中 tushare `daily_basic` 查询也并行化：
+
+```python
+def _fetch_fundamental(code):
+    """独立 pro_api 实例（ThreadPool 安全）"""
+    _pro = ts.pro_api(token)  # 每线程独立
+    df = _pro.daily_basic(ts_code=..., ...)
+    return (code, {...})
+
+with ThreadPoolExecutor(max_workers=10) as ex:
+    futures = {ex.submit(_fetch_fundamental, c): c for c in codes}
+    ...
+```
+
+- 10 workers（保守，避免触发 tushare 限流）
+- 每线程独立 `ts.pro_api(token)` 实例 → 无 session 共享问题
 
 ---
 
