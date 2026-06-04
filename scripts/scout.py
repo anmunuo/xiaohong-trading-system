@@ -519,6 +519,16 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
     new_codes = {e['code'] for e in new_entries}
     actually_added = [r for r in selected_intraday if r['code'] in new_codes]
 
+    # 🆕 研究员全链路 — 对新加入股逐只跑 6 位研究员分析
+    for entry in actually_added:
+        try:
+            from researchers import analyze_stock
+            code = entry.get('code', '')
+            name = entry.get('name', '')
+            entry['researcher_analysis'] = analyze_stock(code, name)
+        except Exception:
+            entry['researcher_analysis'] = {'timestamp': datetime.now().isoformat(), 'error': '分析失败'}
+
     # 持久化
     pool['recommendations'] = merged
     pool.setdefault('scout_additions', [])

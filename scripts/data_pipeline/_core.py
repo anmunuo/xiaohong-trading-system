@@ -286,22 +286,29 @@ def get_north_flow() -> Dict:
         pro = _get_ts_pro()
         df = pro.moneyflow_hsgt(trade_date=yesterday)
         if df.empty:
-            cal = pro.trade_cal(exchange='SSE', start_date=(datetime.now() - timedelta(days=7)).strftime('%Y%m%d'), end_date=yesterday)
+            # 扩大回退窗口到30天，数据可能滞后一周以上
+            cal = pro.trade_cal(exchange='SSE', start_date=(datetime.now() - timedelta(days=30)).strftime('%Y%m%d'), end_date=yesterday)
             trading_days = cal[cal['is_open'] == 1]['cal_date'].tolist()
             if trading_days:
-                df = pro.moneyflow_hsgt(trade_date=trading_days[-1])
+                # 从最近到最远逐日尝试
+                for td in reversed(trading_days[-10:]):
+                    df = pro.moneyflow_hsgt(trade_date=td)
+                    if not df.empty:
+                        break
 
         if not df.empty:
             row = df.iloc[-1]
-            ggt_ss = float(row.get('ggt_ss', 0))
-            ggt_sz = float(row.get('ggt_sz', 0))
-            north_total = (ggt_ss + ggt_sz) / 1e4
-            north_total = round(north_total, 2)
+            # 🔧 v8.11 修复: ggt_ss/ggt_sz 是南向(港股通), 不能当北向!
+            # 正确字段: north_money=北向合计(万元), hgt=沪股通, sgt=深股通
+            north_money = float(row.get('north_money', 0))
+            north_total = round(north_money / 1e4, 2)  # 万元→亿
+            hgt_flow = float(row.get('hgt', 0)) / 1e4
+            sgt_flow = float(row.get('sgt', 0)) / 1e4
             data_date = str(df.iloc[-1].get('trade_date', ''))
 
             tushare_data = {
                 'net_flow': north_total,
-                'detail': f'沪股通:{round(ggt_ss/1e4,2):.1f}亿, 深股通:{round(ggt_sz/1e4,2):.1f}亿',
+                'detail': f'沪股通:{hgt_flow:.1f}亿, 深股通:{sgt_flow:.1f}亿',
                 'date': data_date,
                 'data_type': 'T-1日终（非实时）',
                 'data_source': 'tushare_pro'
@@ -310,14 +317,16 @@ def get_north_flow() -> Dict:
         pass
 
     # ---- 3. 择优使用 ----
-    # 策略：AKShare 日期≥yesterday 则优先（数据比 tushare 新鲜），否则用 tushare
+    # 策略变更 (v8.10): 2024年5月起交易所不再实时披露北向资金，
+    # AKShare 日期虽新但 net_flow 恒为 0（实时通道已关闭）。
+    # 因此：AKShare net_flow!=0 才可信，否则回退 tushare T-1 日终数据。
     use_akshare = False
     if akshare_data:
-        akshare_date = akshare_data.get('date', '')
-        if akshare_date >= yesterday or akshare_data['net_flow'] != 0:
-            use_akshare = True
+        if akshare_data['net_flow'] != 0:
+            use_akshare = True  # AKShare 有实际数据 → 可信
         elif not tushare_data:
-            use_akshare = True  # tushare 也失败，用 akshare
+            use_akshare = True  # tushare 也失败，用 akshare（至少日期对）
+        # else: AKShare=0 且 tushare 可用 → 用 tushare（优选日终数据）
 
     if use_akshare and akshare_data:
         emoji = '🟢' if akshare_data['net_flow'] >= 0 else '🔴'
@@ -329,20 +338,36 @@ def get_north_flow() -> Dict:
             'detail': akshare_data['detail'],
             'date': akshare_data['date'],
             'data_type': akshare_data['data_type'],
-            'data_source': akshare_data['data_source']
+            'data_source': akshare_data['data_source'],
+            '_quality': 'realtime',
         }
     elif tushare_data:
         emoji = '🟢' if tushare_data['net_flow'] >= 0 else '🔴'
         status = f'{emoji} {abs(tushare_data["net_flow"]):.1f}亿元'
         status += ' 净流入' if tushare_data['net_flow'] >= 0 else ' 净流出'
+        # 🆕 计算数据滞后天数
+        data_date = tushare_data['date']
+        days_lag = (datetime.now() - datetime.strptime(data_date, '%Y%m%d')).days if data_date else '?'
         result = {
             'net_flow': tushare_data['net_flow'],
             'status': status,
             'detail': tushare_data['detail'],
             'date': tushare_data['date'],
-            'data_type': tushare_data['data_type'],
-            'data_source': tushare_data['data_source']
+            'data_type': tushare_data['data_type'] + f' (滞后{days_lag}天)',
+            'data_source': tushare_data['data_source'],
+            '_quality': f'T-{days_lag}',
         }
+
+    # 🆕 v8.12 数据真实性印章
+    try:
+        from data_quality import verify as qv
+        qs = qv(result, "north_flow", "get_north_flow")
+        result["_quality_stamp"] = qs.to_dict()
+        if qs.failed_gates:
+            result["_quality_alert"] = [fg["detail"] for fg in qs.failed_gates]
+            result["_quality_repair"] = qs.repair_hint
+    except ImportError:
+        pass
 
     _set_cache(cache_key, result)
     _bronze_write(result, 'tushare', 'fund_flow', fields=['net_flow','status'])
@@ -704,8 +729,15 @@ def get_financial_indicator(stock_code: str, period: str = None) -> Dict:
     """
     if period is None:
         from datetime import datetime
-        y = datetime.now().year - 1
-        period = f'{y}1231'
+        y = datetime.now().year
+        candidates = []
+        for yr in [y, y-1]:
+            for q in ['1231', '0930', '0630', '0331']:
+                candidates.append(f'{yr}{q}')
+        candidates.sort(reverse=True)
+        period = candidates[0]
+    else:
+        candidates = [period]  # 指定 period 时只尝试这一个
 
     cache_key = f'fin_ind_{stock_code}_{period}'
     cached = _cached(cache_key, 86400)
@@ -716,7 +748,21 @@ def get_financial_indicator(stock_code: str, period: str = None) -> Dict:
     try:
         pro = _get_ts_pro()
         tscode = stock_code if '.' in stock_code else f'{stock_code}.SZ' if stock_code.startswith(('0','3')) else f'{stock_code}.SH'
-        df = pro.fina_indicator(ts_code=tscode, period=period)
+
+        # 尝试一系列 period，从最新到最旧
+        tried = []
+        df = None
+        for p in candidates:
+            try:
+                df = pro.fina_indicator(ts_code=tscode, period=p)
+                if df is not None and not df.empty:
+                    period = p  # 记录实际成功的 period
+                    break
+                tried.append(p)
+            except Exception:
+                tried.append(p)
+                continue
+
         if df is not None and not df.empty:
             row = df.iloc[0]
             result = {
@@ -725,6 +771,7 @@ def get_financial_indicator(stock_code: str, period: str = None) -> Dict:
                 'eps': _safe_float(row, 'eps'),
                 'bps': _safe_float(row, 'bps'),
                 'roe': _safe_float(row, 'roe'),
+                'roe_yearly': _safe_float(row, 'roe_yearly'),  # 🆕 v8.12: 滚动12月ROE
                 'roa': _safe_float(row, 'roa_yearly'),
                 'gross_margin': _safe_float(row, 'grossprofit_margin'),
                 'netprofit_margin': _safe_float(row, 'netprofit_margin'),
@@ -764,17 +811,22 @@ def get_financial_summary(stock_code: str) -> Dict:
     highlights = []
     risks = []
 
-    roe = fin.get('roe', 0) or 0
+    # 🔧 v8.12: 优先 roe_yearly (滚动12个月，更反映当前经营)，而非单季roe
+    roe = fin.get('roe_yearly', fin.get('roe', 0)) or 0
     if roe >= 20:          score += 15; highlights.append(f'ROE优秀({roe:.1f}%)')
     elif roe >= 10:        score += 8
     elif roe >= 5:         score += 2
     elif roe > 0:          risks.append(f'ROE偏低({roe:.1f}%)')
     else:                  score -= 8; risks.append('ROE为负')
 
-    gm = fin.get('gross_margin', 0) or 0
-    if gm >= 40:           score += 12; highlights.append(f'高毛利率({gm:.1f}%)')
-    elif gm >= 20:         score += 5
-    elif 0 < gm < 10:      score -= 5; risks.append(f'毛利率偏低({gm:.1f}%)')
+    # 🔧 v8.12: gross_margin=None 时不参与评分 (不是0!)
+    gm = fin.get('gross_margin')
+    if gm is not None:
+        if gm >= 40:           score += 12; highlights.append(f'高毛利率({gm:.1f}%)')
+        elif gm >= 20:         score += 5
+        elif gm > 0:           score -= 5; risks.append(f'毛利率偏低({gm:.1f}%)')
+    else:
+        gm = None  # 明确标记无数据
 
     debt = fin.get('debt_to_assets', 100) or 100
     if debt < 40:          score += 8; highlights.append('低负债率')
@@ -792,7 +844,8 @@ def get_financial_summary(stock_code: str) -> Dict:
 
     score = max(0, min(100, score))
     return {
-        'score': score, 'roe': roe, 'gross_margin': gm,
+        'score': score, 'period': fin.get('period'),  # 🆕: 标注数据所属期
+        'roe': roe, 'gross_margin': gm,
         'netprofit_margin': fin.get('netprofit_margin'),
         'debt_to_assets': debt, 'profit_yoy': py_,
         'eps': fin.get('eps'), 'bps': fin.get('bps'), 'ocf_ps': ocf,

@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 """
-auction_learner.py — 竞价贝叶斯学习器 v1.0
+auction_learner.py — 竞价贝叶斯学习器 v2.0
 ===========================================
 盘后验证竞价信号准确率，Bayesian 更新五维权重。
+
+v2.0 核心变更（做多导向）:
+  · 目标函数从"方向预测准确率"改为"上涨捕获率"
+  · 看跌→跌: 跳过不学（熊市噪音，对做多无价值）
+  · 看跌→涨: 惩罚（漏掉了反转机会）
+  · 看涨→涨: 学习（确认型上涨，真正的金矿）
+  · 看涨→跌: 惩罚（假突破陷阱）
 
 核心逻辑:
   每日收盘后：
     1. 读取当日 auction_frames → 提取特征 → 生成信号
     2. 对比当日实际涨跌（收盘 vs 开盘）
-    3. 命中: α+1  未命中: β+1
+    3. 做多导向判断：
+       看涨→涨: α+1（学习）  看涨→跌: β+1（惩罚）
+       看跌→跌: 跳过（噪音）  看跌→涨: β+1（漏掉反转）
     4. 后验权重 = α/(α+β) → 写入 auction_weights.json
 
 用法:
@@ -18,7 +27,7 @@ auction_learner.py — 竞价贝叶斯学习器 v1.0
   python3 auction_learner.py --show             # 查看当前权重
 """
 
-__version__ = "1.1.1"
+__version__ = "2.0.0"
 
 import sys, os, json, sqlite3, math
 from pathlib import Path
@@ -256,18 +265,33 @@ def learn_from_date(date: str) -> Dict:
         if actual_return is None:
             continue
 
-        # 4. 判断命中
-        # strong/moderate 信号预期上涨 → actual > 0 即命中
-        # caution 信号预期下跌 → actual < 0 即命中
-        # weak/neutral 不参与学习
+        # 4. 判断命中（v2.0: 做多导向，只关注上涨捕获）
+        # ─────────────────────────────────────────────
+        # 旧逻辑缺陷：caution+actual<0 也算"命中"—
+        #   下跌市中永远猜跌得高分，但对做多系统毫无价值。
+        #
+        # v2.0 新逻辑：
+        #   ✅ true_positive:  看涨信号 + 实际涨 → 学习这个信号
+        #   ➖ no_value:       看跌信号 + 实际跌 → 熊市噪音，跳过
+        #   ⚠️ missed_up:       看跌信号 + 实际涨 → 漏掉上涨，惩罚
+        #   ❌ false_positive: 看涨信号 + 实际跌 → 假突破，惩罚
+        # ─────────────────────────────────────────────
+        effective = None  # 'learn' | 'penalize' | 'skip'
+
         if signal in ('strong', 'moderate') and actual_return > 0:
-            hit = True
+            effective = 'learn'     # ✅ 看涨→涨：确认型，真正的金矿
+        elif signal in ('strong', 'moderate') and actual_return <= 0:
+            effective = 'penalize'  # ❌ 看涨→跌：假突破，陷阱
         elif signal == 'caution' and actual_return < 0:
-            hit = True
+            effective = 'skip'      # ➖ 看跌→跌：熊市噪音，不学
+        elif signal == 'caution' and actual_return > 0:
+            effective = 'penalize'  # ⚠️ 看跌→涨：漏掉了反转机会
         elif signal in ('weak', 'neutral'):
-            continue  # 中性信号不学习
-        else:
-            hit = False
+            effective = 'skip'      # ➖ 信号太弱，不参与
+
+        if effective == 'skip':
+            continue
+        hit = (effective == 'learn')
 
         # 5. 逐维度更新贝叶斯分布
         for dim in data['dimensions']:

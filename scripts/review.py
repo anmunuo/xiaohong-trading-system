@@ -25,7 +25,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from data_pipeline import _em_api_get, get_market_money_flow, get_stock_realtime
+from data_pipeline._core import _em_api_get
+from data_pipeline import get_market_money_flow, get_stock_realtime
 from report_formatter import Report
 
 # ── 可进化参数常量（evolution_engine v2.0 可自动调整）──
@@ -226,30 +227,63 @@ def analyze_stock_selection(gainers: list, pool: dict,
 
 
 def generate_optimization(selection: dict, pool: dict) -> list:
-    """根据选股复盘生成优化建议"""
+    """v3.1: 产出具体可执行的参数优化建议"""
     tips = []
-
-    if selection['pool_rate'] < 30:
-        tips.append("推荐池捕获率偏低，检查 stock_recommender 五因子权重是否需要调整")
-    if selection['missed_rate'] > 60:
-        tips.append(f"错过 {len(selection['missed'])} 只大涨股，分析其共性特征补充到筛选逻辑")
-
-    # 分析错过的股票有什么共同点
     missed = selection['missed']
+    pool_total = len(pool)
+
+    # 1. 按涨跌、市值、板块分析错过的股票
     if missed:
+        # 市值分布
+        mc_vals = [m.get('market_cap', 0) for m in missed if m.get('market_cap', 0) > 0]
+        if mc_vals:
+            small_miss = sum(1 for m in mc_vals if m < 50)
+            mid_miss = sum(1 for m in mc_vals if 50 <= m <= 200)
+            tips.append(
+                f"市值分布: {small_miss}只<50亿, {mid_miss}只50-200亿, "
+                f"{len(mc_vals)-small_miss-mid_miss}只>200亿"
+            )
+            if small_miss >= 10:
+                tips.append(
+                    f"⚡ ACTION: 市值下限偏高({small_miss}只<50亿被排除)。"
+                    "建议 stock_recommender._apply_filters: mkt_cap < 40.0 → < 30.0"
+                )
+
+        # 板块分布  
         sectors = {}
         for m in missed:
-            s = pool.get(m['code'], {}).get('sector', '?')
+            s = m.get('sector', '?')
             sectors[s] = sectors.get(s, 0) + 1
-        top_sector = max(sectors, key=sectors.get) if sectors else None
-        if top_sector and sectors[top_sector] >= 3:
-            tips.append(f"⚡ 错过 {sectors[top_sector]} 只 {top_sector} 板块大涨股，建议检查板块关键词映射是否遗漏")
+        if sectors:
+            top3 = sorted(sectors.items(), key=lambda x: x[1], reverse=True)[:3]
+            tips.append(f"板块集中: " + ", ".join(f"{s}({n}只)" for s, n in top3))
 
-    if len(selection['pool_hits']) == 0 and len(pool) > 0:
-        tips.append("推荐池全天零命中，可能排除规则过严或因子权重失衡，需回测调整")
+    # 2. 捕获率诊断
+    if selection['pool_rate'] < 10 and pool_total > 0:
+        tips.append(
+            f"🔴 推荐池捕获率 {selection['pool_rate']:.0f}% ({len(selection['pool_hits'])}/{len(missed)})。"
+            "建议: 检查候选源是否过度依赖公告事件(单一source=announcement)，"
+            "增加资金流候选权重或放宽首板纳入逻辑"
+        )
+    elif selection['pool_rate'] < 30:
+        tips.append(
+            f"⚠️ 推荐池捕获率 {selection['pool_rate']:.0f}%。"
+            "关注后续交易日是否持续<10%——若连续3天建议进化引擎介入调参"
+        )
 
-    if selection['scout_rate'] < 20 and selection['pool_rate'] > 30:
-        tips.append("侦察兵捕获率远低于推荐池，考虑降低侦察兵资金门槛或放宽涨跌范围")
+    # 3. 侦察兵诊断
+    if selection['scout_rate'] < 10 and selection['pool_rate'] > 20:
+        tips.append(
+            "侦察兵捕获率远低于推荐池。"
+            "建议: scout.py adaptive_flow_threshold 降低门槛 5000→3000"
+        )
+
+    # 4. 池质量
+    if pool_total > 0:
+        pool_mc = [p.get('market_cap', 0) for p in pool.values() if p.get('market_cap', 0) > 0]
+        if pool_mc:
+            avg_mc = sum(pool_mc) / len(pool_mc)
+            tips.append(f"当前推荐池平均市值: {avg_mc:.0f}亿")
 
     return tips
 

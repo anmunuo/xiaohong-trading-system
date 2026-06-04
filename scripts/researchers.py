@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
 """
-researchers.py — 研究员议会 v1.0
+researchers.py — 研究员议会 v2.0
 ================================
-5 位研究员：数据 / 基本面 / 技术面 / 多方 / 空方
-两种模式：每日自主研学 + 决策时议会（3轮辩论 → 小红终审）
+6 位研究员：数据 / 基本面 / 技术面 / 多方 / 空方 / 资金面
+核心升级：自主学习者 —— 假设提出→证据积累→验证→信念更新
+
+v2.0 新增:
+  · Hypothesis 假设机制 + Bayesian 信念追踪
+  · ResearcherState 跨日持久化
+  · 资金面研究员（市场各类资金 + 量价关系）
+  · 自动验证旧假设、生成新假设
 
 用法:
   python3 researchers.py --study          # 自主研学模式
-  python3 researchers.py --parliament     # 议会模式（需传入议题）
+  python3 researchers.py --parliament     # 议会模式
   python3 researchers.py --report         # 查看最近研究报告
+  python3 researchers.py --verify         # 验证过往假设
 """
 
 import json, os, sys, re
@@ -23,8 +30,128 @@ KB_DIR = DATA_DIR / "kb"
 RESEARCH_DIR = DATA_DIR / "research"
 REPORTS_DIR = SCRIPT_DIR.parent / "reports" / "research"
 LOG_PATH = RESEARCH_DIR / "parliament_log.json"
+STATE_PATH = RESEARCH_DIR / "researcher_state.json"
 
-__version__ = "1.0.0"
+__version__ = "2.2.0"
+
+# ═══════════════════════════════════════════
+# v2.0 数据模型
+# ═══════════════════════════════════════════
+
+@dataclass
+class Hypothesis:
+    """研究员假设 —— 可跨日追踪、验证"""
+    id: str                          # 唯一标识
+    statement: str                   # 假设陈述
+    category: str                    # 分类: market/stock/sector/data/risk
+    confidence: float = 0.5          # 当前置信度 0-1 (Bayesian 后验)
+    alpha: int = 1                   # 支持证据计数
+    beta: int = 1                    # 反对证据计数
+    evidence_for: List[str] = field(default_factory=list)
+    evidence_against: List[str] = field(default_factory=list)
+    created_at: str = ""
+    updated_at: str = ""
+    verified_at: str = ""
+    status: str = "active"           # active/confirmed/rejected/archived
+    related_symbols: List[str] = field(default_factory=list)
+    source: str = ""                 # 哪个研究员提出的
+
+    def update_belief(self, positive: bool, evidence: str = ""):
+        """Bayesian 更新: 支持→α+1, 反对→β+1"""
+        if positive:
+            self.alpha += 1
+            self.evidence_for.append(evidence[:200])
+        else:
+            self.beta += 1
+            self.evidence_against.append(evidence[:200])
+        self.confidence = round(self.alpha / (self.alpha + self.beta), 4)
+        self.updated_at = datetime.now().strftime('%Y-%m-%d %H:%M')
+        # 自动判定状态
+        if self.confidence >= 0.8:
+            self.status = "confirmed"
+        elif self.confidence <= 0.2:
+            self.status = "rejected"
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Hypothesis":
+        return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
+
+
+class ResearcherState:
+    """研究员跨日状态管理器"""
+
+    def __init__(self):
+        self.hypotheses: Dict[str, Hypothesis] = {}  # id → hypothesis
+        self.verified_today: List[str] = []           # 今天验证过的假设id
+        self.agenda: List[str] = []                   # 当前研究议程
+        self.gaps: List[str] = []                     # 数据缺口
+        self.stats: Dict = {"total_hypotheses": 0, "confirmed": 0, "rejected": 0,
+                            "total_verifications": 0, "accuracy": 0.0}
+
+    def load(self):
+        """从磁盘加载状态"""
+        if STATE_PATH.exists():
+            data = json.loads(STATE_PATH.read_text())
+            for hid, hd in data.get("hypotheses", {}).items():
+                self.hypotheses[hid] = Hypothesis.from_dict(hd)
+            self.agenda = data.get("agenda", [])
+            self.gaps = data.get("gaps", [])
+            self.stats = data.get("stats", self.stats)
+            self.verified_today = []
+
+    def save(self):
+        """持久化到磁盘"""
+        RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
+        data = {
+            "version": __version__,
+            "updated_at": datetime.now().isoformat(),
+            "hypotheses": {hid: h.to_dict() for hid, h in self.hypotheses.items()},
+            "agenda": self.agenda[-20:],
+            "gaps": self.gaps[-20:],
+            "stats": self.stats,
+        }
+        STATE_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+
+    def add_hypothesis(self, h: Hypothesis):
+        if not h.created_at:
+            h.created_at = datetime.now().strftime('%Y-%m-%d %H:%M')
+        self.hypotheses[h.id] = h
+        self.stats["total_hypotheses"] = len(self.hypotheses)
+
+    def verify_hypothesis(self, hid: str, positive: bool, evidence: str = ""):
+        """验证假设并更新信念"""
+        if hid in self.hypotheses:
+            old_status = self.hypotheses[hid].status
+            self.hypotheses[hid].update_belief(positive, evidence)
+            self.hypotheses[hid].verified_at = datetime.now().strftime('%Y-%m-%d %H:%M')
+            self.verified_today.append(hid)
+            # 更新统计
+            self.stats["total_verifications"] += 1
+            new_status = self.hypotheses[hid].status
+            if old_status != "confirmed" and new_status == "confirmed":
+                self.stats["confirmed"] += 1
+            if old_status != "rejected" and new_status == "rejected":
+                self.stats["rejected"] += 1
+
+    def get_active_hypotheses(self) -> List[Hypothesis]:
+        return [h for h in self.hypotheses.values() if h.status == "active"]
+
+    def get_recent_verified(self, days: int = 3) -> List[Hypothesis]:
+        cutoff = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+        return [h for h in self.hypotheses.values()
+                if h.verified_at >= cutoff]
+
+    def add_gap(self, gap: str):
+        if gap not in self.gaps:
+            self.gaps.append(gap)
+
+    def add_agenda(self, item: str):
+        if item not in self.agenda:
+            self.agenda.append(item)
+
 
 # ═══════════════════════════════════════════
 # 研究员定义
@@ -37,111 +164,91 @@ class ResearchReport:
     author_emoji: str
     timestamp: str
     topic: str
-    perspective: str           # 视角简述
-    key_findings: List[str]    # 核心发现
-    data_evidence: List[str]   # 数据证据
-    confidence: float          # 置信度 0-1
-    recommendations: List[str] # 建议
-    red_flags: List[str] = field(default_factory=list)  # 红旗警告
+    perspective: str
+    key_findings: List[str]
+    data_evidence: List[str]
+    confidence: float
+    recommendations: List[str]
+    red_flags: List[str] = field(default_factory=list)
     raw_context: Dict = field(default_factory=dict)
+    new_hypotheses: List[Hypothesis] = field(default_factory=list)  # 🆕
+    verified_hypotheses: List[dict] = field(default_factory=list)   # 🆕
 
 
 RESEARCHERS = {
     "data": {
         "name": "数据研究员",
         "emoji": "📊",
-        "persona": """你是安幕诺家族的数据研究员。你的使命是确保交易系统始终基于即时、准确、有效的数据运行。
+        "persona": """你是安幕诺家族的数据研究员。你主动发现数据缺口、追踪数据质量趋势、挖掘隐藏的数据洞察。
 
-核心能力：
-- 识别哪些数据对系统能力提升有价值
-- 研究数据应该从哪里获得、如何接入
-- 能识别有效数据 vs 干扰噪声
-- 主动挖掘目标标的的隐藏信息
-- 维护数据质量，排除过期/异常/重复数据
+核心能力：识别数据缺口→提出获取方案→挖掘隐藏信息→排除干扰噪声。
 
-分析框架：
-1. 数据完整性 — 关键数据源是否齐全、及时
-2. 数据准确性 — 是否存在异常值、数据冲突
-3. 隐藏信息 — 从原始数据中能挖掘出什么非显而易见的洞察
-4. 新数据源 — 是否有值得接入的新数据源
-5. 干扰排除 — 哪些数据是噪声应忽略""",
+学习方法：每天对比数据新鲜度变化趋势，当你发现某个数据源连续3天延迟，你应提出假设"该数据源可靠性下降"并追踪验证。""",
         "debate_weight": 1.0,
     },
     "fundamental": {
         "name": "基本面研究员",
         "emoji": "🏢",
-        "persona": """你是安幕诺家族的基本面研究员。你专注于财报、公告、研报、行业趋势和情绪热度分析。
+        "persona": """你是安幕诺家族的基本面研究员。你从公告/财报/研报中提炼超越统计数字的洞察。
 
-核心能力：
-- 从知识库吸收的资讯中提炼对板块和个股的影响
-- 评估企业护城河、盈利质量、成长性
-- 跟踪行业轮动和资金流向
-- 识别情绪过热/过冷的拐点信号
+核心能力：公告深层解读→财报质量评估→行业轮动判断→情绪拐点识别。
 
-分析框架：
-1. 公告解读 — 增持/回购/减持/合同/处罚等事件的真实影响
-2. 财报质量 — ROE/毛利率/现金流/负债率的趋势和同业对比
-3. 行业轮动 — 当前市场风格偏好哪个板块，为什么
-4. 情绪热度 — 市场关注度是否过热或过冷
-5. 催化剂 — 近期有哪些可能改变基本面的催化剂""",
+学习方法：当你说"增持信号压倒减持"时，不止步于计数。你要提出假设"回购潮通常领先指数反弹2-4周"，然后在后续交易日验证这个时间窗口。""",
         "debate_weight": 1.2,
     },
     "technical": {
         "name": "技术面研究员",
         "emoji": "📈",
-        "persona": """你是安幕诺家族的技术面研究员。你专攻K线形态、量价关系和技术指标。
+        "persona": """你是安幕诺家族的技术面研究员。你判断趋势阶段、识别反转信号、寻找最佳入场点。
 
-核心能力：
-- 识别多阶段形态（底部盘整/突破/主升/冲高回踩）
-- 判断量价关系是否健康
-- 确定关键支撑阻力位
-- 评估技术风险信号
+核心能力：形态识别→量价关系→关键位→危险信号→操作建议。
 
-分析框架：
-1. 形态阶段 — 当前处于什么阶段，方向判断
-2. 量价关系 — 放量突破还是缩量下跌，筹码是否锁定
-3. 关键位 — MA20/前高/前低/黄金分割位
-4. 危险信号 — 顶背离/放量滞涨/连续缩量阴跌
-5. 操作建议 — 基于技术面的具体买卖点""",
+学习方法：当你说"MA20附近整理"时，要预测"突破方向"。每次预测后追踪验证，更新你对当前市场技术特征的信念。""",
         "debate_weight": 1.0,
     },
     "bull": {
         "name": "多方研究员",
         "emoji": "🐂",
-        "persona": """你是安幕诺家族的多方研究员。你的职责是为每一只标的寻找最有力的看多论据。
+        "persona": """你是安幕诺家族的多方研究员。你是天生的乐观派，但你用数据和逻辑支撑你的乐观。
 
-核心能力：
-- 挖掘被市场忽视的积极因素
-- 寻找业绩超预期、订单爆发的蛛丝马迹
-- 识别估值洼地和价值重估机会
-- 跟踪产业趋势向上拐点
+核心能力：挖掘被忽视的积极因素→寻找业绩超预期线索→识别估值洼地→跟踪产业向上拐点。
 
-分析框架：
-1. 增长逻辑 — 业绩增长的确定性在哪里
-2. 估值空间 — 当前估值是否被低估，目标估值是多少
-3. 催化事件 — 近期有什么可能推动股价上涨的事件
-4. 行业顺风 — 行业政策/周期/趋势利好
-5. 资金信号 — 主力/北向/机构是否在买入""",
+学习方法：你的每一次"看多"预测都会被追踪。如果看多标的随后上涨，你的信念增强；如果下跌，你要反思为什么遗漏了风险因素。""",
         "debate_weight": 1.0,
     },
     "bear": {
         "name": "空方研究员",
         "emoji": "🐻",
-        "persona": """你是安幕诺家族的空方研究员。你的职责是不留情面地揭示每一只标的的风险和看空逻辑。
+        "persona": """你是安幕诺家族的空方研究员。你无情揭示风险，但不仅仅是为了唱空——你的目标是帮助系统避免踩雷。
+
+核心能力：财务风险识别→估值泡沫判断→利空事件预判→行业逆风预警。
+
+学习方法：你的风险预警被验证时，你的红旗建议权重提升；被证伪时（标的在风险评级"高"的情况下反而大涨），你要重新评估自己的风险判断框架。""",
+        "debate_weight": 1.0,
+    },
+    "flow": {
+        "name": "资金面研究员",
+        "emoji": "💰",
+        "persona": """你是安幕诺家族的资金面研究员。你专注于全市场资金流向、主力行为、量价关系和宏观流动性的研究。
 
 核心能力：
-- 挖掘被市场忽视的风险因素
-- 识别财务造假、管理层问题的信号
-- 预判行业下行和政策收紧的风险
-- 找出估值泡沫和炒作过度的证据
+- 跟踪北向资金/主力资金/游资/融资融券/ETF申赎等多维资金动向
+- 分析资金流入板块的逻辑和持续性
+- 识别主力建仓/出货的量价特征
+- 判断市场整体流动性水位和风险偏好
+- 评估量价关系是否健康（放量上涨/缩量下跌/放量滞涨等）
 
 分析框架：
-1. 风险隐患 — 业绩下滑/商誉减值/质押爆仓/债务违约
-2. 估值风险 — 当前估值是否已经泡沫化
-3. 利空事件 — 减持/解禁/诉讼/监管/退市风险
-4. 行业逆风 — 行业衰退/政策收紧/竞争加剧/替代风险
-5. 资金风险 — 主力出货/流动性枯竭/筹码分散""",
-        "debate_weight": 1.0,
+1. 宏观流动性 — 社融/M2/利率/汇率对股市资金面的传导
+2. 北向资金 — 外资的行业偏好、流入/流出的拐点信号
+3. 主力资金 — 超大单/大单净流入板块和个股
+4. 融资融券 — 杠杆资金情绪（融资余额趋势）
+5. 量价关系 — 放量突破 vs 缩量阴跌 vs 放量滞涨的判断
+6. 资金风格 — 当前是机构主导还是游资主导
+7. ETF资金 — 行业ETF的份额变化反映的机构配置方向
+
+学习方法：你的核心研究课题是"资金流向是否能预测股价方向"。每天验证你对资金流入板块的走势预测，追踪资金-价格领先滞后关系的时间窗口。""",
+        "debate_weight": 1.1,
     },
 }
 
@@ -151,22 +258,53 @@ RESEARCHERS = {
 # ═══════════════════════════════════════════
 
 class Researcher:
-    """研究员基类"""
+    """研究员基类 v2.0 — 带假设追踪和跨日记忆"""
 
-    def __init__(self, role_id: str):
+    _hyp_counter = 0  # 🆕 防止同秒ID冲突
+
+    def __init__(self, role_id: str, state: ResearcherState):
         cfg = RESEARCHERS[role_id]
         self.role_id = role_id
         self.name = cfg["name"]
         self.emoji = cfg["emoji"]
         self.persona = cfg["persona"]
         self.debate_weight = cfg["debate_weight"]
+        self.state = state  # 🆕 共享状态
 
     def analyze(self, context: Dict) -> ResearchReport:
-        """基于上下文生成分析报告（结构化数据分析，不调LLM）"""
         raise NotImplementedError
 
+    def verify_past_hypotheses(self, context: Dict) -> List[dict]:
+        """验证该研究员过往的活跃假设，返回验证结果"""
+        results = []
+        my_hypotheses = [h for h in self.state.get_active_hypotheses()
+                         if h.source == self.role_id]
+        for h in my_hypotheses:
+            # 子类覆盖此方法提供具体验证逻辑
+            result = self._verify_one(h, context)
+            if result:
+                results.append(result)
+                self.state.verify_hypothesis(h.id, result["positive"], result["evidence"])
+        return results
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        """子类覆盖：验证单个假设。返回 {positive: bool, evidence: str} 或 None"""
+        return None
+
+    def _make_hypothesis(self, statement: str, category: str,
+                         confidence: float = 0.5, symbols: list = None) -> Hypothesis:
+        """创建新假设"""
+        import time
+        Researcher._hyp_counter += 1
+        hid = f"{self.role_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{Researcher._hyp_counter:03d}"
+        return Hypothesis(
+            id=hid, statement=statement, category=category,
+            confidence=confidence, source=self.role_id,
+            related_symbols=symbols or [],
+            created_at=datetime.now().strftime('%Y-%m-%d %H:%M'),
+        )
+
     def get_system_prompt(self) -> str:
-        """获取 LLM 系统提示词"""
         return f"""你是安幕诺家族的{self.emoji} {self.name}。
 
 {self.persona}
@@ -178,126 +316,182 @@ class Researcher:
   "data_evidence": ["证据1", "证据2"],
   "confidence": 0.0-1.0,
   "recommendations": ["建议1", "建议2"],
-  "red_flags": ["红旗1"] 
+  "red_flags": ["红旗1"]
 }}"""
 
 
 # ═══════════════════════════════════════════
-# 结构化分析（不调LLM的轻量模式）
+# 6位研究员实现
 # ═══════════════════════════════════════════
 
 class DataResearcher(Researcher):
-    """数据研究员 — 结构化数据质量分析"""
 
-    def __init__(self):
-        super().__init__("data")
+    def __init__(self, state: ResearcherState):
+        super().__init__("data", state)
 
     def analyze(self, context: Dict) -> ResearchReport:
-        findings = []
-        evidence = []
-        flags = []
-
-        # 检查数据源完整性
+        findings, evidence, flags, recs = [], [], [], []
         sources = context.get("data_sources", {})
+        kb_files = context.get("kb_files", {})
+
+        # 数据源状态
+        ok_count = 0
         for src_name, status in sources.items():
             if status.get("ok"):
-                findings.append(f"{src_name}: 数据源正常")
+                ok_count += 1
             else:
                 findings.append(f"{src_name}: 数据源异常 — {status.get('error', '未知')}")
                 flags.append(f"{src_name} 数据源异常需修复")
+        if ok_count == len(sources):
+            findings.append(f"全部 {len(sources)} 个数据源正常")
 
-        # 检查KB数据时效
-        kb_files = context.get("kb_files", {})
+        # 🆕 v2.2: 数据内容验证 — 不只检查连通性，还要验证数据合理性
+        content_issues = self._validate_data_content(context)
+        flags.extend(content_issues.get("flags", []))
+        findings.extend(content_issues.get("findings", []))
+        recs.extend(content_issues.get("recs", []))
+
+        # KB时效 + 趋势追踪
+        stale_count = 0
         for fname, age_h in kb_files.items():
             if age_h < 2:
                 evidence.append(f"{fname} 更新及时 ({age_h:.1f}h)")
             elif age_h < 6:
                 findings.append(f"{fname} 数据略旧 ({age_h:.1f}h)")
+                stale_count += 1
             else:
                 flags.append(f"{fname} 严重过期 ({age_h:.1f}h)")
+                stale_count += 1
 
-        # 检查数据冲突
-        conflicts = context.get("data_conflicts", [])
-        for conf in conflicts:
-            flags.append(f"数据冲突: {conf}")
+        # 🆕 追踪数据退化趋势
+        if stale_count >= 2:
+            h = self._make_hypothesis(
+                f"多个数据源({stale_count}个)时效性下降，可能是上游API变更",
+                "data", 0.55
+            )
+            self.state.add_hypothesis(h)
+            findings.append(f"⚠️ {stale_count}个数据源时效下降，已创建追踪假设")
 
-        # 新数据源建议
+        # 数据缺口
+        gaps = context.get("data_gaps", [])
+        for g in gaps:
+            self.state.add_gap(g)
+            recs.append(f"数据缺口: {g} — 建议接入")
+
+        # 未用数据源
         available = context.get("available_sources", [])
         used = context.get("used_sources", [])
         unused = [s for s in available if s not in used]
         if unused:
-            recommendations = [f"建议接入未使用数据源: {', '.join(unused)}"]
+            recs.append(f"建议接入未使用数据源: {', '.join(unused[:5])}")
         else:
-            recommendations = ["当前数据源覆盖完整，无需新增"]
-
-        conf = 0.9 if not flags else 0.7
+            recs.append("当前数据源覆盖完整")
 
         return ResearchReport(
             author=self.name, author_emoji=self.emoji,
             timestamp=datetime.now().isoformat(),
             topic=context.get("topic", "数据质量巡检"),
             perspective=f"数据源 {len(sources)}个 / KB文件 {len(kb_files)}个",
-            key_findings=findings,
-            data_evidence=evidence,
-            confidence=conf,
-            recommendations=recommendations,
-            red_flags=flags,
+            key_findings=findings, data_evidence=evidence,
+            confidence=0.9 if not flags else 0.7,
+            recommendations=recs, red_flags=flags,
         )
+
+    def _validate_data_content(self, context: Dict) -> Dict:
+        """v2.2: 验证数据内容合理性，不只是连通性"""
+        flags, findings, recs = [], [], []
+
+        north = context.get("north_flow", {})
+        if north:
+            nf_val = north.get("net_flow", 0)
+            nf_source = north.get("data_source", "")
+            # 交叉验证：直接用 tushare 拉原始数据比对字段
+            try:
+                import tushare as ts
+                pro = ts.pro_api()
+                for i in range(5):
+                    dt = (datetime.now() - timedelta(days=i)).strftime('%Y%m%d')
+                    df = pro.moneyflow_hsgt(trade_date=dt)
+                    if not df.empty:
+                        row = df.iloc[-1]
+                        north_raw = float(row.get('north_money', 0)) / 1e4
+                        south_raw = float(row.get('south_money', 0)) / 1e4
+                        diff_north = abs(nf_val - north_raw)
+                        diff_south = abs(nf_val - south_raw)
+                        if diff_south < diff_north and nf_val < 20:
+                            flags.append(
+                                f"北向数据疑似字段混淆: 当前{nf_val:.1f}亿更接近南向({south_raw:.1f}亿)"
+                                f"而非北向({north_raw:.1f}亿) → 检查get_north_flow()字段")
+                            recs.append("紧急: 验证get_north_flow()是否用ggt_ss/ggt_sz(南向)而非north_money")
+                        break
+            except Exception:
+                pass
+
+            if abs(nf_val) < 10 and nf_val != 0:
+                findings.append(f"北向{nf_val:.1f}亿偏低，与万亿成交额不匹配，可能数据失真")
+
+        return {"flags": flags, "findings": findings, "recs": recs}
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        # 验证数据退化假设：重新检查当前数据源状态
+        if "数据源" in h.statement and "时效" in h.statement:
+            kb = context.get("kb_files", {})
+            stale_now = sum(1 for v in kb.values() if v >= 6)
+            return {"positive": stale_now == 0, "evidence": f"当前过期数据源: {stale_now}个"}
+        return None
 
 
 class FundamentalResearcher(Researcher):
-    """基本面研究员 — KB事件解析"""
 
-    def __init__(self):
-        super().__init__("fundamental")
+    def __init__(self, state: ResearcherState):
+        super().__init__("fundamental", state)
 
     def analyze(self, context: Dict) -> ResearchReport:
-        findings = []
-        evidence = []
-        flags = []
-        recs = []
-
-        # 公告分析
+        findings, evidence, flags, recs = [], [], [], []
+        new_hyps = []
         announcements = context.get("announcements", [])
+
         buyback = sum(1 for a in announcements if any(
-            kw in str(a) for kw in ["回购", "增持", "注销"]
-        ))
+            kw in str(a) for kw in ["回购", "增持", "注销"]))
         sell = sum(1 for a in announcements if any(
-            kw in str(a) for kw in ["减持", "质押", "冻结"]
-        ))
+            kw in str(a) for kw in ["减持", "质押", "冻结"]))
         mna = sum(1 for a in announcements if any(
-            kw in str(a) for kw in ["要约收购", "并购", "重组"]
-        ))
+            kw in str(a) for kw in ["要约收购", "并购", "重组"]))
 
         if buyback > sell:
-            findings.append(f"增持/回购信号({buyback}条)压倒减持({sell}条)，上市公司积极信号")
+            ratio = buyback / max(sell, 1)
+            findings.append(f"增持/回购({buyback}条) vs 减持({sell}条), 比={ratio:.1f}:1")
             evidence.append(f"内部人行为偏多: 回购增持{buyback} vs 减持{sell}")
+            # 🆕 生成假设：回购潮领先指数反弹
+            if ratio > 5:
+                h = self._make_hypothesis(
+                    f"回购/减持比 {ratio:.1f}:1 处于极高水平，4周内上证指数上涨概率>60%",
+                    "market", 0.55
+                )
+                new_hyps.append(h)
+                self.state.add_hypothesis(h)
         elif sell > buyback:
             flags.append(f"减持信号({sell}条)多于回购({buyback}条)，需警惕")
 
         if mna > 0:
-            findings.append(f"M&A活动活跃({mna}条)，资本运作密集期")
+            findings.append(f"M&A活跃({mna}条)，资本运作密集期")
 
         # 板块情绪
         sectors = context.get("sector_sentiment", {})
-        hot_sectors = [s for s, v in sectors.items() if v.get("score", 0) > 70]
-        cold_sectors = [s for s, v in sectors.items() if v.get("score", 0) < 30]
-        if hot_sectors:
-            findings.append(f"板块热度高: {', '.join(hot_sectors[:3])}")
-        if cold_sectors:
-            recs.append(f"关注超跌板块反弹机会: {', '.join(cold_sectors[:3])}")
+        hot = [s for s, v in sectors.items() if v.get("score", 0) > 70]
+        cold = [s for s, v in sectors.items() if v.get("score", 0) < 30]
+        if hot:
+            findings.append(f"板块热度: {', '.join(hot[:3])}")
+        if cold:
+            recs.append(f"关注超跌板块: {', '.join(cold[:3])}")
 
-        # 研报信号
+        # 研报
         broker = context.get("broker_views", [])
+        buy_cnt = sum(1 for b in broker if "买入" in str(b)) if broker else 0
         if broker:
-            findings.append(f"券商覆盖 {len(broker)} 只标的")
-            buy_cnt = sum(1 for b in broker if "买入" in str(b))
-            if buy_cnt > len(broker) * 0.7:
-                evidence.append(f"券商买入评级占比 {buy_cnt}/{len(broker)}")
-            elif buy_cnt < len(broker) * 0.3:
-                flags.append("券商买入评级偏低，市场情绪谨慎")
+            evidence.append(f"券商覆盖{len(broker)}只，买入{buy_cnt}只")
 
-        # ── 财报分析 (v8.3) ──
+        # 财报分析
         pool_stocks = context.get("pool_stocks", [])
         if pool_stocks:
             try:
@@ -305,17 +499,16 @@ class FundamentalResearcher(Researcher):
                 fin_scores = []
                 for s in pool_stocks[:8]:
                     code = s.get('code', '')
-                    name = s.get('name', code)
                     fs = get_financial_summary(code)
                     if fs.get('data_source') != 'no_data':
-                        fin_scores.append((name, code, fs['score'], fs))
+                        fin_scores.append((s.get('name', code), fs['score']))
                         if fs['score'] >= 80:
-                            findings.append(f"{name}: 财务面优秀 (评分{fs['score']})")
+                            findings.append(f"{s.get('name','')}: 财务优秀(评分{fs['score']})")
                         elif fs['score'] < 40:
-                            flags.append(f"{name}: 财务面堪忧 (评分{fs['score']})")
+                            flags.append(f"{s.get('name','')}: 财务堪忧(评分{fs['score']})")
                 if fin_scores:
-                    avg = sum(s[2] for s in fin_scores) / len(fin_scores)
-                    evidence.append(f"池内标的财务均分: {avg:.0f}/100 ({len(fin_scores)}只)")
+                    avg = sum(s[1] for s in fin_scores) / len(fin_scores)
+                    evidence.append(f"池内财务均分: {avg:.0f}/100")
             except Exception:
                 pass
 
@@ -324,27 +517,33 @@ class FundamentalResearcher(Researcher):
             timestamp=datetime.now().isoformat(),
             topic=context.get("topic", "基本面分析"),
             perspective=f"公告{len(announcements)}条 / 板块{len(sectors)}个",
-            key_findings=findings or ["基本面信号中性，无显著异常"],
+            key_findings=findings or ["基本面信号中性"],
             data_evidence=evidence,
             confidence=0.75 if not flags else 0.6,
             recommendations=recs or ["维持现有持仓基本面评估"],
-            red_flags=flags,
+            red_flags=flags, new_hypotheses=new_hyps,
         )
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        if "回购" in h.statement and "上证" in h.statement:
+            idx = context.get("index_data", {})
+            sh = idx.get("asia", {}).get("shanghai", [0, 0])
+            change = sh[1] if len(sh) > 1 else 0
+            age_days = (datetime.now() - datetime.strptime(h.created_at[:10], '%Y-%m-%d')).days
+            return {"positive": change > 0, "evidence": f"创建{age_days}天后上证{change:+.2f}%"}
+        return None
 
 
 class TechnicalResearcher(Researcher):
-    """技术面研究员 — 池内标的形态扫描"""
 
-    def __init__(self):
-        super().__init__("technical")
+    def __init__(self, state: ResearcherState):
+        super().__init__("technical", state)
 
     def analyze(self, context: Dict) -> ResearchReport:
-        findings = []
-        evidence = []
-        flags = []
-        recs = []
-
+        findings, evidence, flags, recs = [], [], [], []
+        new_hyps = []
         pool = context.get("pool_stocks", [])
+
         for s in pool:
             code = s.get("code", "")
             name = s.get("name", "")
@@ -352,53 +551,60 @@ class TechnicalResearcher(Researcher):
             tech = float(s.get("technical", 50))
 
             if tech >= 65:
-                findings.append(f"{name}({code}): 技术面强势 (评分{tech})")
-                evidence.append(f"{name} MA20偏离{dev:+.1f}%")
-
-            # MA20位置判断
+                findings.append(f"{name}: 技术面强势(评分{tech})")
             if -2 <= dev <= 2:
-                recs.append(f"{name}: MA20附近整理，可等突破确认")
+                recs.append(f"{name}: MA20附近整理，等突破确认")
+                # 🆕 生成方向预测假设
+                h = self._make_hypothesis(
+                    f"{name}({code}) MA20附近盘整，预计5日内选择向上突破",
+                    "stock", 0.5, [code]
+                )
+                new_hyps.append(h)
+                self.state.add_hypothesis(h)
             elif dev > 8:
-                flags.append(f"{name}: 偏离MA20 +{dev:.0f}%，追高风险大")
+                flags.append(f"{name}: 偏离MA20 +{dev:.0f}%，追高风险")
             elif dev < -8:
-                findings.append(f"{name}: 超跌 {dev:.0f}%，关注止跌信号")
+                findings.append(f"{name}: 超跌{dev:.0f}%，关注止跌")
 
-        # 池整体判断
         if pool:
             avg_tech = sum(float(s.get("technical", 50)) for s in pool) / len(pool)
-            if avg_tech > 60:
-                findings.insert(0, f"池整体技术面偏强 (均分{avg_tech:.0f})")
-            else:
-                findings.insert(0, f"池整体技术面中性 (均分{avg_tech:.0f})")
+            tag = "偏强" if avg_tech > 60 else ("偏弱" if avg_tech < 40 else "中性")
+            findings.insert(0, f"池整体技术面{tag}(均分{avg_tech:.0f})")
 
         return ResearchReport(
             author=self.name, author_emoji=self.emoji,
             timestamp=datetime.now().isoformat(),
             topic=context.get("topic", "技术面扫描"),
             perspective=f"池内{len(pool)}只标的形态评估",
-            key_findings=findings or ["池内标的无显著技术信号"],
+            key_findings=findings or ["无显著技术信号"],
             data_evidence=evidence,
             confidence=0.7,
-            recommendations=recs or ["观望为主，等待明确技术信号"],
-            red_flags=flags,
+            recommendations=recs or ["观望为主，等待明确信号"],
+            red_flags=flags, new_hypotheses=new_hyps,
         )
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        if "突破" in h.statement and h.related_symbols:
+            code = h.related_symbols[0]
+            pool = context.get("pool_stocks", [])
+            for s in pool:
+                if s.get("code") == code:
+                    dev = float(s.get("ma20_dev", 0))
+                    return {"positive": dev > 0, "evidence": f"{code} MA20偏离{dev:+.1f}%"}
+        return None
 
 
 class BullResearcher(Researcher):
-    """多方研究员 — 寻找看多因素"""
 
-    def __init__(self):
-        super().__init__("bull")
+    def __init__(self, state: ResearcherState):
+        super().__init__("bull", state)
 
     def analyze(self, context: Dict) -> ResearchReport:
-        findings = []
-        evidence = []
-        recs = []
-
+        findings, evidence, recs = [], [], []
+        new_hyps = []
         pool = context.get("pool_stocks", [])
         insights = context.get("kb_insights", [])
 
-        # 扫描利好信号
         for s in pool:
             name = s.get("name", "")
             code = s.get("code", "")
@@ -406,48 +612,54 @@ class BullResearcher(Researcher):
             event = float(s.get("event", 50))
 
             if sentiment >= 70:
-                findings.append(f"{name}: 情绪面积极 (评分{sentiment})")
-                evidence.append(f"{name} 市场关注度和正面讨论高")
-
+                findings.append(f"{name}: 情绪面积极({sentiment})")
             if event >= 65:
-                findings.append(f"{name}: 事件催化密集 (评分{event})")
-                recs.append(f"{name}: 事件驱动型，关注后续公告进展")
+                findings.append(f"{name}: 事件催化密集({event})")
+                h = self._make_hypothesis(
+                    f"{name}({code}) 事件催化密集，5日内上涨概率>60%",
+                    "stock", 0.55, [code]
+                )
+                new_hyps.append(h)
+                self.state.add_hypothesis(h)
 
-            # 从insights中找看多信号
             for ins in insights:
                 text = str(ins)
-                if code in text:
-                    positive_kw = ["回购", "增持", "利好", "突破", "中标", "订单", "增长", "注销", "激励"]
-                    if any(kw in text for kw in positive_kw):
-                        evidence.append(f"{name}: KB洞察确认正面信号")
+                if code in text and any(kw in text for kw in
+                    ["回购", "增持", "利好", "突破", "中标", "订单", "增长", "注销", "激励"]):
+                    evidence.append(f"{name}: KB洞察确认正面信号")
 
         if not findings:
-            findings.append("当前池内标的无明显看多信号，建议等待更好的入场时机")
+            findings.append("当前池内标的无明显看多信号")
 
         return ResearchReport(
             author=self.name, author_emoji=self.emoji,
             timestamp=datetime.now().isoformat(),
             topic=context.get("topic", "多方研判"),
             perspective=f"池内{len(pool)}只标的看多因素",
-            key_findings=findings,
-            data_evidence=evidence,
+            key_findings=findings, data_evidence=evidence,
             confidence=0.7 if evidence else 0.5,
             recommendations=recs or ["观望——多方信号不足"],
-            red_flags=[],
+            new_hypotheses=new_hyps,
         )
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        if h.related_symbols:
+            code = h.related_symbols[0]
+            pool = context.get("pool_stocks", [])
+            for s in pool:
+                if s.get("code") == code:
+                    chg = float(s.get("change_pct", 0))
+                    return {"positive": chg > 0, "evidence": f"{code} 涨跌{chg:+.1f}%"}
+        return None
 
 
 class BearResearcher(Researcher):
-    """空方研究员 — 寻找看空因素"""
 
-    def __init__(self):
-        super().__init__("bear")
+    def __init__(self, state: ResearcherState):
+        super().__init__("bear", state)
 
     def analyze(self, context: Dict) -> ResearchReport:
-        findings = []
-        evidence = []
-        flags = []
-
+        findings, evidence, flags = [], [], []
         pool = context.get("pool_stocks", [])
         insights = context.get("kb_insights", [])
 
@@ -458,20 +670,21 @@ class BearResearcher(Researcher):
             mkt_cap = float(s.get("market_cap", 0))
 
             if risk == "高":
-                findings.append(f"{name}: 风险评级为「高」")
-                evidence.append(f"{name} 风险等级高，需控制仓位")
-
+                findings.append(f"{name}: 风险评级「高」")
             if 0 < mkt_cap < 80:
                 flags.append(f"{name}: 小市值({mkt_cap:.0f}亿)，流动性风险")
+                # 🆕 生成风险追踪假设
+                h = self._make_hypothesis(
+                    f"{name}({code}) 小市值({mkt_cap:.0f}亿)流动性风险将导致日内波动>5%",
+                    "risk", 0.5, [code]
+                )
+                self.state.add_hypothesis(h)
 
-            # 从insights找看空信号
             for ins in insights:
                 text = str(ins)
-                if code in text:
-                    negative_kw = ["减持", "终止", "亏损", "诉讼", "处罚", "退市", "警示", "冻结", "下跌"]
-                    if any(kw in text for kw in negative_kw):
-                        flags.append(f"{name}: KB洞察发现风险信号")
-                        evidence.append(f"{name}: 洞察中出现利空关键词")
+                if code in text and any(kw in text for kw in
+                    ["减持", "终止", "亏损", "诉讼", "处罚", "退市", "警示", "冻结"]):
+                    flags.append(f"{name}: KB洞察发现风险信号")
 
         if not findings and not flags:
             findings.append("当前池内标的无明显看空信号")
@@ -481,444 +694,666 @@ class BearResearcher(Researcher):
             timestamp=datetime.now().isoformat(),
             topic=context.get("topic", "空方研判"),
             perspective=f"池内{len(pool)}只标的风险因素",
-            key_findings=findings,
-            data_evidence=evidence,
+            key_findings=findings, data_evidence=evidence,
             confidence=0.7,
-            recommendations=["严格要求止损，高风偏标的控制仓位 ≤ 11.1%"],
+            recommendations=["高风偏标的控制仓位 ≤ 11.1%，严格执行止损"],
             red_flags=flags,
         )
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        if "波动" in h.statement and h.related_symbols:
+            code = h.related_symbols[0]
+            pool = context.get("pool_stocks", [])
+            for s in pool:
+                if s.get("code") == code:
+                    chg = abs(float(s.get("change_pct", 0)))
+                    return {"positive": chg > 5,
+                            "evidence": f"{code} 波动{chg:.1f}%"}
+        return None
+
+
+class CapitalFlowResearcher(Researcher):
+    """🆕 资金面研究员 — 全市场资金流向 + 量价关系分析"""
+
+    def __init__(self, state: ResearcherState):
+        super().__init__("flow", state)
+
+    def analyze(self, context: Dict) -> ResearchReport:
+        findings, evidence, flags, recs = [], [], [], []
+        new_hyps = []
+
+        # 1. 北向资金 — 先验证数据质量再使用
+        north = context.get("north_flow", {})
+        nf_val = north.get("net_flow", 0)
+        nf_source = north.get("data_source", "unknown")
+        nf_quality = north.get("_quality", "")
+
+        # 🆕 v2.2: 前置数据验证 — 不盲目信任输入
+        if nf_val != 0:
+            # 验证1: 北向<10亿对万亿成交额来说异常偏小
+            if abs(nf_val) < 10:
+                flags.append(
+                    f"🚨 北向{nf_val:.1f}亿严重偏低(正常日30-100亿)，疑似数据源字段错误"
+                    f"（可能把南向ggt_ss/ggt_sz当北向）→ 已标记红旗"
+                )
+                recs.append("暂停基于北向数据的决策，先修复get_north_flow()字段映射")
+                # 不生成基于失真数据的假设
+            else:
+                direction = "净流入" if nf_val > 0 else "净流出"
+                findings.append(f"北向资金: {nf_val:.1f}亿{direction} (来源:{nf_source})")
+                if nf_val > 30:
+                    recs.append("北向大幅流入，关注外资偏好板块")
+                    h = self._make_hypothesis(
+                        f"北向单日流入{nf_val:.0f}亿，次日上证上涨概率>60%",
+                        "market", 0.55
+                    )
+                    new_hyps.append(h)
+                    self.state.add_hypothesis(h)
+                elif nf_val < -30:
+                    flags.append(f"北向大幅流出{nf_val:.0f}亿，外资撤离信号")
+        else:
+            evidence.append(f"北向实时数据不可用，使用{str(nf_quality) or 'T-1'}数据")
+
+        # 2. 全市场资金流向
+        mf = context.get("market_flow", {})
+        main_net = mf.get("main_net", 0)
+        retail_net = mf.get("retail_net", 0)
+        if main_net != 0:
+            findings.append(f"主力资金: {main_net/1e8:.0f}亿{'流入'if main_net>0 else '流出'}")
+            # 主力 vs 散户背离是重要信号
+            if main_net > 0 and retail_net < 0:
+                findings.append("⚠️ 主力流入但散户流出——聪明钱在接盘")
+            elif main_net < 0 and retail_net > 0:
+                flags.append("主力出货散户接盘——危险信号")
+
+        # 3. 板块资金流入Top3
+        top_stocks = context.get("top_flow_stocks", [])
+        if top_stocks:
+            sector_flow = {}
+            for s in top_stocks[:20]:
+                sec = s.get("sector", "综合")
+                nf = float(s.get("net_flow", 0))
+                sector_flow[sec] = sector_flow.get(sec, 0) + nf
+            if sector_flow:
+                top3 = sorted(sector_flow.items(), key=lambda x: x[1], reverse=True)[:3]
+                findings.append(f"板块资金TOP3: " + ", ".join(
+                    f"{s}({v/1e4:.0f}万)" for s, v in top3))
+                # 🆕 生成板块资金持续性假设
+                top_sec = top3[0][0]
+                h = self._make_hypothesis(
+                    f"资金流入最多的板块{top_sec}将在3日内持续获得资金青睐",
+                    "sector", 0.5
+                )
+                new_hyps.append(h)
+                self.state.add_hypothesis(h)
+
+        # 4. 融资融券情绪
+        margin = context.get("margin_data", {})
+        if margin:
+            bal = margin.get("margin_balance", 0)
+            findings.append(f"融资余额: {bal/1e8:.0f}亿")
+
+        # 5. 量价关系诊断
+        pool = context.get("pool_stocks", [])
+        abnormal_vol = []
+        for s in pool:
+            code = s.get("code", "")
+            name = s.get("name", "")
+            chg = float(s.get("change_pct", 0))
+            vol_ratio = float(s.get("volume_ratio", 1.0))
+            if vol_ratio > 2.5:
+                if chg > 5:
+                    findings.append(f"{name}: 放量上涨(chg{chg:+.1f}% vol{vol_ratio:.1f}x)——强势突破")
+                elif chg < -3:
+                    flags.append(f"{name}: 放量下跌——出货信号")
+                else:
+                    abnormal_vol.append(name)
+
+        if abnormal_vol:
+            recs.append(f"关注异常放量标的: {', '.join(abnormal_vol)}")
+
+        # 6. 杠杆资金风险偏好
+        ins = context.get("kb_insights", [])
+        margin_bull = sum(1 for i in ins if "融资买入" in str(i) or "杠杆" in str(i))
+        if margin_bull > 5:
+            findings.append(f"杠杆资金活跃({margin_bull}条相关事件)")
+
+        return ResearchReport(
+            author=self.name, author_emoji=self.emoji,
+            timestamp=datetime.now().isoformat(),
+            topic=context.get("topic", "资金面分析"),
+            perspective=f"北向{nf_val:.0f}亿 / 主力{main_net/1e8:.0f}亿 / 量价{len(pool)}只",
+            key_findings=findings or ["资金面信号中性，无明显异常"],
+            data_evidence=evidence,
+            confidence=0.7 if findings else 0.5,
+            recommendations=recs or ["维持现有资金面评估"],
+            red_flags=flags, new_hypotheses=new_hyps,
+        )
+
+    def _verify_one(self, h: Hypothesis, context: Dict) -> Optional[dict]:
+        if "板块" in h.statement and "资金" in h.statement:
+            top = context.get("top_flow_stocks", [])
+            if top:
+                sec_flows = {}
+                for s in top[:20]:
+                    sec_flows[s.get("sector","")] = sec_flows.get(s.get("sector",""), 0) + float(s.get("net_flow",0))
+                top_sec = max(sec_flows, key=sec_flows.get) if sec_flows else ""
+                target_sec = h.statement.split("板块")[1].split("将")[0].strip()
+                return {"positive": target_sec in top_sec,
+                        "evidence": f"当前资金TOP板块: {top_sec}"}
+        if "北向" in h.statement and "上证" in h.statement:
+            idx = context.get("index_data", {})
+            sh = idx.get("asia", {}).get("shanghai", [0, 0])
+            chg = sh[1] if len(sh) > 1 else 0
+            return {"positive": chg > 0, "evidence": f"上证{chg:+.2f}%"}
+        return None
 
 
 # ═══════════════════════════════════════════
 # 研究员工厂
 # ═══════════════════════════════════════════
 
-def get_all_researchers() -> List[Researcher]:
+def get_all_researchers(state: ResearcherState) -> List[Researcher]:
     return [
-        DataResearcher(),
-        FundamentalResearcher(),
-        TechnicalResearcher(),
-        BullResearcher(),
-        BearResearcher(),
+        DataResearcher(state),
+        FundamentalResearcher(state),
+        TechnicalResearcher(state),
+        BullResearcher(state),
+        BearResearcher(state),
+        CapitalFlowResearcher(state),  # 🆕
     ]
 
 
-def get_researcher(role_id: str) -> Optional[Researcher]:
-    mapping = {
-        "data": DataResearcher,
-        "fundamental": FundamentalResearcher,
-        "technical": TechnicalResearcher,
-        "bull": BullResearcher,
-        "bear": BearResearcher,
-    }
-    cls = mapping.get(role_id)
-    return cls() if cls else None
-
-
 # ═══════════════════════════════════════════
-# 议会调度器
+# 议会 (保持不变，增加资金面研究员)
 # ═══════════════════════════════════════════
 
 class Parliament:
-    """研究员议会 — 3轮辩论协议"""
+    """研究员议会 — 3轮辩论 → 小红终审"""
 
     def __init__(self):
-        self.researchers = get_all_researchers()
-        self.rounds = []
+        self.state = ResearcherState()
+        self.state.load()
+        self.researchers = get_all_researchers(self.state)
 
     def load_context(self) -> Dict:
-        """加载当前系统上下文"""
+        """加载当日研究上下文"""
         ctx = {
-            "topic": "系统全景分析",
-            "timestamp": datetime.now().isoformat(),
+            "data_sources": {}, "kb_files": {}, "announcements": [],
+            "sector_sentiment": {}, "broker_views": [], "pool_stocks": [],
+            "kb_insights": [], "data_gaps": [], "available_sources": [],
+            "used_sources": [], "data_conflicts": [],
+            "north_flow": {}, "market_flow": {}, "top_flow_stocks": [],
+            "margin_data": {}, "index_data": {},
         }
 
-        # 加载推荐池
-        pool_path = DATA_DIR / "daily_pool.json"
-        if pool_path.exists():
-            try:
-                pool = json.loads(pool_path.read_text())
-                ctx["pool_stocks"] = pool.get("recommendations", [])
-                ctx["excluded"] = pool.get("excluded", {})
-            except Exception:
-                ctx["pool_stocks"] = []
-
-        # 加载KB洞察
-        kb_path = SCRIPT_DIR.parent / "data" / "kb" / "kb_insights.json"
-        if kb_path.exists():
-            try:
-                ctx["kb_insights"] = json.loads(kb_path.read_text())
-            except Exception:
-                ctx["kb_insights"] = []
-
-        # 加载KB最新采集
-        mega_path = SCRIPT_DIR.parent / "data" / "kb" / "mega_latest.json"
-        kb_files = {}
-        if mega_path.exists():
-            kb_files["mega_latest"] = (
-                datetime.now().timestamp() - mega_path.stat().st_mtime
-            ) / 3600
-        ctx["kb_files"] = kb_files
-
-        # 加载持仓
-        holdings_path = SCRIPT_DIR.parent / "data" / "holdings.json"
-        if holdings_path.exists():
-            try:
-                ctx["holdings"] = json.loads(holdings_path.read_text())
-            except Exception:
-                ctx["holdings"] = {}
-
-        # 公告/板块
-        if mega_path.exists():
-            try:
+        try:
+            # KB数据
+            mega_path = KB_DIR / "mega_latest.json"
+            if mega_path.exists():
                 mega = json.loads(mega_path.read_text())
                 modules = mega.get("modules", {})
                 ctx["announcements"] = modules.get("announcements", {}).get("data", [])
-                ctx["broker_views"] = modules.get("broker_views", {}).get("data", [])
-            except Exception:
-                pass
+                ctx["kb_insights"] = []
+                ins_path = DATA_DIR / "kb" / "kb_insights.json"
+                if ins_path.exists():
+                    ins_data = json.loads(ins_path.read_text())
+                    ctx["kb_insights"] = ins_data.get("insights", [])
+
+            # 数据源状态
+            for f in KB_DIR.glob("*.json"):
+                age = (datetime.now().timestamp() - f.stat().st_mtime) / 3600
+                ctx["kb_files"][f.name] = round(age, 1)
+
+            # 推荐池
+            pool_path = SCRIPT_DIR / "data" / "daily_pool.json"
+            if pool_path.exists():
+                pool = json.loads(pool_path.read_text())
+                ctx["pool_stocks"] = pool.get("recommendations", [])
+
+            # 数据源状态
+            from data_pipeline import check_data_health, get_north_flow, get_market_money_flow, get_top_flow_stocks, get_index_data
+            health = check_data_health()
+            ctx["data_sources"]["push2"] = {"ok": health.get("status") == "ok",
+                                              "error": health.get("detail", "")}
+            ctx["north_flow"] = get_north_flow()
+            ctx["market_flow"] = get_market_money_flow()
+            ctx["top_flow_stocks"] = get_top_flow_stocks(20)
+            ctx["index_data"] = get_index_data()
+
+        except Exception:
+            pass
 
         return ctx
 
-    def round_one(self, context: Dict) -> Dict[str, ResearchReport]:
-        """Round 1: 独立研判 — 各研究员独立分析"""
-        reports = {}
-        pool = context.get("pool_stocks", [])
-
-        for r in self.researchers:
-            ctx = {**context, "topic": f"{r.name}独立研判"}
-            try:
-                report = r.analyze(ctx)
-                reports[r.role_id] = report
-            except Exception as e:
-                reports[r.role_id] = ResearchReport(
-                    author=r.name, author_emoji=r.emoji,
-                    timestamp=datetime.now().isoformat(),
-                    topic=ctx["topic"],
-                    perspective="分析异常",
-                    key_findings=[f"分析出错: {str(e)[:100]}"],
-                    data_evidence=[],
-                    confidence=0.0,
-                    recommendations=["需人工复核"],
-                )
-
-        self.rounds.append({"name": "独立研判", "reports": reports})
-        return reports
-
-    def round_two(self, round1_reports: Dict[str, ResearchReport]) -> Dict:
-        """Round 2: 交叉辩论 — 多空互驳 + 基本面技术面交叉验证"""
-        debate = {
-            "bull_vs_bear": self._debate_pair(
-                round1_reports.get("bull"),
-                round1_reports.get("bear"),
-                "多空辩论"
-            ),
-            "fundamental_vs_technical": self._debate_pair(
-                round1_reports.get("fundamental"),
-                round1_reports.get("technical"),
-                "基本面×技术面交叉验证"
-            ),
-            "data_verdict": self._data_verdict(round1_reports),
-        }
-
-        self.rounds.append({"name": "交叉辩论", "debate": debate})
-        return debate
-
-    def _debate_pair(self, report_a, report_b, title: str) -> Dict:
-        """两方辩论：比较观点，找共识和分歧"""
-        if not report_a or not report_b:
-            return {"title": title, "status": "缺失一方报告", "consensus": [], "divergence": []}
-
-        a_findings = set(report_a.key_findings) if report_a.key_findings else set()
-        b_findings = set(report_b.key_findings) if report_b.key_findings else set()
-
-        # 简单共识/分歧检测（关键词重叠）
-        consensus = []
-        divergence = []
-
-        a_keywords = set()
-        b_keywords = set()
-        for f in a_findings:
-            a_keywords.update(re.findall(r'[\u4e00-\u9fff]{2,}', f))
-        for f in b_findings:
-            b_keywords.update(re.findall(r'[\u4e00-\u9fff]{2,}', f))
-
-        shared = a_keywords & b_keywords
-        if shared:
-            consensus.append(f"共同关注点: {'/'.join(list(shared)[:5])}")
-
-        a_unique = a_keywords - b_keywords
-        b_unique = b_keywords - a_keywords
-        if a_unique:
-            divergence.append(f"{report_a.author_emoji}独有关注: {'/'.join(list(a_unique)[:3])}")
-        if b_unique:
-            divergence.append(f"{report_b.author_emoji}独有关注: {'/'.join(list(b_unique)[:3])}")
-
-        return {
-            "title": title,
-            "a_perspective": f"{report_a.author_emoji}: {report_a.perspective}",
-            "b_perspective": f"{report_b.author_emoji}: {report_b.perspective}",
-            "consensus": consensus or ["无明显共识"],
-            "divergence": divergence or ["无明显分歧"],
-        }
-
-    def _data_verdict(self, reports: Dict[str, ResearchReport]) -> Dict:
-        """数据研究员做裁判：用数据验证各方论据"""
-        data_rpt = reports.get("data")
-        if not data_rpt:
-            return {"verdict": "数据研究员未参与，无法裁判"}
-
-        all_flags = []
-        for rid, rpt in reports.items():
-            if rid != "data" and rpt.red_flags:
-                all_flags.extend(rpt.red_flags)
-
-        return {
-            "verdict": f"数据研报置信度 {data_rpt.confidence:.0%}",
-            "data_quality_flags": data_rpt.red_flags,
-            "cross_validated_flags": list(set(all_flags))[:5],
-        }
-
-    def round_three(self, round1: Dict, round2: Dict) -> Dict:
-        """Round 3: 小红终审 — 综合所有报告形成统一结论"""
-        decision = {
-            "timestamp": datetime.now().isoformat(),
-            "verdict": self._synthesize(round1, round2),
-            "researcher_credits": self._score_researchers(round1),
-        }
-        self.rounds.append({"name": "小红终审", "decision": decision})
-        return decision
-
-    def _synthesize(self, round1: Dict, round2: Dict) -> Dict:
-        """综合研判"""
-        confidences = [r.confidence for r in round1.values() if r.confidence > 0]
-        avg_conf = sum(confidences) / len(confidences) if confidences else 0.5
-
-        # 汇总红旗
-        all_flags = []
-        for r in round1.values():
-            all_flags.extend(r.red_flags)
-        unique_flags = list(set(all_flags))
-
-        # 汇总建议
-        all_recs = []
-        for r in round1.values():
-            all_recs.extend(r.recommendations)
-
-        # 多空对比
-        bull_rpt = round1.get("bull")
-        bear_rpt = round1.get("bear")
-        bull_signals = len(bull_rpt.key_findings) if bull_rpt else 0
-        bear_signals = len(bear_rpt.red_flags) if bear_rpt else 0
-
-        if bull_signals > bear_signals + 2:
-            bias = "偏多"
-        elif bear_signals > bull_signals + 2:
-            bias = "偏空"
-        else:
-            bias = "中性"
-
-        return {
-            "overall_confidence": round(avg_conf, 2),
-            "bias": bias,
-            "bull_strength": bull_signals,
-            "bear_strength": bear_signals,
-            "critical_flags": unique_flags[:5],
-            "consolidated_recommendations": list(dict.fromkeys(all_recs))[:5],  # 去重
-        }
-
-    def _score_researchers(self, round1: Dict) -> Dict:
-        """根据报告质量给研究员打分"""
-        scores = {}
-        for rid, rpt in round1.items():
-            # 评分维度：置信度 + 发现数量 + 证据数量
-            evidence_bonus = min(len(rpt.data_evidence) * 0.05, 0.2)
-            finding_bonus = min(len(rpt.key_findings) * 0.03, 0.1)
-            score = min(rpt.confidence + evidence_bonus + finding_bonus, 1.0)
-            scores[rid] = round(score, 2)
-        return scores
-
-    def execute(self, topic: str = None) -> Dict:
-        """执行完整议会流程"""
-        print(f"\n🏛️ 研究员议会 · {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-        print(f"   议题: {topic or '系统全景分析'}\n")
-
-        # Round 1
-        print("━" * 50)
-        print("📋 Round 1: 独立研判")
+    def debate(self, topic: str) -> Dict:
+        """3轮辩论 → 小红终审"""
         context = self.load_context()
-        if topic:
-            context["topic"] = topic
-        r1 = self.round_one(context)
-        for rid, rpt in r1.items():
-            print(f"  {rpt.author_emoji} {rpt.author}: {rpt.perspective} "
-                  f"(置信度 {rpt.confidence:.0%})")
+        context["topic"] = topic
+        reports = []
 
-        # Round 2
-        print("\n━" * 50)
-        print("⚔️ Round 2: 交叉辩论")
-        r2 = self.round_two(r1)
-        for debate_id, debate in r2.items():
-            print(f"  [{debate.get('title', debate_id)}]")
-            for cons in debate.get("consensus", []):
-                print(f"    🤝 {cons}")
-            for div in debate.get("divergence", []):
-                print(f"    ⚡ {div}")
-
-        # Round 3
-        print("\n━" * 50)
-        print("🌹 Round 3: 小红终审")
-        r3 = self.round_three(r1, r2)
-        verdict = r3["verdict"]
-        print(f"   市场判断: {verdict['bias']}  (置信度 {verdict['overall_confidence']:.0%})")
-        print(f"   多方信号: {verdict['bull_strength']}  |  空方信号: {verdict['bear_strength']}")
-        if verdict["critical_flags"]:
-            print(f"   🚩 关键红旗: {verdict['critical_flags'][0]}")
-
-        # 保存
-        self._save()
-        return {"round1": r1, "round2": r2, "round3": r3}
-
-    def _save(self):
-        """保存议会记录"""
-        RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
-        REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-
-        # 保存结构化日志
-        record = {
-            "timestamp": datetime.now().isoformat(),
-            "rounds": []
-        }
-
-        for r in self.rounds:
-            rd = {"name": r["name"]}
-            if "reports" in r:
-                rd["reports"] = {
-                    rid: {
-                        "perspective": rpt.perspective,
-                        "key_findings": rpt.key_findings,
-                        "confidence": rpt.confidence,
-                        "recommendations": rpt.recommendations,
-                        "red_flags": rpt.red_flags,
-                    }
-                    for rid, rpt in r["reports"].items()
-                }
-            elif "debate" in r:
-                rd["debate"] = r["debate"]
-            elif "decision" in r:
-                rd["decision"] = r["decision"]
-            record["rounds"].append(rd)
-
-        log = []
-        if LOG_PATH.exists():
+        # 第1轮: 独立研判
+        for r in self.researchers:
             try:
-                log = json.loads(LOG_PATH.read_text())
+                report = r.analyze(context)
+                reports.append(report)
             except Exception:
                 pass
-        log.append(record)
-        if len(log) > 90:
-            log = log[-90:]
-        LOG_PATH.write_text(json.dumps(log, ensure_ascii=False, indent=2))
 
-        # 保存可读报告
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        report_md = self._format_markdown(record)
-        (REPORTS_DIR / f"议会报告-{date_str}.md").write_text(report_md)
+        # 第2轮: 交叉质疑
+        bull_findings = []
+        bear_flags = []
+        for rp in reports:
+            if rp.author_emoji == "🐂":
+                bull_findings = rp.key_findings
+            if rp.author_emoji == "🐻":
+                bear_flags = rp.red_flags
 
-    def _format_markdown(self, record: Dict) -> str:
-        """生成议会报告 Markdown"""
-        lines = [
-            f"# 🏛️ 研究员议会报告",
-            f"> {record['timestamp'][:19]}",
-            "",
-        ]
-        for rd in record["rounds"]:
-            lines.append(f"## {rd['name']}")
-            lines.append("")
-            if "reports" in rd:
-                # Round 1: 独立研判
-                for rid, rpt in rd["reports"].items():
-                    if not isinstance(rpt, dict):
-                        continue
-                    cfg = RESEARCHERS.get(rid, {})
-                    lines.append(f"### {cfg.get('emoji','')} {cfg.get('name', rid)}")
-                    lines.append(f"**视角**: {rpt.get('perspective','')}")
-                    for f in rpt.get('key_findings', []):
-                        lines.append(f"- {f}")
-                    conf = rpt.get('confidence', 0)
-                    lines.append(f"_置信度: {conf:.0%}_")
-                    flags = rpt.get('red_flags', [])
-                    if flags:
-                        lines.append(f"🚩 红旗: {', '.join(flags[:3])}")
-                    lines.append("")
-            elif "debate" in rd:
-                # Round 2: 交叉辩论
-                for debate_id, debate in rd["debate"].items():
-                    if isinstance(debate, dict):
-                        lines.append(f"### {debate.get('title', debate_id)}")
-                        for cons in debate.get('consensus', []):
-                            lines.append(f"- 🤝 {cons}")
-                        for div in debate.get('divergence', []):
-                            lines.append(f"- ⚡ {div}")
-                        lines.append("")
-            elif "decision" in rd:
-                # Round 3: 小红终审
-                d = rd["decision"]
-                v = d.get("verdict", {})
-                lines.append(f"**市场判断**: {v.get('bias','?')}  (置信度 {v.get('overall_confidence',0):.0%})")
-                lines.append(f"**多方信号**: {v.get('bull_strength',0)}  |  **空方信号**: {v.get('bear_strength',0)}")
-                if v.get('critical_flags'):
-                    lines.append(f"**关键红旗**: {v['critical_flags'][0]}")
-                lines.append("")
-                for rec in v.get('consolidated_recommendations', []):
-                    lines.append(f"- 🌹 {rec}")
-                lines.append("")
-        return '\n'.join(lines)
+        cross_findings = []
+        if bull_findings and bear_flags:
+            overlap = set(bull_findings) & set(str(f) for f in bear_flags)
+            if overlap:
+                cross_findings.append(f"⚠️ 多空分歧: {list(overlap)[:3]}")
+            else:
+                cross_findings.append("多空双方无直接冲突——市场方向不明")
+
+        # 第3轮: 小红终审
+        total_bull = sum(1 for r in reports if len(r.key_findings) > 0 and r.author_emoji in ["🐂","📈"])
+        total_bear = sum(1 for r in reports if len(r.red_flags) > 0 and r.author_emoji in ["🐻","📊"])
+
+        verdict = {
+            "topic": topic,
+            "timestamp": datetime.now().isoformat(),
+            "bull_signals": total_bull,
+            "bear_signals": total_bear,
+            "bias": "偏多" if total_bull > total_bear else ("偏空" if total_bear > total_bull else "中性"),
+            "confidence": round(0.5 + abs(total_bull - total_bear) * 0.1, 2),
+            "red_flags": [f for r in reports for f in r.red_flags],
+            "recommendations": [rec for r in reports for rec in r.recommendations],
+            "hypotheses_created": sum(len(r.new_hypotheses) for r in reports),
+        }
+
+        # 持久化日志
+        LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        logs = []
+        if LOG_PATH.exists():
+            logs = json.loads(LOG_PATH.read_text())
+        logs.append(verdict)
+        LOG_PATH.write_text(json.dumps(logs[-100:], ensure_ascii=False, indent=2))
+
+        return {**verdict, "reports": reports}
 
 
 # ═══════════════════════════════════════════
-# 自主研学模式
+# 🆕 v2.1 个股级研究员分析 — 渗透到全链路
+# ═══════════════════════════════════════════
+
+def build_stock_context(code: str, name: str = "") -> Dict:
+    """
+    为单只股票构建研究员分析所需的完整上下文。
+    拉取：实时行情、财务、K线+MA、资金流向、KB洞察
+    """
+    ctx = {
+        "topic": f"个股深度分析: {name or code}",
+        "pool_stocks": [],
+        "kb_insights": [],
+        "north_flow": {},
+        "market_flow": {},
+        "top_flow_stocks": [],
+        "margin_data": {},
+        "index_data": {},
+        "announcements": [],
+        "sector_sentiment": {},
+        "broker_views": [],
+        "data_sources": {},
+        "kb_files": {},
+        "_errors": [],
+    }
+
+    try:
+        from data_pipeline import (
+            get_stock_realtime, get_financial_summary,
+            get_historical_k_with_ma, get_top_flow_stocks,
+            get_north_flow, get_market_money_flow, get_index_data
+        )
+
+        # 1. 实时行情
+        try:
+            rt = get_stock_realtime([code])
+            if code in rt:
+                stock = rt[code]
+                name = name or stock.get("name", "")
+                stock_info = {
+                    "code": code,
+                    "name": name,
+                    "close": stock.get("close", 0),
+                    "change_pct": stock.get("change_pct", 0),
+                    "open": stock.get("open", 0),
+                    "high": stock.get("high", 0),
+                    "low": stock.get("low", 0),
+                    "volume": stock.get("volume", 0),
+                    "amount": stock.get("amount", 0),
+                }
+                ctx["pool_stocks"] = [stock_info]
+        except Exception as e:
+            ctx["_errors"].append(f"行情: {e}")
+            ctx["pool_stocks"] = [{"code": code, "name": name}]
+
+        # 2. 财务数据
+        try:
+            fin = get_financial_summary(code)
+            if fin and fin.get("data_source") != "no_data":
+                ctx["pool_stocks"][0]["financial_score"] = fin.get("score", 50)
+                ctx["pool_stocks"][0]["financial_highlights"] = fin.get("highlights", [])
+                ctx["pool_stocks"][0]["financial_risks"] = fin.get("risks", [])
+                ctx["pool_stocks"][0]["roe"] = fin.get("roe")
+                ctx["pool_stocks"][0]["debt_ratio"] = fin.get("debt_ratio")
+                ctx["pool_stocks"][0]["profit_growth"] = fin.get("profit_growth")
+        except Exception as e:
+            ctx["_errors"].append(f"财务: {e}")
+
+        # 3. K线+MA (用于技术面分析)
+        #    get_historical_k_with_ma 返回: {code: [{date,close,volume,ma5,ma10,peTTM,pbMRQ,turn},...]}
+        try:
+            kline = get_historical_k_with_ma([code], days=60)
+            bars = kline.get(code, [])
+            if isinstance(bars, list) and bars:
+                closes = [b.get('close', 0) for b in bars]
+                ctx["pool_stocks"][0]["close_history"] = closes
+                last = bars[-1]
+                ctx["pool_stocks"][0]["ma5"] = last.get("ma5")
+                ctx["pool_stocks"][0]["ma10"] = last.get("ma10")
+                # MA20 自算
+                if len(closes) >= 20:
+                    ma20_val = sum(closes[-20:]) / 20
+                    ctx["pool_stocks"][0]["ma20"] = round(ma20_val, 2)
+                    ctx["pool_stocks"][0]["ma20_dev"] = round(
+                        (closes[-1] - ma20_val) / ma20_val * 100, 1) if ma20_val else 0
+                ctx["pool_stocks"][0]["pe_ttm"] = last.get("peTTM")
+                ctx["pool_stocks"][0]["pb_mrq"] = last.get("pbMRQ")
+                ctx["pool_stocks"][0]["turnover"] = last.get("turn")
+        except Exception as e:
+            ctx["_errors"].append(f"K线: {e}")
+
+        # 4. 资金流向 (从TOP股票中筛出此code)
+        try:
+            top20 = get_top_flow_stocks(20)
+            ctx["top_flow_stocks"] = top20
+            for s in top20:
+                if str(s.get("code", "")) == str(code):
+                    ctx["pool_stocks"][0]["net_flow"] = s.get("net_flow", 0)
+                    ctx["pool_stocks"][0]["volume_ratio"] = s.get("volume_ratio", 1.0)
+                    ctx["pool_stocks"][0]["main_net"] = s.get("main_net", 0)
+                    break
+        except Exception as e:
+            ctx["_errors"].append(f"资金流向: {e}")
+
+        # 5. 宏观资金面
+        try:
+            ctx["north_flow"] = get_north_flow()
+            ctx["market_flow"] = get_market_money_flow()
+            ctx["index_data"] = get_index_data()
+        except Exception:
+            pass
+
+        # 6. KB洞察 (与code相关)
+        try:
+            kb_path = SCRIPT_DIR / "data" / "kb" / "kb_insights.json"
+            if kb_path.exists():
+                ins = json.loads(kb_path.read_text())
+                all_ins = ins.get("insights", [])
+                ctx["kb_insights"] = [
+                    i for i in all_ins
+                    if str(code) in str(i) or (name and name in str(i))
+                ][:10]
+        except Exception:
+            pass
+
+        # 7. KB数据源时效
+        try:
+            for f in KB_DIR.glob("*.json"):
+                age = (datetime.now().timestamp() - f.stat().st_mtime) / 3600
+                ctx["kb_files"][f.name] = round(age, 1)
+        except Exception:
+            pass
+
+    except Exception as e:
+        ctx["_errors"].append(f"上下文构建: {e}")
+
+    return ctx
+
+
+def analyze_stock(code: str, name: str = "") -> Dict:
+    """
+    🆕 v2.1 个股研究员全维度分析。
+
+    拉取个股数据 → 6位研究员逐一分析 → 交叉汇总。
+    返回可直接嵌入 daily_pool recommendation 的 researcher_analysis 字段。
+    """
+    state = ResearcherState()
+    state.load()
+    researchers = get_all_researchers(state)
+
+    context = build_stock_context(code, name)
+
+    reports = {}
+    flags_aggregated = []
+    bull_signals = 0
+    bear_signals = 0
+
+    for r in researchers:
+        try:
+            report = r.analyze(context)
+            reports[r.role_id] = {
+                "author": r.name,
+                "emoji": r.emoji,
+                "perspective": report.perspective,
+                "key_findings": report.key_findings[:5] if report.key_findings else [],
+                "data_evidence": report.data_evidence[:3] if report.data_evidence else [],
+                "confidence": report.confidence,
+                "recommendations": report.recommendations[:3] if report.recommendations else [],
+                "red_flags": report.red_flags[:5] if report.red_flags else [],
+            }
+            # 统计多空
+            if r.role_id in ("bull", "technical"):
+                if report.confidence >= 0.6 and report.key_findings:
+                    bull_signals += 1
+            if r.role_id in ("bear",):
+                if report.red_flags and len(report.red_flags) > 0:
+                    bear_signals += 1
+            flags_aggregated.extend(report.red_flags[:3] if report.red_flags else [])
+        except Exception as e:
+            reports[r.role_id] = {
+                "author": r.name, "emoji": r.emoji,
+                "perspective": f"分析异常: {e}",
+                "confidence": 0.0,
+                "red_flags": [f"{r.name}分析失败: {str(e)[:100]}"]
+            }
+
+    # 交叉分析
+    bias = "偏多" if bull_signals > bear_signals else (
+        "偏空" if bear_signals > bull_signals else "中性"
+    )
+
+    return {
+        "timestamp": datetime.now().isoformat(),
+        "version": "v2.1",
+        "reports": reports,
+        "cross_analysis": {
+            "bias": bias,
+            "bull_votes": bull_signals,
+            "bear_votes": bear_signals,
+            "aggregated_flags": list(dict.fromkeys(flags_aggregated))[:8],
+            "consensus_findings": _extract_consensus(reports),
+            "data_errors": context.get("_errors", []),
+        }
+    }
+
+
+def _extract_consensus(reports: Dict) -> List[str]:
+    """提取至少2位研究员共同关注的发现"""
+    from collections import Counter
+    keywords_counter = Counter()
+    keyword_map = {}
+
+    sector_kw = ["突破", "反弹", "放量", "缩量", "均线", "支撑", "压力",
+                 "资金流入", "资金流出", "主力", "北向", "融资",
+                 "低估", "高估", "回购", "增持", "减持", "反转",
+                 "风险", "超买", "超卖", "背离", "盘整", "上涨", "下跌"]
+
+    for rid, rpt in reports.items():
+        for f in rpt.get("key_findings", []):
+            for kw in sector_kw:
+                if kw in str(f):
+                    keywords_counter[kw] += 1
+                    if kw not in keyword_map:
+                        keyword_map[kw] = []
+                    keyword_map[kw].append(f[:80])
+
+    consensus = []
+    for kw, cnt in keywords_counter.most_common(5):
+        if cnt >= 2:
+            consensus.append(f"[{cnt}位研究员] {kw}: {keyword_map[kw][0]}")
+
+    return consensus[:5]
+
+
+def query_stock(code: str, name: str = "") -> str:
+    """
+    🆕 用户查询个股 → 返回格式化分析报告供飞书展示。
+    CLI: python3 researchers.py --query 600519
+    """
+    analysis = analyze_stock(code, name)
+    cross = analysis["cross_analysis"]
+    reports = analysis["reports"]
+
+    stock_name = name or code
+
+    lines = [
+        f"# 🔬 研究员深度分析: {stock_name}({code})",
+        f"> 分析时间: {analysis['timestamp'][:19]}  |  bias: {cross['bias']}  "
+        f"(多{cross['bull_votes']} 空{cross['bear_votes']})",
+        "",
+    ]
+
+    if cross["consensus_findings"]:
+        lines.append("## 🤝 研究员共识")
+        for c in cross["consensus_findings"]:
+            lines.append(f"- {c}")
+        lines.append("")
+
+    order = ["fundamental", "technical", "flow", "bull", "bear", "data"]
+    for rid in order:
+        if rid not in reports:
+            continue
+        r = reports[rid]
+        lines.append(f"### {r['emoji']} {r['author']}")
+        lines.append(f"**视角**: {r['perspective']}")
+        lines.append(f"_置信度: {r['confidence']:.0%}_")
+        if r['key_findings']:
+            for f in r['key_findings'][:3]:
+                lines.append(f"- {f}")
+        if r['red_flags']:
+            lines.append(f"🚩 " + " · ".join(r['red_flags'][:3]))
+        lines.append("")
+
+    if cross["aggregated_flags"]:
+        lines.append("## ⚠️ 红旗汇总")
+        for f in cross["aggregated_flags"][:5]:
+            lines.append(f"- 🚩 {f}")
+        lines.append("")
+
+    if cross.get("data_errors"):
+        lines.append("## ⚙️ 数据获取异常")
+        for e in cross["data_errors"]:
+            lines.append(f"- ⚡ {e}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# ═══════════════════════════════════════════
+# 主流程
 # ═══════════════════════════════════════════
 
 def run_study_session():
-    """每日自主研学 — 系统空闲时段各研究员独立深度学习"""
-    print(f"📚 研究员自主研学 · {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    print("=" * 50)
+    """v2.0 自主研学：分析→验证旧假设→生成新假设→保存报告"""
+    print(f"📚 研究员自主研学 v{__version__} · {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    print("=" * 60)
 
     parliament = Parliament()
     context = parliament.load_context()
+    state = parliament.state
+
+    # 显示状态概览
+    active_h = state.get_active_hypotheses()
+    print(f"\n🧠 研究员状态: {len(state.hypotheses)}个假设 "
+          f"(活跃{len(active_h)}, 确认{state.stats['confirmed']}, "
+          f"驳回{state.stats['rejected']})")
+    if state.agenda:
+        print(f"📋 研究议程: {state.agenda[-3:]}")
+
+    all_reports = []
+    total_new_hyps = 0
 
     for r in parliament.researchers:
-        print(f"\n{r.emoji} {r.name} 研学报导...")
+        print(f"\n{r.emoji} {r.name}")
         try:
+            # 1. 验证过往假设
+            verified = r.verify_past_hypotheses(context)
+            if verified:
+                for v in verified:
+                    icon = "✅" if v["positive"] else "❌"
+                    print(f"  验证假设: {icon} {v['evidence'][:80]}")
+
+            # 2. 当日分析
             ctx = {**context, "topic": f"{r.name}自主研学"}
             report = r.analyze(ctx)
+            all_reports.append(report)
+
             print(f"  视角: {report.perspective}")
             print(f"  置信度: {report.confidence:.0%}")
             if report.key_findings:
-                print(f"  发现: {report.key_findings[0][:60]}...")
+                print(f"  发现: {report.key_findings[0][:80]}")
+            if report.new_hypotheses:
+                total_new_hyps += len(report.new_hypotheses)
+                print(f"  🆕 新假设: {len(report.new_hypotheses)}个")
             if report.red_flags:
-                print(f"  🚩 {len(report.red_flags)} 个红旗")
+                print(f"  🚩 {len(report.red_flags)}个红旗")
         except Exception as e:
-            print(f"  ❌ 研学异常: {e}")
+            print(f"  ❌ 异常: {e}")
 
-    # 保存研学报告（v2.0: 写入实质内容）
+    # 保存状态
+    state.save()
+    print(f"\n💾 状态已保存: {len(state.hypotheses)}个假设, "
+          f"今日验证{len(state.verified_today)}个, 新增{total_new_hyps}个")
+
+    # 保存报告
     date_str = datetime.now().strftime('%Y-%m-%d')
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    lines = [f"# 📚 研究员自主研学报告", f"> {date_str}", ""]
-    
-    reports_written = 0
+
+    lines = [f"# 📚 研究员自主研学报告 v{__version__}",
+             f"> {date_str}  |  状态: {len(state.hypotheses)}假设 "
+             f"(确认{state.stats['confirmed']}/驳回{state.stats['rejected']})",
+             ""]
+
+    # 假设追踪面板
+    if active_h:
+        lines.append("## 🧠 活跃假设")
+        for h in active_h[:5]:
+            lines.append(f"- [{h.source}] {h.statement} "
+                        f"(置信度:{h.confidence:.0%} α:{h.alpha} β:{h.beta})")
+        lines.append("")
+
     for r in parliament.researchers:
         lines.append(f"## {r.emoji} {r.name}")
         try:
-            # 重新 analyze 获取报告（之前的 report 变量作用域受限）
             ctx = {**context, "topic": f"{r.name}自主研学"}
             report = r.analyze(ctx)
             if report.key_findings:
                 lines.append("**核心发现**:")
                 for f in report.key_findings[:3]:
                     lines.append(f"- {f}")
-                reports_written += 1
             if report.data_evidence:
                 lines.append("**数据证据**:")
                 for e in report.data_evidence[:3]:
@@ -927,15 +1362,79 @@ def run_study_session():
                 lines.append("🚩 **红旗**:")
                 for rf in report.red_flags[:3]:
                     lines.append(f"- {rf}")
-            lines.append(f"_置信度: {report.confidence:.0%}_")
+            if report.new_hypotheses:
+                lines.append("🆕 **新假设**:")
+                for h in report.new_hypotheses[:3]:
+                    lines.append(f"- {h.statement} (置信度:{h.confidence:.0%})")
+            lines.append(f"_置信度: {report.confidence:.0%}_\n")
         except Exception as e:
-            lines.append(f"_研学异常: {e}_")
+            lines.append(f"_异常: {e}_\n")
+
+    report_path = REPORTS_DIR / f"研学报告-{date_str}.md"
+    report_path.write_text('\n'.join(lines))
+    print(f"📁 报告: {report_path}")
+
+    return all_reports
+
+
+def run_parliament():
+    """议会模式"""
+    parliament = Parliament()
+    topic = f"每日推荐池标的研判 — {datetime.now().strftime('%Y-%m-%d')}"
+    verdict = parliament.debate(topic)
+
+    # 保存议会报告
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    lines = [
+        f"# 🏛️ 研究员议会报告",
+        f"> {verdict['timestamp'][:19]}",
+        "",
+        "## 独立研判", ""
+    ]
+
+    for r in verdict.get("reports", []):
+        lines.append(f"### {r.author_emoji} {r.author}")
+        lines.append(f"**视角**: {r.perspective}")
+        lines.append(f"_置信度: {r.confidence:.0%}_")
+        if r.key_findings:
+            for f in r.key_findings[:2]:
+                lines.append(f"- {f}")
+        if r.red_flags:
+            lines.append(f"🚩 红旗: " + ", ".join(r.red_flags[:3]))
         lines.append("")
 
-    (REPORTS_DIR / f"研学报告-{date_str}.md").write_text('\n'.join(lines))
-    
-    print(f"\n✅ 研学完成 → {REPORTS_DIR / f'研学报告-{date_str}.md'}")
-    print(f"   实质报告: {reports_written}/{len(parliament.researchers)} 位研究员")
+    lines += [
+        "## 小红终审", "",
+        f"**市场判断**: {verdict['bias']}  (置信度 {verdict['confidence']:.0%})",
+        f"**多方信号**: {verdict['bull_signals']}  |  **空方信号**: {verdict['bear_signals']}",
+    ]
+    if verdict['red_flags']:
+        lines.append(f"**关键红旗**: " + ", ".join(verdict['red_flags'][:3]))
+    lines.append("")
+    for rec in verdict.get('recommendations', [])[:5]:
+        lines.append(f"- 🌹 {rec}")
+
+    report_path = REPORTS_DIR / f"议会报告-{date_str}.md"
+    report_path.write_text('\n'.join(lines))
+    print(f"📁 议会报告: {report_path}")
+
+    return verdict
+
+
+def run_verify_only():
+    """仅验证过往假设，不生成新报告"""
+    parliament = Parliament()
+    context = parliament.load_context()
+    total = 0
+    for r in parliament.researchers:
+        verified = r.verify_past_hypotheses(context)
+        if verified:
+            for v in verified:
+                icon = "✅" if v["positive"] else "❌"
+                print(f"{r.emoji} {icon} {v['evidence'][:100]}")
+                total += 1
+    parliament.state.save()
+    print(f"\n已验证 {total} 个假设，状态已保存")
 
 
 # ═══════════════════════════════════════════
@@ -944,33 +1443,38 @@ def run_study_session():
 
 def main():
     import argparse
-    p = argparse.ArgumentParser(description='研究员议会 v1.0')
-    p.add_argument('--study', action='store_true', help='自主研学模式')
-    p.add_argument('--parliament', action='store_true', help='完整议会模式')
-    p.add_argument('--topic', type=str, help='议会议题')
-    p.add_argument('--report', action='store_true', help='查看最近报告')
-    args = p.parse_args()
+    ap = argparse.ArgumentParser(description=f'研究员议会 v{__version__}')
+    ap.add_argument('--study', action='store_true', help='自主研学模式')
+    ap.add_argument('--parliament', action='store_true', help='议会模式')
+    ap.add_argument('--verify', action='store_true', help='仅验证过往假设')
+    ap.add_argument('--report', action='store_true', help='查看最近研究报告')
+    ap.add_argument('--reset', action='store_true', help='重置研究员状态')
+    ap.add_argument('--query', type=str, help='查询单只股票深度分析 (code, 例如 600519)')
+    ap.add_argument('--name', type=str, default='', help='--query时指定股票名称')
+    args = ap.parse_args()
 
-    if args.report:
-        if LOG_PATH.exists():
-            log = json.loads(LOG_PATH.read_text())
-            print(f"📜 议会记录: {len(log)} 条")
-            if log:
-                last = log[-1]
-                print(f"   最近: {last['timestamp'][:19]}")
-                for rd in last.get("rounds", []):
-                    print(f"   └ {rd['name']}")
-            else:
-                print("   无记录")
-        else:
-            print("📭 无议会记录")
-    elif args.study:
-        run_study_session()
+    if args.query:
+        print(query_stock(args.query, args.name))
+        return
+
+    if args.reset:
+        if STATE_PATH.exists():
+            STATE_PATH.unlink()
+        print("🔄 研究员状态已重置")
+        return
+
+    if args.verify:
+        run_verify_only()
     elif args.parliament:
-        parliament = Parliament()
-        parliament.execute(topic=args.topic)
+        run_parliament()
+    elif args.report:
+        reports = sorted(REPORTS_DIR.glob("研学报告-*.md"), reverse=True)
+        if reports:
+            print(reports[0].read_text()[:2000])
+        else:
+            print("暂无研究报告")
     else:
-        p.print_help()
+        run_study_session()
 
 
 if __name__ == "__main__":

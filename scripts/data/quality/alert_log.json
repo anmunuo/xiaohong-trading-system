@@ -1,0 +1,30 @@
+[
+  {
+    "ts": "2026-06-05T01:35:34.471145",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-05T01:35:51.523237",
+    "type": "north_flow",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "cross",
+        "priority": "P3",
+        "detail": "字段混淆: 当前5.4亿≠北向(36.5亿)而是≈南向(5.4亿) → 检查字段映射!"
+      }
+    ],
+    "hint": "字段混淆: get_north_flow() 可能使用了ggt_ss/ggt_sz(南向)而非north_money"
+  }
+]

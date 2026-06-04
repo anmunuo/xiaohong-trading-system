@@ -108,8 +108,13 @@ def _load_bronze_kline(date: str) -> Optional[Dict[str, dict]]:
     for src in ['sina', 'baostock']:
         path = BRONZE_ROOT / 'daily_kline' / d.strftime('%Y') / d.strftime('%m') / d.strftime('%d') / f'{src}.json.gz'
         if path.exists():
-            rows = json.loads(gzip.decompress(path.read_bytes()))
-            return {r.get('code', r.get('symbol', '')): r for r in rows}
+            data = json.loads(gzip.decompress(path.read_bytes()))
+            if isinstance(data, dict):
+                # v8.7+ 格式: {code: row_dict}，键即股票代码
+                return data
+            elif isinstance(data, list):
+                # 旧格式: [{code, ...}, ...]
+                return {r.get('code', r.get('symbol', '')): r for r in data if isinstance(r, dict)}
     return None
 
 

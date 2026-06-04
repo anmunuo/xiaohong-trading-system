@@ -32,8 +32,10 @@ triggers:
   - 券商.*对接|broker|xtquant|easytrader|实盘.*下单|paper.*trading
   - 对标.*系统|交易日志|结构化日志|Paper Trading
   - 美化|格式化|架构图|报告.*美化|SVG|boxes|ascii|excalidraw
-  - 健康检查|自检|系统健康|system_health|health_check|7维扫描|11维扫描
-  - 研究员|助理研究员|议会|多方|空方|数据研究员|基本面研究员|技术面研究员|协同研究
+  - 健康检查|自检|系统健康|system_health|health_check|7维扫描|11维扫描|12维扫描
+  - "cron.*污染|cron.*行号|脚本.*行号"
+  - 研究员|助理研究员|议会|多方|空方|数据研究员|基本面研究员|技术面研究员|协同研究|研究员.*个股|查.*个股.*分析|--query|query_stock|analyze_stock
+  - 自主修复|auto_repair|auto_heal|健康检查.*修复|health_check.*fix|系统自愈
   - ETF.*分析|分析.*ETF|指数.*基金|创新药.*ETF|行业.*ETF
   - gold.*ETL|Gold.*层|因子面板.*构建|factor.*panel|分层数据.*Gold|数据血缘|gold.*pipeline
 ---
@@ -246,8 +248,8 @@ PB 分布 (N=3961):
 | ⭐ BaoStock `rs.next()` 阻塞 60s+ | **必须用 `rs.data` 直接读 list**。`rs.next()` 是迭代器模式，在生产环境会无限阻塞。正确用法：`for row in rs.data: ...`。字段索引与 `fields` 参数顺序一致，需显式映射。详见 `references/baostock-integration.md` |
 | ⭐ BaoStock ThreadPool 并发乱码 | **baostock 非线程安全**。底层共享全局 HTTP session，ThreadPool 并发导致 utf-8 decode error + 服务端数据交叉读取。**必须用 ProcessPoolExecutor**，每进程独立 `bs.login()` → 查询 → `bs.logout()`。`get_historical_k_with_ma()` v8.5 已改为 ProcessPool（8 workers, batch 50只/进程, 528码 87.8s→10.8s） |
 | ⭐ ProcessPool pickle 闭包失败 | `Can't pickle local object '_worker'` → worker 函数必须是**模块级**（非闭包）。`data_pipeline.py` 采用 `_baostock_batch_worker(args)` tuple 传参绕过。tushare 基本面并行化可用 ThreadPool（独立 `pro_api` 实例，10 workers） |
-| ⭐ 东方财富 `po` 参数取反 | **`po=0` 是降序**（涨幅从高到低），**`po=1` 是升序**（低到高）。`get_top_gainers()` 曾错误地 `po=0`→`po=1` 修复方向反了：用 `po=1`+`fid=f3` 取回跌幅最大50只→筛≥6%永远空。正确：取TOP N 用 `po=0`。`get_top_flow_stocks()` 用 `po=1`+`fid=f62` 取净流入降序是因为东方财富按 `fid` 值排序逻辑不同：f62 正值=流入→po=1降序取最大流入。验证：`po=0`+`fid=f3`→前5只全涨停(>9%)。`review.py` 修复为 `po=0`+`fid=f3`，同时新增 tushare daily 回退（盘后 push2 关闭时自动降级）。 |
-| `data fetch company` 只返回利润表 | `overview`/`balance`/`fina` 三个 category 返回相同数据（仅 income statement），**没有资产负债表和财务比率**。需要 ROE/负债率/毛利率等用 `akshare` 或 `tushare` 直调 |
+| ⭐ 竞价学习器 v1.0 目标函数错误（做多系统不应为"猜对下跌"加分） | **根因**：v1.0 `caution + actual<0 → hit +α`，下跌市中永远猜跌得高分，但对做多系统毫无价值。v2.0 改为做多导向：`strong/moderate+涨→learn +α`、`strong/moderate+跌→penalize +β`（假突破）、`caution+跌→skip`（熊市噪音）、`caution+涨→penalize +β`（漏掉反转）。详见 `auction_learner.py` v2.0。 |
+| ⭐ **反复回归** Cron 脚本行号污染 (v8.10→v8.12) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀（如 `     1|#!/bin/bash`），bash 无法解析 shebang 报 `未找到命令` → exit 2。**此问题会反复回归** — 健康检查上次运行没问题不代表这次没问题，每次 cron 扫描都要检查。**诊断**：`xxd cron_scout.sh | head -3` 看首字节是否为 `2020 2020 2031 7c`（空格+`1|`）而非 `2321`（`#!`）。**修复**：`python3 -c "import re; [open(f,'w').write(re.sub(r'^\s*\d+\|','',open(f).read(),flags=re.MULTILINE)) for f in ...]"` 或 `sed -i 's/^[[:space:]]*[0-9]\+\|//' cron_*.sh`。**自动防御**：`system_health_check.py` v1.2 维度12 + `auto_repair.py` `_clean_cron_line_numbers()` 自动清理。
 | akshare `stock_zt_pool_em` 列名不同于文档 | 涨停板列名是 `封板资金`、`连板数`（非 `封单金额`），最新价列是 `最新价`；跌停用 `stock_zt_pool_dtgc_em` |
 | 东方财富 API 周末/晚间限流 | 非交易时段 `_em_api_get` 返回 None 或 RemoteDisconnected，属正常现象。代码中 `try/except` 兜底即可，不可据此判断 API 故障 |
 | `_em_api_get` 批量请求限流 | 单票请求间隔 ≥150ms，批量时用 `time.sleep(0.15)` 避免触发东方财富反爬 |
@@ -263,7 +265,7 @@ PB 分布 (N=3961):
 | 弹药库流动性误判 | v4.0 用当日成交额（不完整），v4.1 改 5 日均量 |
 | `get_stock_realtime` 在循环中逐只调 | **禁止**。应一次传入全部 code 列表，函数内置 Sina 批量 HTTP 快路径（~800只/请求，<0.05s）。在循环中逐只调会退化为 subprocess 模式，每个 30s timeout |
 | 裸 `except:` 禁止 | 吞掉 KeyboardInterrupt/SystemExit 等系统异常。全部用 `except Exception:`。2026-06-01 已全局修复 |
-| ⭐ 推荐引擎所有候选评分完全相同 | **五个因子全部退化，不是只查技术因子**。逐因子诊断：(1) event — KB公告/龙虎榜全空？insights 未接入？(2) fund — tushare PE/ROE未返回（盘后无今日数据）？net_flow 全 0？(3) sentiment — KB无hot_events？候选 change_pct 全 0？(4) technical — Sina 不含 MA20/均量导致偏离 0%？(5) research — broker_views 空？修复优先级：`_prefetch_indicators()` 拉历史日线→`_load_insights()` 读 kb_insights.json→tushare daily_basic 补PE/市值 |
+| ⭐ 北向资金实时数据永久不可用 | 2024年5月政策变更后，交易所不再实时披露北向资金买卖额。AKShare `stock_hsgt_fund_flow_summary_em()` 日期新鲜但 `成交净买额` 恒为0。东方财富 push2 同样全0。**修复 v8.10**：`get_north_flow()` 策略改为 AKShare `net_flow!=0` 才可信，否则回退 tushare `moneyflow_hsgt`（T-1日终数据）。回退窗口从7天扩大到30天，逐日尝试。返回含 `_quality: 'T-N'` 标记滞后天数。 |
 | ⭐ 推荐引擎 enrichment 层全部相同（操作建议/风险评级/止损比例 9只都一样） | **三个子函数各自有致命 bug**：(1) `_gen_operation`：5分支状态机，全部命中 `tech>=50` 分支→同一句"缩量回踩10日线低吸"。需改为类方法访问 `_quote_cache`/`_indicators`/`_insights_index`，用 MA20偏离 × insight情绪 × 创业板前缀 多维决策矩阵。(2) `_assess_risk`：`market_cap` 字段恒为 0→全体命中 `mkt_cap<80`→全"高"。需优先从 `_quote_cache` 补市值，加入波动/板别/技术面/消息面多因子打分。(3) `_calc_stop_loss`：ratio 硬编码 -5.0%，不区分创业板(300/301→应 -7%)。详情见 `references/recommender-enrich-v2.2.md` |
 | ⭐ 候选池盲区：涨停股大量不在候选池（文工团诊断 118/120） | **候选源单一 + 全部连板被排除**：(1) `get_top_flow_stocks()` 盘前返回空→资金流候选源失效，(2) hot_events/broker_views 采集为空，(3) `_apply_filters` 排除所有涨停（含首板）。修复：盘前缓存 TTL→24h + 过期缓存兜底；`_get_multi_lianban_codes()` 仅排除 ≥2连板；新增 `_get_first_board_codes()` 将首板纳入候选源。详见 `references/candidate-pool-p0-fix.md` |
 | 竞价采集器东方财富 API 价格单位错误 | `fetch_one()` 中 `f43`/`f2`/`f46`/`f60` 字段单位是**分**，需 ÷100。修复前收盘价显示 ¥976（实际 ¥9.76）。`auction_collector.py` 已修复。 |
@@ -271,7 +273,8 @@ PB 分布 (N=3961):
 | 竞价采集器 09:15 cron error | 东方财富 `push2.eastmoney.com/api/qt/stock/get` 在非交易时段主动拒绝连接（RemoteDisconnected）。修复：(1) API 预热从 3 轮→6 轮指数退避（2s-12s），(2) 预热失败后尝试批量拉取兜底，(3) 全部失败时干净退出不返回 error，(4) cron 脚本去掉 `exec` 避免进程跟踪丢失。 |
 | ⭐ 腾讯行情解析失败 | `qt.gtimg.cn` 返回格式 `v_sz000001="51~名称~代码~..."`，双引号内用 `~` 分隔，**不能用 `split('=')` 解析**（`=` 在引号外）。正确方法：`content = r.text.split('"')[1]` 再 `content.split('~')`。字段索引从 0 开始：0=市场码, 1=名称, 2=代码, 3=现价, 4=昨收, 5=开盘, 6=成交量(手), 32=涨跌幅, 36=成交额(万)。量单位手(×100=股), 额单位万(×10000=元)。详见 `references/multi-channel-data-pattern.md`。 |
 | ⭐ 多通道降级模式 | 当单一数据源不可靠时，建立「主通道→备1→备2」降级链。竞价采集器已落地（东方财富→腾讯→Sina），宏观资金面已落地（AKShare→tushare汇总）。每条返回数据含 `channel` 字段，采集结束输出分布统计。详见 `references/multi-channel-data-pattern.md`。 |
-| 进化引擎 extract_changes 返回空 | **三重 bug**：(1) 路径偏移 — `DATA_DIR.parent/"kb"`→应为 `DATA_DIR/"kb"`，(2) 格式断层 — 诊断文件是 `list[{root_causes}]` 但代码期望 `dict{rule_changes_suggested}`，(3) `return changes` 在补丁中被误删。修复：路径修正 + list/dict 双格式兼容 + return 补回。详见 `references/evolution-engine-debug.md`。 |
+| ⭐ Gold 层 Bronze kline 格式不匹配 | `bronze_ingest.py` v8.7+ 写 `{code: row_dict}`（dict），`gold_pipeline.py` `_load_bronze_kline` 读 `[{code: row}]`（list）。遍历 dict 时 `r` 是字符串 → `r.get()` → AttributeError。**修复**：`isinstance(data, dict)` 检测直接返回，`isinstance(data, list)` 走旧逻辑。 |
+| ⭐ **反复回归** `_em_api_get` 导入路径断裂 (v8.10→v8.12) | **根因**：v8.5 `data_pipeline` 拆分子模块后，`_em_api_get` 在 `data_pipeline/_core.py` 定义但**未从 `__init__.py` 重导出**。`review.py` 中 `from data_pipeline import _em_api_get` → ImportError。**此问题会反复回归** — 系统升级、重新部署、批量找替换时可能再次引入旧的 import 语法。**修复**：改为 `from data_pipeline._core import _em_api_get`（单独一行，不要合并到 `from data_pipeline import ...` 行）。**防御**：Cron 健康检查发现 `script failed + exit=1 + review.py` 时第一位排查此 import。**永久防御**：`grep -rn "from data_pipeline import _em_api_get" scripts/*.py` 扫描所有引用。
 | 进化引擎沙箱 KeyError: 'old_metric' | `sandbox_test()` 返回 dict 不含 `old_metric`，打印语句硬编码了不存在的键。改为 `test_result.get('details', 'ok')`。 |
 | ⭐ 宏观资金面数据全部缺失（三路同时） | **系统性根因，不是单点故障**。诊断流程：(1) `python3 -c "from data_pipeline import get_xxx; print(get_xxx())"` 逐路测试返回值，(2) 检查 `market_snapshot.json` 中各字段的 `data_source` 和 `date`，(3) 绕过缓存直接调原始 API（AKShare/tushare/东方财富），(4) 对比缓存时间戳确认是拉取失败还是缓存过期。常见根因组合：北向=tushare moneyflow_hsgt 返回 7 天前过期数据（函数不检查日期新鲜度）→ AKShare 优先；市场资金=ak.stock_market_fund_flow() 东方财富断连被静默吞掉→ tushare moneyflow 全市场汇总回退；板块流=_em_api_get 无重试+UA不完整→ 3次重试+退避+完整 Chrome UA + tushare ths_daily 回退。修复文件 data_pipeline.py，验证用 `python3 market_snapshot.py`。 |
 | ⭐ 分时数据获取方案 | tushare Pro **不是分时引擎**。分时K线用 Sina `quotes.sina.cn` KLineData API (免费无限制)。详见 `references/intraday-data-integration.md` |
@@ -304,8 +307,23 @@ PB 分布 (N=3961):
 | ⭐ Gold 层因子覆盖率为 0 (启动期) | **三重根因**：(1) Silver 仅 1天 → `_get_historical_bars()` 返回空，(2) `n < 5` 早期 return 导致所有标的被跳，(3) `n_computed==0` 进一步跳过 Pool 归档。**修复**：改为 `n < 1` → 用当日 Silver 行构造最小 bars `[{close,open,high,low,volume}]` → Pool 归档提升到 `if/else` 外部始终执行。详见 `references/gold-layer-design.md` |
 | ⭐ Gold 因子覆盖率低 (启动期 ~24%) | 正常现象。仅有 Silver 当日数据的因子可用（资金+质量）。动量/波动/筹码/滚动需要 6-61 天回溯 → 随 Silver 日积累自动提升。不要为此告警或试图绕过 Silver 调 API。详见 `references/gold-layer-design.md` |
 | ⭐ Gold PE/PB 全为 None | Silver 仅 100 只样本且 PE/PB 为 0（Bronze 样本缺基本面数据）。需 tushare `fina_indicator` 或 `daily_basic` 数据注入 Silver 后才能激活估值因子。PE/PB 为 0 时因子填 None。 |
+| 🆕 议会静默停摆无人感知 (v8.11) | **根因**：parliament_log.json 超过 24h 无新记录，daily_pool.parliament 引用陈旧数据，认知层链路断裂但无监控。**检测**：`python3 -c "import json; log=json.load(open('scripts/data/research/parliament_log.json')); print(max(e['timestamp'] for e in log))"` 应与今天日期相差≤24h。**修复**：system_health_check 计划增加第13维「议会数据新鲜度」。详见 `references/llm-review-pitfalls.md`。 |
+| 🆕 进化引擎 ±20% 边界拒绝大跨步变更 (v8.11) | **根因**：`review_diagnosis.json` 中建议「50→30」(40%) 被 --dry-run 拒绝。单次调整≤20% 是硬约束。**正确做法**：分步递进——50→40→32→30 (3天完成)，每步在 change 字段写明分步目标。详见 `references/llm-review-pitfalls.md`。 |
+| 🆕 Gold ETL cron 路径双写 (v8.11) | **症状**：`can't open file '/home/pc/.../xiaohong/home/.hermes/.../gold_pipeline.py'` — 路径中出现双重 `home/.hermes/profiles/xiaohong`。**根因**：非 cron_gold.sh 自身问题（脚本使用相对路径正常），疑为 hermes cron 调度层将工作目录前缀重复拼接。**影响**：Gold 因子面板+ML 数据集+Pool 归档未产出。详见 `references/llm-review-pitfalls.md`。 |
+| 🆕 三链路断裂：推荐池→侦察兵→狙击手→下单 (v8.11) | LLM 复盘应检查此四环节是否全部在线。任一断裂→系统处于「有信号无行动」状态，需在 diagnosis 首句标注。6/4 现状：推荐池✅ 侦察兵⚠️ 狙击手🔴 下单🔴。详见 `references/llm-review-pitfalls.md`。 |
 | ⭐ Cron 裸 python3 导致 26 脚本静默失败 (v8.7) | **根因**：cron 环境的 PATH 仅为 `/usr/bin:/bin`，不包含 venv。`cron_*.sh` 中写 `python3` 或 `exec python3` → cron 找不到解释器 → `exit 127`。影响 26 个脚本，4 个 job 标记 error（选股推荐 08:25、竞价采集 09:15、侦察兵盘中 11:00、健康检查 08:15）。**修复**：全量替换为 `/home/pc/.hermes/hermes-agent/venv/bin/python3`。新 cron 脚本**必须**使用绝对路径。验证：`grep -l 'venv/bin/python3' cron_*.sh | wc -l` → 应为 26。 |
+| ⭐ Cron 脚本行号污染 (v8.10) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀的内容（如 `     1|#!/bin/bash`）。bash 无法解析 shebang 报 `未找到命令`。22/26 脚本受影响。stdout 仍有产出（pipeline 后半段 `exec python3` 仍能执行）→ 健康检查只看输出文件永远发现不了。**修复**：`sed -i 's/^[[:space:]]*[0-9]\+|//'` 批量去行号；`system_health_check.py` v1.2.0 新增维度12（Cron脚本完整性 - shebang 检测）+ 维度6重构（Cron执行退出码 - 扫描所有 output 目录的 `script failed` / `exited with code` 标记）。**教训**：监控产出物≠监控管道。写 cron 脚本时务必验证文件以 `#!` 开头。 |
+| ⭐ 北向资金实时通道永久关闭 (v8.10) | **根因**：2024年5月起交易所不再实时披露北向资金。AKShare `stock_hsgt_fund_flow_summary_em()` 的 `成交净买额` 永久返回 0。`get_north_flow()` 择优逻辑 `if date>=yesterday or net_flow!=0` → 日期新鲜命中 → 永远用 AKShare 的 0。tushare 回退只查 7 天但最新数据 8 天前。**修复**：(1) `if net_flow != 0` 才信 AKShare，否则回退 tushare，(2) tushare 回退窗口 7→30天，(3) 新增 `_quality: T-N` 标记滞后天数。**教训**：API 永久归零与间歇性归零需要不同策略——不是 fallback，是彻底改变择优逻辑。 |
+| ⭐⭐ **P0** 北向字段张冠李戴 — ggt_ss/ggt_sz 是南向！(v8.12) | **致命 bug (2026-06-04发现)**：`get_north_flow()` tushare 回退逻辑用了 `ggt_ss + ggt_sz` 字段计算北向。但 `ggt_ss`=港股通(沪)、`ggt_sz`=港股通(深) → 南向！正确北向字段是 `north_money`（或 `hgt+sgt`）。真实北向 36.5亿 被算成 5.4亿 → 误差 6.8x，系统宏观判断失真数月。**修复**：`north_money = float(row.get('north_money', 0)); north_total = north_money / 1e4`。**防御**：1) `DataResearcher._validate_data_content()` 直接拉 tushare 交叉比对 north_money vs south_money，如果当前值更接近 south → 🚩字段混淆红旗。2) `CapitalFlowResearcher.analyze()` 前置验证：北向 <10亿 → 🚩严重偏低+暂停决策。3) 每次修改数据管线函数后，打印 tushare 原始行并逐字段标注含义，确认字段映射正确。 |
+| ⭐⭐ **P1** 研究员数据内容盲区 (v2.2) | **根因**：`DataResearcher.analyze()` 只检查数据源连通性和文件时效，不验证数据**内容**的正确性。`CapitalFlowResearcher.analyze()` 盲信 `north_flow` 输入不做前置校验。导致北向字段混淆 bug 存活数月无人发现。**修复 (v2.2)**：`DataResearcher` 新增 `_validate_data_content()` → 直接拉 tushare 原始数据交叉比对字段一致性、检测值异常（<10亿偏低→红旗）。`CapitalFlowResearcher` 新增前置验证：北向 <10亿 → 标记红旗 + 暂停决策 + 不生成失真假设。**教训**：连通性检查 ≠ 内容检查。研究员必须像审计师一样对待数据——不只确认管道通不通，还要确认数据对不对。 |
+| ⭐ `_em_api_get` 从 `_core` 导入非 `__init__` (v8.10) | **根因**：v8.5 `data_pipeline` 拆分子模块后，私有函数 `_em_api_get` 只在 `data_pipeline/_core.py` 定义，**未从 `data_pipeline/__init__.py` 重导出**。`review.py` 仍用 `from data_pipeline import _em_api_get` → ImportError。**修复**：改为 `from data_pipeline._core import _em_api_get`。**检测**：`grep -rn "_em_api_get" scripts/*.py | grep "from data_pipeline import"` 扫描所有引用。 |
+| ⭐ 竞价学习器目标函数做空导向 (v2.0) | **根因**：`auction_learner.py` 将 "caution信号 + 实际下跌" 算作命中（hit→α+1）。下跌市中永远猜跌得高分，但对只做多的交易系统毫无价值——竞价跌→收盘跌的确认不会帮你赚钱。**修复 v2.0**：目标函数改为做多导向——(1) 看涨→涨: 学习 +α，(2) 看涨→跌: 惩罚 +β，(3) 看跌→跌: 跳过（熊市噪音），(4) 看跌→涨: 惩罚 +β（漏了反转机会）。**教训**：学习器的"准确率"如果不是以赚钱为导向，就是自欺欺人。详见 `references/auction-learner-v2.md`。 |
+| ⭐ `review.py` `_em_api_get` 导入失败 (v8.10) | 同 `_em_api_get` 根因。`review.py` line 28 的 `from data_pipeline import _em_api_get` 在 v8.5 拆分后失败。修复为 `from data_pipeline._core import _em_api_get`。 |
+| ⭐ `get_historical_k_with_ma` 返回 list-of-dicts 非 dict-of-dicts (v8.12) | **根因**：`get_historical_k_with_ma(['000001'])` 返回 `{code: [{date,close,ma5,ma10,peTTM,...}, ...]}`——每只 code 映射到 **list of daily bar dicts**，而非 `{close_history: [...], ma20: ..., ...}` 这种单层 dict。`kl.get("close_history")` 会因 `kl` 是 list 而报 `AttributeError: 'list' object has no attribute 'get'`。**修复**：`bars = kline.get(code, []); closes = [b.get('close') for b in bars]` 从 bar 列表提取 close；`last = bars[-1]` 获取最新 bar 的 ma5/ma10/peTTM 等；MA20 需自算（BaoStock 不支持 ma20 字段）。**注意**：返回的 dict key 是纯数字码（如 `000001`）不带后缀，需与传入 code 一致。 |
+| ⭐ 推荐引擎 researcher_analysis 集成 (v2.3) | **新增**：`stock_recommender._run_researcher_analysis()` 在 `_save_pool()` 前逐只调用 `analyze_stock()`，6位研究员分析写入 `daily_pool.recommendations[i].researcher_analysis` 字段。`researchers.analyze_stock()` 拉取行情/财务/K线/资金/KB → 各研究员 analyze() → `cross_analysis`(bias+votes+flags+consensus)。侦察兵 `feed_intraday_pool()` 中新加入股同理。用户查询用 `researchers.py --query 600519`。 |
+| ⭐ system_health_check 自主修复 v1.3 | **新增**：`--fix` 标志触发 `auto_repair.run_auto_repair()`，逐维修复已知问题（D2估值→ammo更新、D3议会→重新生成、D5管线→清缓存、D6 cron→重启sniperd+清行号、D7研究员→重新研学、D10-11管线→重新生成、D12脚本→clean）。修复日志写入 `data/fix_log.json`。Cron 已更新为 `system_health_check.py --fix`。 |
 | ⭐ system_health_check degraded → exit 1 造成假 error (v8.7) | **根因**：健康检查在 08:15/15:15/22:15 运行，大部分时段 Silver/Gold 管线未产出、研学报告未生成、R 值未计算 → `overall=degraded`。旧逻辑 `if overall in ('degraded','down','critical'): sys.exit(1)` 把「黄灯」当「红灯」→ 每次运行都报 error。**修复**：改为 `if overall in ('down','critical'): sys.exit(1)` + `sys.exit(0)`。degraded 是"需要注意"不是"故障"。|
+| ⭐ Cron 脚本行号污染 → 静默失败 (v8.9) | **根因**：cron_*.sh 文件内容被写入了带行号前缀的内容（每行开头为 `     N|`），导致 bash 无法解析 shebang，尝试将 `1|#!/bin/bash` 当命令执行 → 报「未找到命令」→ exit 2。2026-06-04 发现 **22/26** 脚本被污染，影响侦察兵(09:25+盘中4次)、弹药库(15:30)、竞价采集器(09:15)、文工团(15:30) 等关键任务。**诊断方法**：`xxd cron_scout.sh | head -3` 看前几个字节是否为 `2020 2020 2031 7c`（空格+`1|`）而非 `2321`（`#!`）。**修复**：`sed -i 's/^[[:space:]]*[0-9]\+|//' cron_*.sh` 批量清除行号前缀。**自动检测**：`system_health_check.py` v1.2 新增第12维「📜 Cron脚本」——遍历所有 `cron_*.sh` 检查首字节是否 `#!`，异常时标记 `status: down`。验证：`python3 -c "from system_health_check import check_cron_scripts; print(check_cron_scripts())"` |
 
 ---
 
@@ -485,7 +503,7 @@ URL: https://so.eastmoney.com/news/s?keyword=公司名+关键词&page=1
 | 09:25 | 🔍 侦察兵 v4.0 开盘确认 + 竞价 | 飞书 |
 | 09:30-15:00 | 🎯 狙击手 v4.0 实时守护进程 (systemd) | 飞书(实时告警) |
 | **每5分钟** | 💓 狙击手·存活检测 | 飞书(异常时) |
-| **08:15/15:15/22:15** | 🩺 系统健康检查 v1.2 (🆕11维扫描：+Silver质量 +Gold质量) | 飞书 |
+| 08:15/15:15/22:15 | 🩺 系统健康检查 v1.3 (🆕12维扫描 → 7维自主修复 → --fix 模式) | 飞书 |
 | **10:00/11:00/13:00/14:00** | 🔍 侦察兵·盘中扫描 | 飞书 |
 | 15:30 | 🛡️ 弹药库 v4.1 --update (+🆕组合风控section) | 飞书 |
 | 15:35 | 📊 股票跟踪器 (60日跟踪/止损检测/胜率统计) | 飞书 |
@@ -562,7 +580,7 @@ LLM认知层 (17:05)
 | 🆕 组合管理 | **6** | VaR/CVaR阈值 / 相关性 / 行业集中度 / 压力测试频率 |
 | 🆕 算法执行 | **3** | TWAP切片 / VWAP天数 / 最大冲击bps |
 
-> **铁律**: 单次参数调整 ≤±20%，至少 3 天回测数据才自动落地，所有变更可追溯可回滚。
+> **铁律 (v3.0)**: 系统自主评估参数变更幅度，无硬上限。大变更自动分步执行（跨日渐进）。所有变更可追溯可回滚。
 
 参数映射 → `references/evolution-v2-params.md`（62参数） + `references/v8.6-factor-and-risk.md`（🆕 v8.6升级详情）
 
@@ -594,7 +612,7 @@ idx = get_index_data(); nf = get_north_flow()
 - 自选池必须注明数据来源和筛选日期
 - 口头禅：从基本面看…… 心里有数就好
 - **自审查铁律**：每次生成含数据的报告后，必须逐项验证数据来源——对照实时 API 检查关键数值（指数、资金、涨跌停、MA20、公告数、个股事件数），不得凭「看上去合理」放过。详见 `references/system-pitfalls.md`（v5.0·26项）。
-- **进化后自检**：进化引擎 live 模式完成后自动触发 `system_health_check.py --fix`，7维扫描+自动修复。详见 `references/health-check-system.md`。
+- **进化后自检**：进化引擎 live 模式完成后自动触发 `system_health_check.py --fix`，12维扫描+自动修复。详见 `references/health-check-system.md`。
 
 ### 晨报生成强制检查清单
 
@@ -673,7 +691,8 @@ idx = get_index_data(); nf = get_north_flow()
 - `scripts/sniper.py` — 🎯 狙击手 v3.0（手动备用，P0-P3分级止损+入场信号）
 - `scripts/sniperd.py` — 🎯 狙击手 v4.0 实时守护进程 🆕（systemd 服务，3s轮询+状态机去重+秒级止损响应，11 可进化参数。`--once` 单次扫描，`--dry-run` 不写日志）
 - `scripts/sniper_healthcheck.sh` — 💓 狙击手存活检测 🆕（交易日每5分钟 cron，自动检测+恢复 sniperd.service）
-- `scripts/system_health_check.py` — 🩺 系统健康自检 v1.1（🆕 v8.6 扩展至9维：+因子有效性 +组合风险健康度。每维 status=ok/degraded/down + issues 列表。--json 输出 / --push 飞书推送。cron 08:15/15:15/22:15 自动运行，非 ok 时 exit 1 触发告警）
+- `scripts/system_health_check.py` — 🩺 系统健康自检 v1.3（12维扫描 → 自动触发7维修复 → --fix 模式。`auto_repair.py` 独立修复引擎，幂等可追溯。cron 08:15/15:15/22:15 自动扫描+修复+飞书）
+- `scripts/auto_repair.py` — 🆕 自主修复引擎 v1.0（配合 system_health_check --fix，逐维修复已知问题，日志写入 data/fix_log.json）
 - `scripts/factor_evaluator.py` — 🆕 因子有效性评估引擎（22因子IC/ICIR日频计算+月度自动淘汰。--report输出因子报告，--purge淘汰低效因子，--json JSON输出。依赖scipy做Spearman IC）
 - `scripts/portfolio_risk.py` — 🆕 组合层面风控引擎（三层：相关性矩阵+VaR/CVaR+5场景压力测试。--daily日频，--weekly周频压力测试，--report输出格式化报告）
 - `scripts/review.py` — 🏥 文工团 v3.0（日终复盘，当日盈亏+持仓体检+交易记录+选股复盘6%+涨幅对比+纪律7条+自我优化→reflection_log.json）
@@ -726,7 +745,9 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/health-check-system.md` — 🆕 系统健康自检 v1.0（进化后自动触发，7维扫描+6种自修复）
 - `references/layered-data-architecture.md` — 🆕 v8.6 分层数据架构 v1.0 (Bronze/Silver/Gold三层，可复现性保证，70MB/天×17GB/年)
 - `references/gold-layer-design.md` — 🆕 v8.7 Gold 层设计 (26维因子注册表+启动期陷阱+因子覆盖率时间线+可复现性验证)
+- `references/cron-script-corruption.md` — 🆕 v8.10 Cron脚本行号污染诊断与修复手册（症状/根因/诊断/修复/防范全流程）
 - `references/cron-audit-pattern.md` — 🆕 v8.7 Cron 全面审计与修复模式 (四步法+常见根因+批量修复)
+- `references/llm-review-pitfalls.md` — 🆕 v8.11 LLM复盘工作流陷阱（议会静默/20%边界/路径双写/三链路断裂）
 - `references/v8.6-factor-and-risk.md` — 🆕 v8.6 因子扩充+组合风控升级（22因子注册表+IC/ICIR管线+3层组合风控+关键设计决策）
 - `references/researcher-parliament.md` — 🆕 研究员议会 v1.1（5角色协同研究，3轮辩论协议，全链路集成：推荐引擎→daily_pool.parliament→瞭望塔/决策官/LLM复盘/进化引擎 veto）
 - `references/scout-v4-design.md` — 侦察兵 v4.0 升级设计（独立侦察+板块排名+基本面快筛+反哺推荐池）
@@ -735,6 +756,9 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/tradingskill-benchmark.md` — TradingSkill vs 小红系统对标矩阵
 - `references/skills-framework-overview.md` — Skills 框架总览
 - `references/workspace-layout-discovery.md` — 🆕 工作区路径发现与 v1.0/v2.0 版本映射（LLM 复盘 cron 必读）
+- `references/auto-repair-system.md` — 🆕 v1.3 自主修复系统（12维扫描→诊断→7维修复闭环，幂等可追溯，cron --fix 模式）
+- `references/researcher-v2.1-pervasive.md` — 🆕 研究员全链路渗透 v2.1（analyze_stock / query_stock / 推荐引擎+侦察兵集成 / daily_pool schema）
+- `references/data-quality-framework.md` — 🆕 v1.0 数据真实性管理框架（五道质检门/QualityStamp/字段陷阱/消费者接入模式/北向bug案例）
 
 ## 数据流向架构 (v8.7)
 

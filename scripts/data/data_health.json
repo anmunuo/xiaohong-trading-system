@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-06-04 02:01:27",
+  "checked_at": "2026-06-05 02:07:39",
   "sources": {
     "mega_latest": {
       "ok": true,
-      "age_hours": 0.0,
+      "age_hours": 0.1,
       "module_count": 9,
       "empty_modules": [
         "hot_events",
@@ -13,21 +13,21 @@
     },
     "daily_pool": {
       "ok": true,
-      "age_hours": 0.5,
-      "stock_count": 8,
+      "age_hours": 15.1,
+      "stock_count": 9,
       "error": ""
     },
     "market_snapshot": {
       "ok": true,
-      "age_hours": 17.5
+      "age_hours": 3.7
     },
     "tracked_pool": {
       "ok": true,
-      "active_count": 26
+      "active_count": 23
     },
     "kb_insights": {
       "ok": true,
-      "age_hours": 0.9,
+      "age_hours": 0.0,
       "entry_count": 50
     }
   },

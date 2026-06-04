@@ -1,178 +1,54 @@
 {
-  "timestamp": "2026-06-04T02:15:00+08:00",
+  "timestamp": "2026-06-05T02:15:00+08:00",
   "scores": {
-    "data_integrity": 6,
+    "data_integrity": 7,
     "signal_quality": 7,
-    "execution_health": 6,
-    "recommendation_quality": 5,
+    "execution_health": 8,
+    "recommendation_quality": 6,
     "gap_risk": 5
-  },
-  "diagnosis": {
-    "data_integrity": {
-      "score": 6,
-      "previous_score": 6,
-      "delta": "stable",
-      "detail": "推荐引擎恢复正常运行（01:32生成daily_pool，新鲜度0.5h，vs昨天15.5h过期→重大改善）。mega_collector 9/9模块运行，kb_insights 50条。但：market_snapshot 17.5h未更新（08:28 cron可能失败），push2 list/gainers API全线down（夜间限流），hot_events/broker_views持续空数据（2模块空载），Silver/Gold管线06/04未生成。",
-      "pro": [
-        "✅ 推荐引擎恢复正常（01:32产出8只标的，不超时）",
-        "✅ mega_collector 9/9模块运行（age 0h）",
-        "✅ kb_insights.json 50条洞察积累",
-        "✅ baoStock/sina/tushare basic 三通道正常"
-      ],
-      "con": [
-        "⚠️ market_snapshot 17.5h老旧（08:28 cron失败？）→ 瞭望塔缺市场全景",
-        "⚠️ push2 API 夜间down（list/gainers双降级）→ 盘前可能恢复",
-        "⚠️ hot_events/broker_views 持续空 → sentiment因子退化",
-        "⚠️ Silver/Gold 06/04未生成（15:45/15:50 cron正常盘后运行）"
-      ]
-    },
-    "signal_quality": {
-      "score": 7,
-      "previous_score": 7,
-      "delta": "stable",
-      "detail": "KB洞察质量维持高位。00:05窗口5条洞察全部有具体数字：纳指-0.82%/道指-0.81%（外盘恶化）、增持26:减持14 net+12（产业资本转暖）、非退市跌停2→7只（补跌扩散）、20cm全线换血（一日游模式确立）、退市博弈收敛至1只（投机退潮）。议会v2.3偏空bias（多1:空8），5只标的KB风险标记。但昨日reflection_log显示pool_rate=0%（全天零命中，错过50只大涨股）——信号判断与市场实际表现脱节。",
-      "pro": [
-        "✅ 最新洞察5/5条有结构化数据+信源标注",
-        "✅ 外盘→A股传导逻辑链完整（美股跌幅扩大→竞价承压→侦察兵确认）",
-        "✅ 产业资本信号改善（增持net+12 vs 昨日net+6）",
-        "✅ 跌停扩散+20cm换血预警及时"
-      ],
-      "con": [
-        "⚠️ 昨日pool命中率0%（50只大涨→池内0只）→ 信号→选股转化失效",
-        "⚠️ 退市博弈投机退潮信号与ST风险池22家稳定一致",
-        "⚠️ 20cm一日游预警虽准确但无法转化为操作（推荐池不含涨停源）"
-      ]
-    },
-    "execution_health": {
-      "score": 6,
-      "previous_score": 5,
-      "delta": "improving",
-      "detail": "核心修复确认：推荐引擎cron已恢复正常产出（昨天P0超时问题解决）。系统健康检查11维扫描完成。进化引擎W22应用3项参数变更（event 0.30→0.35、technical 0.15→0.18、fund 0.25→0.30）。但：push2 API双降级、market_snapshot cron疑似失败、狙击手无持仓可管、弹药库R值未更新、竞价采集器状态不明。7维健康检查degraded（8个issues）。",
-      "pro": [
-        "✅ 推荐引擎cron恢复（P0已解决）→ 整个系统心脏重新跳动",
-        "✅ 进化引擎v2.2应用3项变更（W22 research_weekly驱动）",
-        "✅ 系统健康检查11维扫描通过（仅degraded非down）",
-        "✅ 研究员研学报告质量改善（不再模板化）"
-      ],
-      "con": [
-        "⚠️ push2 list API down（RemoteDisconnected）→ 侦察兵资金流功能受限",
-        "⚠️ push2 gainers API down → 文工团选股复盘依赖tushare回退",
-        "⚠️ market_snapshot cron 08:28疑似失败（17.5h无更新）",
-        "⚠️ Silver/Gold管线06/04未生成（盘后正常——02:00时段属正常）",
-        "⚠️ 弹药库R值未更新（ammo_risk.py --update 运行异常）",
-        "⚠️ 竞价采集器auction.db状态不明（上次P0失败未确认修复）"
-      ]
-    },
-    "recommendation_quality": {
-      "score": 5,
-      "previous_score": 4,
-      "delta": "improving",
-      "detail": "今日daily_pool（06/04，01:32产出）含8只推荐，评分65.7-71.0（跨度5.3，vs昨天4.0→改善）。标的换血显著：致欧科技(301376/71.0)、友发集团(601686/69.0)、迪威尔(688377/68.6)、TCL科技(000100/68.0)、白云电器(603861/67.0)、国邦医药(605507/66.8)、威胜信息(688100/66.4)、爱玛科技(603529/65.7)。新因子已激活（new_factors 3.0-9.8，占total_score的4.5-14.8%）。但：昨日0%命中率（错过50只大涨股）、review_diagnosis P0修复（涨停源/首板/市值阈值）未落地、stop_loss仍全部-5%（除致欧科技-7%创业板）、sector大面积「金融」分类不准确。",
-      "pro": [
-        "✅ pool新鲜（age 0.7h）——昨天超时问题不复存在",
-        "✅ 评分跨度改善（5.3 vs 昨天4.0）——因子区分度提升",
-        "✅ 新因子激活（动量/波动/MA偏离）贡献3.0-9.8分",
-        "✅ 进化引擎W22权重调整已生效（event↑/technical↑/fund↑）",
-        "✅ TCL科技(986亿)未超3000亿上限——市值过滤正确",
-        "✅ 致欧科技创业板自动-7%止损（板别区分已部分生效）"
-      ],
-      "con": [
-        "⚠️ 昨日pool命中率0%（50只大涨全漏）→ 候选池盲区未解决",
-        "⚠️ review_diagnosis P0修复未落地：涨停源/首板/市值30亿 → self_evolution.py v1.0不消费review_diagnosis",
-        "⚠️ sector分类混乱（致欧科技「金融」？TCL科技「金融」？）→ 板块映射bug",
-        "⚠️ stop_loss除创业/科创外全-5%（未根据波动率差异化）",
-        "⚠️ broker_views/hot_events空→ research/sentiment因子依赖回退逻辑"
-      ]
-    },
-    "gap_risk": {
-      "score": 5,
-      "previous_score": 4,
-      "delta": "improving",
-      "detail": "4项未接入数据源与前日相同（指数估值/融券/机构持仓/VIX），1项弱数据源（hot_events）。但P0行动项推荐引擎超时已修复→降低整体系统风险。push2 API双降级是当前最大不确定性（夜盘限流常态化，需确认盘中是否自动恢复）。进化引擎W22的3项参数变更被应用→系统自我修复能力验证有效。",
-      "pro": [
-        "✅ 推荐引擎cron超时已修复（最大P0降级）→ 系统核心链路恢复",
-        "✅ 进化引擎W22成功应用3项变更→ 自我修复闭环验证",
-        "✅ discovery_report自动发现4缺口+1弱源→ 监测机制运行",
-        "✅ KB洞察填补了部分数据缺口（外盘→A股传导逻辑链）"
-      ],
-      "con": [
-        "⚠️ push2 API夜间限流→ 盘中09:30前必须确认恢复（否则侦察兵缺资金流）",
-        "⚠️ 4项缺失数据源全为P1（指数估值/融券/机构/VIX）→ 仓位中枢无市场水位参照",
-        "⚠️ review_diagnosis→进化引擎断层（v1.0不消费→P0修复无法自动落地）",
-        "⚠️ 竞价采集器auction.db状态完全不明→ 9:25侦察兵缺竞价信号的风险未知"
-      ]
-    }
   },
   "top_actions": [
     {
       "priority": "P0",
-      "action": "盘前确认push2 API恢复（09:15前）",
-      "rationale": "push2 list/gainers双通道当前down（夜间限流），但交易时段通常自动恢复。09:15竞价采集器和09:25侦察兵开盘确认依赖push2数据。如果09:15仍未恢复→启用三通道降级（东方财富→腾讯→Sina）。建议cron_scout_intraday.sh启动时先跑check_data_health()确认状态。",
-      "module": "data_pipeline.py → check_data_health() → scout.py"
-    },
-    {
-      "priority": "P0",
-      "action": "修复market_snapshot cron（08:28疑似失败）",
-      "rationale": "market_snapshot.json已17.5h未更新→瞭望塔LLM cron（08:30）将使用过期数据生成晨报。当前美股三大指数全线下跌（纳指-0.82%）的利空未被market_snapshot捕获。需检查cron_market_snapshot.sh执行日志，必要时手动跑一次 market_snapshot.py 生成快照供瞭望塔使用。",
-      "module": "market_snapshot.py + cron_market_snapshot.sh"
-    },
-    {
-      "priority": "P0",
-      "action": "落实review_diagnosis P0修复：候选池增加涨停板源 + 连板≥2排除",
-      "rationale": "06/01 LLM复盘诊断P0致命缺陷：118/120涨停股不在候选池（覆盖率<2%），昨日再次验证0%池命中率。review_diagnosis.json包含完整修复方案（5项action+3项rule_change）但v1.0进化引擎不自动消费→需手动落地stock_recommender.py。不改→每日继续错过50+只大涨股。",
-      "module": "stock_recommender.py → _get_candidates() + _get_lianban_codes()"
-    },
-    {
-      "priority": "P0",
-      "action": "修复sector分类映射（致欧科技→「金融」？）",
-      "rationale": "daily_pool中致欧科技(301376，跨境电商)/迪威尔(688377，油气设备)/威胜信息(688100，能源物联网)均标记为「金融」——sector映射明显错误。影响瞭望塔板块聚类（「金融」板块出现完全不相关标的）和侦察兵板块热度评分。根因可能是tushare industry分类字段映射偏移或fallback逻辑bug。",
+      "action": "修复sector分类映射（致欧科技/迪威尔/星德胜/瀚蓝环境/TCL → 均标记为「金融」）",
+      "rationale": "daily_pool中9只标的中5只sector显示「金融」（致欧=跨境电商、迪威尔=油气设备、星德胜=电机、瀚蓝=环保、TCL=面板），仅白云电器=「电气设备」、晨光股份=「通信」正确。sector映射系统性错误影响瞭望塔板块聚类和侦察兵板块热度评分，且昨日诊断已标记此问题但未修复。根因在stock_recommender.py _enrich_sector()的tushare industry字段映射偏移。",
       "module": "stock_recommender.py → _enrich_sector()"
     },
     {
+      "priority": "P0",
+      "action": "修复hot_events数据质量（gap discovery标记P0）",
+      "rationale": "hot_events数据质量不稳定，直接影响推荐引擎sentiment因子评分。是当前唯一标记P0的数据源缺陷。KB洞察中已观察到「券商研报+热搜双双归零」的夜间静默现象，但盘中也应产出内容。检查mega_collector.py中hot_events采集逻辑是否静默降级。",
+      "module": "mega_collector.py → hot_events采集"
+    },
+    {
+      "priority": "P0",
+      "action": "盘前确认push2 API恢复 + 竞价采集器可运行（09:15前验证）",
+      "rationale": "当前02:08 check_data_health()显示f62=ok + sina_api=ok，push2已恢复。但昨天诊断标记push2双降级（list/gainers均down），需在09:15竞价采集前再次确认。如果再次降级→启用三通道（东方财富→腾讯→Sina）。cron_auction.sh已有多通道降级逻辑，重点确认09:15首轮采集产出。",
+      "module": "data_pipeline.py → check_data_health() → auction_collector.py"
+    },
+    {
       "priority": "P1",
-      "action": "接入指数PE/PB分位数 → 弹药库仓位中枢动态调整",
-      "rationale": "无指数估值→弹药库R值恒为¥832无论上证4075还是3000。当前上证PE分位90%整体偏贵→仓位中枢应下调，但系统无感知。market_snapshot.py已有index_valuation占位（字段全为0），只需接通tushare daily_basic历史分位计算即可激活。",
+      "action": "接入指数PE分位数 → 弹药库仓位中枢动态调整",
+      "rationale": "当前market_snapshot已含index_valuation（上证50 PE 11.2/分位66.8%、沪深300 PE 14.5/分位96.0%、中证500 PE 36.7/分位91.2%、创业板PE 48.5/分位99.6%）→整体「轻仓/防御」。但弹药库R值和仓位中枢未感知指数估值水位——这个数据已经有了，只是下游未消费。打通pipeline：market_snapshot.index_valuation.position_signal → ammo_risk.py仓位建议。",
       "module": "market_snapshot.py → ammo_risk.py"
     },
     {
       "priority": "P1",
-      "action": "确认竞价采集器 auction.db 状态 + 必要时修复",
-      "rationale": "06/03诊断标记竞价采集器P0失败（auction.db=0行），但06/03交易日是否已修复未确认。09:15竞价采集器是侦察兵开盘确认的关键输入（五维特征+Bayesian学习）。如果再次失败→09:25侦察兵将缺竞价溢价/量能/不平衡信号。",
-      "module": "auction_collector.py → check auction.db → auction_learner.py --diagnose"
+      "action": "接入波动率指数（VIX/50ETF波指）→行情冷却触发机制",
+      "rationale": "当前无恐慌指标，市场急跌时系统无法自动触发冷却。a股可用50ETF期权隐含波动率替代VIX。接入后：(1)波指>30→侦察兵/狙击手自动提高资金门槛,(2)波指>40→暂停新开仓。akshare option_50etf_vol可用。",
+      "module": "data_pipeline.py → 新增 get_volatility_index()"
     },
     {
       "priority": "P2",
-      "action": "stop_loss差异化：根据ATR/波动率而非仅板别",
-      "rationale": "当前除创业板-7%外全部-5%。但同样主板标的：爱玛科技(波动小)和白云电器(波动大)应有不同止损。进化引擎W22拒绝了「止损参数重新校准」因参数值bug——需手动设定合理的止损映射表后重新提交。",
+      "action": "stop_loss差异化：根据ATR/波动率动态计算而非仅板别",
+      "rationale": "当前除创业板-7%外全部-5%。但白云电器(波动大)和晨光股份(波动小)应有不同止损。需从historical_k_with_ma计算20日ATR，映射到止损比例（如ATR<3%=止损-4%, ATR 3-5%=-5%, ATR>5%=-7%）。昨日诊断P2同项未执行。",
       "module": "stock_recommender.py → _calc_stop_loss()"
     }
   ],
   "trend": {
-    "vs_last_week": "stabilizing",
+    "vs_last_week": "improving",
     "vs_yesterday": "improving",
-    "detail": "昨日诊断标记'declining'因推荐引擎超时+竞价采集完全失败+holdings清零三重打击。今日最大改善：推荐引擎恢复正常（P0心脏问题解决）、进化引擎成功应用3项W22变更、daily_pool新鲜产出。但market_snapshot 17.5h老旧+push2双降级+候选池盲区未修复仍是硬伤。相比上周W22（05/26-05/30有完整瞭望塔+弹药库+文工团链），本周仍处于「部分恢复」而非「全面正常」状态。关键看今日09:15-09:30竞价→侦察兵链路是否畅通。"
+    "detail": "昨日(06/04)五维均分 ~5.8（data:6/signal:7/exec:6/reco:5/gap:5），今日(06/05)升至 ~6.6（data:7/signal:7/exec:8/reco:6/gap:5）。三大改善：(1)push2 API从双降级恢复到f62=ok→侦察兵资金流信号恢复,(2)market_snapshot从17.5h老旧恢复到3.7h→瞭望塔晨报将用较新数据,(3)无cron错误+sniperd连续运行3天→执行层健康。未改善：(1)sector分类映射仍系统性错误（5/9标「金融」）, (2)hot_events数据质量P0未修,(3)4个缺失数据源仍未接入。相比上周W22完整链（瞭望塔+弹药库+文工团全通），本周处于「稳定恢复中」→关键看今日09:15竞价→09:25侦察兵开盘确认链路是否全线畅通。"
   },
-  "system_snapshot": {
-    "holdings_count": 0,
-    "daily_pool_count": 8,
-    "daily_pool_age_h": 0.7,
-    "kb_insights_count": 50,
-    "market_snapshot_age_h": 17.5,
-    "cron_jobs_active": 37,
-    "mega_modules_healthy": 7,
-    "mega_modules_empty": 2,
-    "push2_status": "degraded",
-    "sina_status": "ok",
-    "tushare_status": "ok",
-    "baostock_status": "ok",
-    "silver_generated_today": false,
-    "gold_generated_today": false,
-    "evolution_applied_w22": 3,
-    "evolution_rejected_w22": 4,
-    "r_value": 832.5,
-    "net_value": 100000.0,
-    "drawdown": 0.0,
-    "parliament_bias": "偏空",
-    "parliament_bull_vs_bear": "1:8"
-  }
+  "summary": "系统健康度从昨日5.8升至6.6（+0.8）。push2恢复+market_snapshot刷新+cron全绿是核心改善。但sector映射错误和hot_events质量是持续P0，需在今日08:25推荐引擎运行前修复sector字段。指数估值已采集但下游未消费——低垂果实。"
 }

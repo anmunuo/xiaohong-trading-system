@@ -118,7 +118,35 @@ logger.export_filtered("workspace/btc-only.csv", symbol="600519")
 - SQLite 写入失败时 CSV 仍会成功（双写独立）
 - `created_at` 由 SQLite `datetime('now')` 自动填充，不需要在代码中传
 
-## 可用命令
+## 券商对接详情
+
+### xtquant (QMT) — 首选
+
+| 券商 | 门槛 | 备注 |
+|:--|:--|:--|
+| 招商证券 | ~50万 | 生态成熟，系统已完整对接 |
+| 国金证券 | ~50万 | 量化生态最成熟 |
+| 华鑫证券 | ~10万 | 低门槛明星 |
+| 国信证券 | ~50万 | MiniQMT 支持 |
+| 中泰证券 | ~30万 | XTP 接口可选 |
+| 光大证券 | ~50万 | QMT 或 PTrade（后者需额外开发） |
+
+**配置步骤**：
+1. 开通券商 QMT 权限 → 下载 QMT 客户端
+2. 从 QMT 安装目录复制 `xtquant/` 到 venv: `cp -r xtquant/ venv/lib/python3.11/site-packages/`
+3. 验证: `python3 -c "from xtquant import xtdata; print('OK')"`
+4. 测试: `python3 broker_gateway.py --live --status`
+
+### easytrader — 备用
+
+| 券商 | 配置 |
+|:--|:--|
+| 华泰证券 | `easytrader.use('ht')` |
+| 银河证券 | `easytrader.use('yh')` |
+| 广发证券 | `easytrader.use('gf')` |
+| 国金证券 | `easytrader.use('gjzq')` |
+
+招商证券和光大证券**不在 easytrader 默认支持列表**，只能走 QMT。
 
 | 命令 | 参数 | 说明 |
 |------|------|------|

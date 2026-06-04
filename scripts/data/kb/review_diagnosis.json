@@ -1,109 +1,78 @@
-[
-  {
-    "timestamp": "2026-06-01T17:14:44+08:00",
-    "market_context": {
-      "shanghai": "4057.74 (-0.27%)",
-      "总涨停数": 120,
-      "推荐池数量": 1,
-      "推荐池唯一标的": "920184 国源科技 (北交所, 评分48.3)",
-      "missed_condition": "池外涨幅≥6%"
+{
+  "date": "20260604",
+  "diagnosis": "全局偏空震荡市，推荐池数量回升至9只（v2.3首板源生效）但捕获率仍为0%。文工团15:30崩盘（_em_api_get导入→15:33已修复）。议会停摆2天未运行。系统处于「有信号无行动」的尴尬期——池有标的、账户空仓、狙击手未启动。最大断点：从推荐池→实际下单的链路完全断裂。",
+  "module_scores": {
+    "recommender": {
+      "status": "warn",
+      "note": "池内9只（回升显著，v2.3首板源生效）。但reflection_log显示捕获率0%、错过50只6%+。排除结构：ST=15、连板=1、停牌=2、大市值=7、小市值=105——105只被小市值过滤（占有效候选的~80%）。TCL科技(986亿)漏入池：市值985亿却未触发大市值过滤（daily_basic逐只查询慢，可能部分候选跳过）。v2.3综合评分体系运行正常，因子分布合理。建议：市值下限从50亿→30亿（释放30-50亿区间，当前过滤过严）。"
     },
-    "missed_count": 118,
-    "root_causes": {
-      "candidate_pool_blindspot": {
-        "count": 118,
-        "severity": "P0",
-        "detail": "118/120涨停股不在候选池中。候选池仅来源公告事件(111只)，与涨停池交集仅2只。get_top_flow_stocks()返回None，hot_events/broker_views均为空。",
-        "evidence": "涨停板120只 vs 公告池111只，交集=2 (603877太平鸟, 920184国源科技)"
-      },
-      "small_cap_overkill": {
-        "count": 106,
-        "severity": "P0",
-        "detail": "候选池111只中106只被<50亿市值过滤排除(95.5%)。涨停板中35只<50亿也被排除，但可接受。真正的问题是候选池本身就全是小盘股(公告股偏小市值)。",
-        "evidence": "111只候选 → 106被小市值排除 → 仅剩5只。公告池的上市公司以中小盘为主。"
-      },
-      "lianban_overexclusion": {
-        "count": 0,
-        "severity": "P1",
-        "detail": "今日因昨周日无涨停数据，连板排除为0。但正常交易日「含首板」规则会排除当日所有涨停(包括大量首板牛股)。75只中市值首板涨停本应可捕获。",
-        "evidence": "昨日涨停: 0只(Sunday)。规则设置为排除所有连板含首板 → 正常交易日会把全部涨停排除。"
-      },
-      "data_pipeline_postmarket_failure": {
-        "count": 50,
-        "severity": "P1",
-        "detail": "get_top_flow_stocks()盘后返回None。东方财富push2 API在工作日16:00后可能返回空数据。该函数应添加akshere stock_zt_pool_em或stock_hot_rank_em作为fallback。",
-        "evidence": "三次调用均返回None，函数内try/except静默吞错。"
-      }
+    "scout": {
+      "status": "warn",
+      "note": "盘中侦察兵10:02发现中兴通讯(80.0分)加入推荐池。scout日志目录不存在（data/sniper_logs/），无法回溯盘中扫描记录。scout_intraday模式4次cron是否全部正常运行待验证。"
     },
-    "optimization": [
-      {
-        "id": 1,
-        "priority": "P0-立即",
-        "title": "候选池增加涨停板源",
-        "action": "在_get_candidates()中新增: 调用ak.stock_zt_pool_em(date=today)获取当日涨停池，所有中市值(50-2000亿)首板涨停直接进入候选池",
-        "expected_impact": "候选池从111只→约180-200只。今日可捕获75只中市值首板涨停中的60+只(排除当日连板≥2的11只)。覆盖率从1.7%提升到50%+。",
-        "code_hint": "在_get_candidates()中添加: zt_pool = ak.stock_zt_pool_em(date=self.date_str); 筛选市值50-2000亿+连板数==1 → 加入candidates"
-      },
-      {
-        "id": 2,
-        "priority": "P0-立即",
-        "title": "放宽连板排除: 含首板 → ≥2板",
-        "action": "修改_apply_filters()中_get_lianban_codes()逻辑: 仅获取连板数≥2的股票，不再排除首板。同时改为取当日涨停池而非昨日。",
-        "expected_impact": "首板涨停不再被过滤。75只中市值首板涨停全部可通过。连板≥2的11只继续排除。预期每日可多捕获40-80只有效候选。",
-        "code_hint": "在_get_lianban_codes()中: df = ak.stock_zt_pool_em(date=self.date_str); lianban = {code for code, lb in zip(df['代码'], df['连板数']) if lb >= 2}"
-      },
-      {
-        "id": 3,
-        "priority": "P1-本周",
-        "title": "小市值阈值从50亿降至30亿",
-        "action": "修改_apply_filters()中的市值下限: mkt_cap < 50 → mkt_cap < 30。30亿以下为微盘股高风险区间，30-50亿为中证2000范围，有挖掘价值。",
-        "expected_impact": "候选池从5只→约15-20只。涨停板中额外释放约15-20只30-50亿首板股进入候选。但需配合基本面深度审查，该区间波动大。",
-        "code_hint": "将两处 mkt_cap < 50 改为 mkt_cap < 30"
-      },
-      {
-        "id": 4,
-        "priority": "P1-本周",
-        "title": "get_top_flow_stocks添加fallback",
-        "action": "当_em_api_get返回None/空时，fallback到ak.stock_hot_rank_em()取前N只，或ak.stock_zt_pool_em当日涨停按成交额排序取TOP N",
-        "expected_impact": "盘后时段也能获取有效候选。资金流候选从0恢复到30-50只。",
-        "code_hint": "在get_top_flow_stocks()的except块中添加ackshare fallback调用"
-      },
-      {
-        "id": 5,
-        "priority": "P2-下周",
-        "title": "龙虎榜净买入作为事件加分源",
-        "action": "在_scoring中添加龙虎榜净买入因子: 净买入>5000万 +10分，>1亿 +20分。龙虎榜数据15:30后可用，适合盘后复用和第二日开盘参考。",
-        "expected_impact": "提升资金面信号质量。今日龙虎榜净买入股44只中20+只有效加分。"
-      }
-    ],
-    "rule_changes_suggested": [
-      {
-        "rule": "连板排除",
-        "current": "排除所有连板(含首板)，取昨日涨停池",
-        "proposed": "仅排除连板≥2板，取当日涨停池",
-        "rationale": "首板是牛股起涨信号，排除首板等于自断一手情报。昨日涨停池在周一失效(Sunday无数据)。改用当日涨停池判断连板数更准确。",
-        "expected_hit_rate_improvement": "+40~80只/日进入候选池"
-      },
-      {
-        "rule": "小市值阈值",
-        "current": "市值<50亿排除",
-        "proposed": "市值<30亿排除",
-        "rationale": "50亿阈值过高，30-50亿区间(中证2000成分)有大量成长股。公告事件池以中小盘为主，50亿阈值导致95%候选被排除。降低至30亿释放该区间。",
-        "expected_hit_rate_improvement": "候选池从5只→约15-20只(+200~300%)"
-      },
-      {
-        "rule": "候选池来源",
-        "current": "仅公告+资金流(TOP50)+热点+券商",
-        "proposed": "新增涨停板首板+龙虎榜净买入+资金流fallback",
-        "rationale": "当前候选池与涨停池交集仅1.7%，严重脱节。新增三大来源覆盖当日最强股票。",
-        "expected_hit_rate_improvement": "覆盖率从1.7%→50%+，候选池从111只→约200-250只"
-      }
-    ],
-    "data_integrity_note": {
-      "涨停板数据": "✅ 真实: akshare stock_zt_pool_em('20260601')=120只",
-      "公告池数据": "✅ 真实: mega_latest.json announcements=137只(盘后), 08:01版=131只",
-      "推荐池数据": "✅ 真实: daily_pool.json=1只(920184国源科技, 评分48.3)",
-      "龙虎榜数据": "✅ 真实: akshare stock_lhb_detail_em=116条记录, 44只≥6%"
+    "sniper": {
+      "status": "warn",
+      "note": "sniper_logs目录完全不存在——sniperd守护进程未产出任何日志。systemd服务可能未启动或已挂掉。无交易执行记录。推荐池→下单链路完全断裂。"
+    },
+    "ammo": {
+      "status": "ok",
+      "note": "弹药库15:30正常运行。零持仓，净值¥100,000，回撤0%。R值¥832。风控正常——空仓状态符合当前市场偏空判断。"
+    },
+    "knowledge_base": {
+      "status": "ok",
+      "note": "mega_collector每小时正常产出（06/04 00:00-17:07共18个时段文件）。但议会已2天未消费KB数据，parliament_log停在6/2。KB→议会的数据流存在断点。"
+    },
+    "auction": {
+      "status": "warn",
+      "note": "竞价学习器连续第2天运行（1520帧/8只）。但signal starvation持续——3/5维度(量能加速/失衡/板块偏离)两日16只标的中零触发。仅价格斜率+溢价各有1次触发(1/1准确)。这不是权重问题而是触发机制问题：震荡市中竞价信号天然弱+阈值偏保守+板块偏离与跨行业标的池结构性冲突。auction_diagnosis.json已详细诊断，本次LLM复盘不做重复建议。"
+    },
+    "review": {
+      "status": "error",
+      "note": "文工团15:30崩盘：review.py ImportError _em_api_get未从data_pipeline/__init__.py导出。根因：v8.5 data_pipeline拆分子模块后_em_api_get在_core.py定义但未在__init__.py重导出。15:33已将import改为from data_pipeline._core import _em_api_get。明日cron应正常。今日无文工团复盘产出，错过了选股复盘和纪律检查。"
+    },
+    "parliament": {
+      "status": "error",
+      "note": "议会自6/2后停摆2天。parliament_log.json仅有6/2的两条记录（01:32和01:33，且为重复数据）。daily_pool.json的parliament section仍引用6/2的偏空裁决(bias=偏空, bull=1, bear=8)。6/3和6/4均无议会产出。议会cron未运行或运行失败但静默——需排查researchers.py或parliament cron调度。议会是连接KB洞察→推荐池→瞭望塔→决策官的关键认知层，停摆2天导致整个多空判断链路依赖2天旧数据。"
     }
+  },
+  "rule_changes_suggested": [
+    {
+      "rule": "市值下限",
+      "change": "市值下限从50亿降低到30亿",
+      "reason": "连续3天数据确认：105/130有效候选被50亿阈值过滤(80.8%)。30-50亿区间(中证2000成分)有大量成长型标的被误杀。降低至30亿可释放约15-20只候选，同时仍然排除30亿以下微盘垃圾股。与6/1诊断建议一致但当时未被进化引擎落地（self_evolution.py v1.0不消费review_diagnosis.json）。",
+      "confidence": "high"
+    },
+    {
+      "rule": "市值上限",
+      "change": "市值上限从2000亿收紧至1000亿",
+      "reason": "TCL科技(985.96亿)今日漏入推荐池，已超1000亿但因子评分仍达68.0。大市值股票在震荡市中流动性好但弹性差，不符合小红「中小盘弹性」定位。收紧上限并修复large_cap过滤逻辑中的查询遗漏（daily_basic逐只查询慢→部分跳过后fallback到市值=None→不过滤）。",
+      "confidence": "medium"
+    }
+  ],
+  "no_change": false,
+  "critical_fixes_today": [
+    {
+      "module": "review",
+      "bug": "ImportError: _em_api_get not in __init__.py",
+      "fix": "改为 from data_pipeline._core import _em_api_get",
+      "time": "15:33",
+      "verified": "python3 -c 'from data_pipeline._core import _em_api_get; from data_pipeline import get_market_money_flow, get_stock_realtime; print(\"OK\")'",
+      "impact": "明日cron恢复正常，今日复盘数据缺失"
+    },
+    {
+      "module": "gold_pipeline",
+      "bug": "cron_gold.sh 路径错误：/home/pc/.hermes/profiles/xiaohong/home/.hermes/...",
+      "discovery": "15:50 cron exit code 2, path双写home",
+      "impact": "Gold ETL今日未产出，因子面板无6/4数据",
+      "needs_investigation": true
+    }
+  ],
+  "data_integrity_note": {
+    "holdings": "✅ 零持仓，净值100,000，连续5天未变",
+    "daily_pool": "✅ v2.3 9只推荐，评分体系正常",
+    "parliament_log": "⚠️ 仅6/2数据，6/3和6/4缺失",
+    "reflection_log": "✅ 数据一致——连续3天捕获率0%",
+    "auction_diagnosis": "✅ 6/4数据完整，signal starvation已识别",
+    "market_snapshot": "✅ 08:28正常生成，美股三指齐跌(-0.7~-1.2%)"
   }
-]
+}

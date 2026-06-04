@@ -1,5 +1,56 @@
 [
   {
+    "version": 5,
+    "date": "2026-06-04",
+    "timestamp": "2026-06-04T17:35:21.841339",
+    "dry_run": false,
+    "changes_attempted": 2,
+    "changes_applied": 2,
+    "changes_rejected": 0,
+    "weight_status": "⚠️ 6/3权重变更未落地 — stock_recommender.py仍为旧值(event:0.30 fund:0.25 tech:0.15 research:0.07)，需手动验证patch工具是否生效",
+    "details": [
+      {
+        "action": "市值下限 50→40 (第一步)",
+        "param_id": "recommender_market_cap_min",
+        "old_value": 50,
+        "new_value": 40,
+        "change_pct": "-20.0%",
+        "target": 30,
+        "step": "1/2",
+        "status": "applied",
+        "reason": "数据支撑充分: 80.8%候选被50亿阈值过滤。PE分位90.1%下扩大候选池寻求被错杀中小盘",
+        "validation": "范围合理 ✅ 幅度20.0%≤20% ✅",
+        "file": "stock_recommender.py (5处: docstring+注释+代码+methodology)",
+        "patches_verified": 5
+      },
+      {
+        "action": "市值上限 3000→2400 (第一步)",
+        "param_id": "recommender_market_cap_max",
+        "old_value": 3000,
+        "new_value": 2400,
+        "change_pct": "-20.0%",
+        "target": 1000,
+        "step": "1/3",
+        "status": "applied",
+        "reason": "PE分位90.1%高位需收紧。注意LLM复盘误判当前为2000亿→已按实际3000亿修正。2400→1000仍需2步",
+        "validation": "范围合理 ✅ 幅度20.0%≤20% ✅",
+        "file": "stock_recommender.py (5处)",
+        "patches_verified": 5,
+        "note": "LLM复盘数据偏差: 声称当前2000亿→实际代码3000亿"
+      }
+    ],
+    "market_context": {
+      "shanghai": "4,084 (+0.22%)",
+      "pe_percentile": "90.1%",
+      "position_signal": "轻仓/防御（整体偏贵）",
+      "north_flow": "净流入 5.4亿"
+    },
+    "bugs_found": [
+      "6/3进化引擎applied变更未落地: weight_event 0.30→0.35 / weight_technical 0.15→0.18 / weight_fundamental 0.25→0.30 仍在代码中为旧值",
+      "LLM复盘市值上限值偏差: review_diagnosis称当前2000亿，实际代码3000亿"
+    ]
+  },
+  {
     "version": 4,
     "date": "2026-06-03",
     "timestamp": "2026-06-03T17:35:00",
@@ -12,7 +63,7 @@
       {
         "action": "公告情绪权重调整",
         "param_id": "recommender_weight_event",
-        "old_value": 0.30,
+        "old_value": 0.3,
         "new_value": 0.35,
         "change_pct": "16.7%",
         "status": "applied",
@@ -23,7 +74,7 @@
       {
         "action": "行业轮动信号增强",
         "param_id": "recommender_weight_sentiment",
-        "old_value": 0.20,
+        "old_value": 0.2,
         "new_value": 0.25,
         "change_pct": "25.0%",
         "status": "rejected",
@@ -54,7 +105,7 @@
         "action": "北向资金权重上调",
         "param_id": "recommender_weight_fundamental",
         "old_value": 0.25,
-        "new_value": 0.30,
+        "new_value": 0.3,
         "change_pct": "20.0%",
         "status": "applied",
         "reason": "研究员: 北向资金持续性 - 今日北向净流入5.38亿确认流入趋势，上调基本面因子权重至0.30",
@@ -65,7 +116,7 @@
         "action": "估值分位风险阈值设置",
         "param_id": "ammo_total_position_limit",
         "old_value": null,
-        "new_value": 0.70,
+        "new_value": 0.7,
         "status": "rejected",
         "reason": "参数 ammo_total_position_limit 未在 EVOLVABLE_PARAMS 中定义。当前PE分位90%确实需要风控参数，但需先在 ammo_risk.py 中实现该参数后才能调整。",
         "suggestion": "需在 EVOLVABLE_PARAMS 中添加 ammo_total_position_limit 参数定义，并在 ammo_risk.py 中实现 PE 分位自动减仓逻辑"
@@ -87,5 +138,22 @@
       "position_signal": "轻仓/防御（整体偏贵）",
       "north_flow": "净流入 5.38亿"
     }
+  },
+  {
+    "date": "2026-06-04 17:13:03",
+    "version": "#2",
+    "dry_run": true,
+    "changes_attempted": 2,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "timestamp": "2026-06-04T22:00:00",
+    "module": "recommender",
+    "param": "market_cap_range",
+    "action": "市值过滤 40~2400亿 → 30~2000亿",
+    "reason": "LLM复盘建议：105只小市值被排除(80.8%)致候选池过窄，降低下限放宽筛选；上限收紧排除无操作价值的大盘股",
+    "status": "applied",
+    "version": "v3.0"
   }
 ]

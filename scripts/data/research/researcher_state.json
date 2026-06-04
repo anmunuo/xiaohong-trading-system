@@ -1,0 +1,521 @@
+{
+  "version": "2.2.0",
+  "updated_at": "2026-06-05T02:02:04.007477",
+  "hypotheses": {
+    "data_20260604220204_001": {
+      "id": "data_20260604220204_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "当前过期数据源: 2个"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260604220205_002": {
+      "id": "technical_20260604220205_002",
+      "statement": "中兴通讯(000063) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "000063 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "000063"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_003": {
+      "id": "technical_20260604220205_003",
+      "statement": "致欧科技(301376) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "301376 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "301376"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_004": {
+      "id": "technical_20260604220205_004",
+      "statement": "星德胜(603344) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "603344 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "603344"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_005": {
+      "id": "technical_20260604220205_005",
+      "statement": "友发集团(601686) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "601686 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "601686"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_006": {
+      "id": "technical_20260604220205_006",
+      "statement": "迪威尔(688377) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "688377 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "688377"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_007": {
+      "id": "technical_20260604220205_007",
+      "statement": "TCL科技(000100) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "000100 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "000100"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_008": {
+      "id": "technical_20260604220205_008",
+      "statement": "白云电器(603861) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "603861 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "603861"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_009": {
+      "id": "technical_20260604220205_009",
+      "statement": "瀚蓝环境(600323) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "600323 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "600323"
+      ],
+      "source": "technical"
+    },
+    "technical_20260604220205_010": {
+      "id": "technical_20260604220205_010",
+      "statement": "晨光股份(603899) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "603899 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "603899"
+      ],
+      "source": "technical"
+    },
+    "bear_20260604220205_011": {
+      "id": "bear_20260604220205_011",
+      "statement": "致欧科技(301376) 小市值(73亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "301376 波动0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "301376"
+      ],
+      "source": "bear"
+    },
+    "bear_20260604220205_012": {
+      "id": "bear_20260604220205_012",
+      "statement": "星德胜(603344) 小市值(60亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "603344 波动0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "603344"
+      ],
+      "source": "bear"
+    },
+    "bear_20260604220205_013": {
+      "id": "bear_20260604220205_013",
+      "statement": "迪威尔(688377) 小市值(74亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "688377 波动0.0%"
+      ],
+      "created_at": "2026-06-04 22:02",
+      "updated_at": "2026-06-05 02:02",
+      "verified_at": "2026-06-05 02:02",
+      "status": "active",
+      "related_symbols": [
+        "688377"
+      ],
+      "source": "bear"
+    },
+    "data_20260605020200_001": {
+      "id": "data_20260605020200_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
+      "confidence": 0.55,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260605020204_002": {
+      "id": "technical_20260605020204_002",
+      "statement": "中兴通讯(000063) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "000063"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_003": {
+      "id": "technical_20260605020204_003",
+      "statement": "致欧科技(301376) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301376"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_004": {
+      "id": "technical_20260605020204_004",
+      "statement": "星德胜(603344) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603344"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_005": {
+      "id": "technical_20260605020204_005",
+      "statement": "友发集团(601686) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "601686"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_006": {
+      "id": "technical_20260605020204_006",
+      "statement": "迪威尔(688377) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "688377"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_007": {
+      "id": "technical_20260605020204_007",
+      "statement": "TCL科技(000100) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "000100"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_008": {
+      "id": "technical_20260605020204_008",
+      "statement": "白云电器(603861) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603861"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_009": {
+      "id": "technical_20260605020204_009",
+      "statement": "瀚蓝环境(600323) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600323"
+      ],
+      "source": "technical"
+    },
+    "technical_20260605020204_010": {
+      "id": "technical_20260605020204_010",
+      "statement": "晨光股份(603899) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603899"
+      ],
+      "source": "technical"
+    },
+    "bear_20260605020204_011": {
+      "id": "bear_20260605020204_011",
+      "statement": "致欧科技(301376) 小市值(73亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301376"
+      ],
+      "source": "bear"
+    },
+    "bear_20260605020204_012": {
+      "id": "bear_20260605020204_012",
+      "statement": "星德胜(603344) 小市值(60亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603344"
+      ],
+      "source": "bear"
+    },
+    "bear_20260605020204_013": {
+      "id": "bear_20260605020204_013",
+      "statement": "迪威尔(688377) 小市值(74亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "688377"
+      ],
+      "source": "bear"
+    },
+    "flow_20260605020204_014": {
+      "id": "flow_20260605020204_014",
+      "statement": "北向单日流入37亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.55,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-05 02:02",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    }
+  },
+  "agenda": [],
+  "gaps": [],
+  "stats": {
+    "total_hypotheses": 27,
+    "confirmed": 0,
+    "rejected": 0,
+    "total_verifications": 13,
+    "accuracy": 0.0
+  }
+}

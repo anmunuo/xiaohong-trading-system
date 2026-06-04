@@ -59,9 +59,29 @@ LLM 复盘 `rule` 关键词 → 进化引擎 `param_id`：
 }
 ```
 
-## 安全边界
+## 安全边界 (v3.0: 取消硬上限)
 
-- 单次参数调整 ≤ ±20%
-- 至少 3 天回测数据才自动落地
+- ~~单次参数调整 ≤ ±20%~~ **已取消**。系统自主评估合理性，无幅度限制。
+- 变更幅度较大的参数建议分步执行（通过 `step` 字段标记当日进度）
 - 所有变更记录 `evolution_log.json`，可追溯可回滚
 - `evolution_backups/` 保存每个文件的修改前版本
+
+### 跨日渐进变更
+
+action_item 新增 `step` 和 `total_steps` 字段：
+
+```json
+{
+  "rule": "市值下限",
+  "param_id": "recommender_market_cap_min",
+  "target_value": 30,         // 最终目标
+  "current_value": 50,        // 当日当前值
+  "step": 1,                   // 当日执行第几步
+  "total_steps": 3,            // 共分几步
+  "change_today": "50→40",    // 当日变更
+  "reason": "105只小市值被排除",
+  "confidence": "high"
+}
+```
+
+引擎处理逻辑：如果 `step < total_steps`，执行当日变更后将 `step+1`，状态保持 `pending` 而非 `applied`，次日继续执行下一步。

@@ -3320,5 +3320,960 @@
         }
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-04T08:12:39.608618",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告683条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(541条)压倒减持(25条)，上市公司积极信号",
+              "M&A活动活跃(72条)，资本运作密集期",
+              "威胜信息: 财务面优秀 (评分81)"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认",
+              "TCL科技: MA20附近整理，可等突破确认",
+              "白云电器: MA20附近整理，可等突破确认",
+              "国邦医药: MA20附近整理，可等突破确认",
+              "威胜信息: MA20附近整理，可等突破确认",
+              "爱玛科技: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "致欧科技: 风险评级为「高」",
+              "迪威尔: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号",
+              "威胜信息: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 迪威尔/风险评级为/致欧科技"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告683条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 活动活跃/财务面优秀/评分",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "威胜信息: KB洞察发现风险信号",
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-04T08:12:39.608508",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 4,
+            "critical_flags": [
+              "威胜信息: KB洞察发现风险信号",
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.83,
+            "bear": 0.96
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T08:12:44.941900",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告683条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(541条)压倒减持(25条)，上市公司积极信号",
+              "M&A活动活跃(72条)，资本运作密集期",
+              "威胜信息: 财务面优秀 (评分81)"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认",
+              "TCL科技: MA20附近整理，可等突破确认",
+              "白云电器: MA20附近整理，可等突破确认",
+              "国邦医药: MA20附近整理，可等突破确认",
+              "威胜信息: MA20附近整理，可等突破确认",
+              "爱玛科技: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "致欧科技: 风险评级为「高」",
+              "迪威尔: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号",
+              "威胜信息: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 致欧科技/风险评级为/迪威尔"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告683条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 回购信号/活动活跃/威胜信息",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "威胜信息: KB洞察发现风险信号",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-04T08:12:44.941775",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 4,
+            "critical_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "威胜信息: KB洞察发现风险信号",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.83,
+            "bear": 0.96
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T08:12:49.285014",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告683条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(541条)压倒减持(25条)，上市公司积极信号",
+              "M&A活动活跃(72条)，资本运作密集期",
+              "威胜信息: 财务面优秀 (评分81)"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认",
+              "TCL科技: MA20附近整理，可等突破确认",
+              "白云电器: MA20附近整理，可等突破确认",
+              "国邦医药: MA20附近整理，可等突破确认",
+              "威胜信息: MA20附近整理，可等突破确认",
+              "爱玛科技: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "致欧科技: 风险评级为「高」",
+              "迪威尔: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号",
+              "威胜信息: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 风险评级为/致欧科技/迪威尔"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告683条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 威胜信息/财务面优秀/评分",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "威胜信息: KB洞察发现风险信号",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-04T08:12:49.284887",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 4,
+            "critical_flags": [
+              "威胜信息: KB洞察发现风险信号",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.83,
+            "bear": 0.96
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T08:37:35.379634",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告683条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(541条)压倒减持(25条)，上市公司积极信号",
+              "M&A活动活跃(72条)，资本运作密集期",
+              "威胜信息: 财务面优秀 (评分81)"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内8只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认",
+              "TCL科技: MA20附近整理，可等突破确认",
+              "白云电器: MA20附近整理，可等突破确认",
+              "国邦医药: MA20附近整理，可等突破确认",
+              "威胜信息: MA20附近整理，可等突破确认",
+              "爱玛科技: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内8只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内8只标的风险因素",
+            "key_findings": [
+              "致欧科技: 风险评级为「高」",
+              "迪威尔: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号",
+              "威胜信息: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内8只标的看多因素",
+            "b_perspective": "🐻: 池内8只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 当前池内标的无明显看多信号/建议等待更好的入场时机",
+              "🐻独有关注: 风险评级为/迪威尔/致欧科技"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告683条 / 板块0个",
+            "b_perspective": "📈: 池内8只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 威胜信息/上市公司积极信号/回购信号",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "国邦医药: KB洞察发现风险信号",
+              "威胜信息: KB洞察发现风险信号",
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-04T08:37:35.379574",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 4,
+            "critical_flags": [
+              "国邦医药: KB洞察发现风险信号",
+              "威胜信息: KB洞察发现风险信号",
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.94,
+            "technical": 0.73,
+            "bull": 0.83,
+            "bear": 0.96
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T08:40:34.209633",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告683条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(541条)压倒减持(25条)，上市公司积极信号",
+              "M&A活动活跃(72条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "致欧科技: MA20附近整理，可等突破确认",
+              "星德胜: MA20附近整理，可等突破确认",
+              "川恒股份: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "TCL科技: MA20附近整理，可等突破确认",
+              "白云电器: MA20附近整理，可等突破确认",
+              "瀚蓝环境: MA20附近整理，可等突破确认",
+              "国邦医药: MA20附近整理，可等突破确认",
+              "中国铝业: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "致欧科技: 风险评级为「高」",
+              "星德胜: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "星德胜: 小市值(60亿)，流动性风险",
+              "瀚蓝环境: KB洞察发现风险信号",
+              "国邦医药: KB洞察发现风险信号"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 星德胜/致欧科技/风险评级为"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告683条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 增持/活动活跃/压倒减持",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "星德胜: 小市值(60亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号",
+              "瀚蓝环境: KB洞察发现风险信号",
+              "致欧科技: 小市值(73亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-04T08:40:34.209549",
+          "verdict": {
+            "overall_confidence": 0.75,
+            "bias": "偏空",
+            "bull_strength": 1,
+            "bear_strength": 4,
+            "critical_flags": [
+              "星德胜: 小市值(60亿)，流动性风险",
+              "国邦医药: KB洞察发现风险信号",
+              "瀚蓝环境: KB洞察发现风险信号",
+              "致欧科技: 小市值(73亿)，流动性风险"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "星德胜: MA20附近整理，可等突破确认",
+              "川恒股份: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.91,
+            "technical": 0.73,
+            "bull": 0.83,
+            "bear": 0.96
+          }
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T17:13:03.778408",
+    "rounds": [
+      {
+        "name": "独立研判",
+        "reports": {
+          "data": {
+            "perspective": "数据源 0个 / KB文件 1个",
+            "key_findings": [],
+            "confidence": 0.9,
+            "recommendations": [
+              "当前数据源覆盖完整，无需新增"
+            ],
+            "red_flags": []
+          },
+          "fundamental": {
+            "perspective": "公告683条 / 板块0个",
+            "key_findings": [
+              "增持/回购信号(541条)压倒减持(25条)，上市公司积极信号",
+              "M&A活动活跃(72条)，资本运作密集期"
+            ],
+            "confidence": 0.75,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": []
+          },
+          "technical": {
+            "perspective": "池内9只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性 (均分50)"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "中兴通讯: MA20附近整理，可等突破确认",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "星德胜: MA20附近整理，可等突破确认",
+              "友发集团: MA20附近整理，可等突破确认",
+              "迪威尔: MA20附近整理，可等突破确认",
+              "TCL科技: MA20附近整理，可等突破确认",
+              "白云电器: MA20附近整理，可等突破确认",
+              "瀚蓝环境: MA20附近整理，可等突破确认",
+              "晨光股份: MA20附近整理，可等突破确认"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "perspective": "池内9只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号，建议等待更好的入场时机"
+            ],
+            "confidence": 0.5,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "perspective": "池内9只标的风险因素",
+            "key_findings": [
+              "致欧科技: 风险评级为「高」",
+              "星德胜: 风险评级为「高」",
+              "迪威尔: 风险评级为「高」"
+            ],
+            "confidence": 0.7,
+            "recommendations": [
+              "严格要求止损，高风偏标的控制仓位 ≤ 11.1%"
+            ],
+            "red_flags": [
+              "致欧科技: 小市值(73亿)，流动性风险",
+              "星德胜: 小市值(60亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "交叉辩论",
+        "debate": {
+          "bull_vs_bear": {
+            "title": "多空辩论",
+            "a_perspective": "🐂: 池内9只标的看多因素",
+            "b_perspective": "🐻: 池内9只标的风险因素",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🐂独有关注: 建议等待更好的入场时机/当前池内标的无明显看多信号",
+              "🐻独有关注: 风险评级为/星德胜/致欧科技"
+            ]
+          },
+          "fundamental_vs_technical": {
+            "title": "基本面×技术面交叉验证",
+            "a_perspective": "🏢: 公告683条 / 板块0个",
+            "b_perspective": "📈: 池内9只标的形态评估",
+            "consensus": [
+              "无明显共识"
+            ],
+            "divergence": [
+              "🏢独有关注: 活动活跃/上市公司积极信号/增持",
+              "📈独有关注: 池整体技术面中性/均分"
+            ]
+          },
+          "data_verdict": {
+            "verdict": "数据研报置信度 90%",
+            "data_quality_flags": [],
+            "cross_validated_flags": [
+              "星德胜: 小市值(60亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "致欧科技: 小市值(73亿)，流动性风险"
+            ]
+          }
+        }
+      },
+      {
+        "name": "小红终审",
+        "decision": {
+          "timestamp": "2026-06-04T17:13:03.778229",
+          "verdict": {
+            "overall_confidence": 0.71,
+            "bias": "中性",
+            "bull_strength": 1,
+            "bear_strength": 3,
+            "critical_flags": [
+              "星德胜: 小市值(60亿)，流动性风险",
+              "迪威尔: 小市值(74亿)，流动性风险",
+              "致欧科技: 小市值(73亿)，流动性风险"
+            ],
+            "consolidated_recommendations": [
+              "当前数据源覆盖完整，无需新增",
+              "维持现有持仓基本面评估",
+              "中兴通讯: MA20附近整理，可等突破确认",
+              "致欧科技: MA20附近整理，可等突破确认",
+              "星德胜: MA20附近整理，可等突破确认"
+            ]
+          },
+          "researcher_credits": {
+            "data": 0.95,
+            "fundamental": 0.86,
+            "technical": 0.73,
+            "bull": 0.53,
+            "bear": 0.94
+          }
+        }
+      }
+    ]
+  },
+  {
+    "topic": "每日推荐池标的研判 — 2026-06-04",
+    "timestamp": "2026-06-04T22:01:08.134467",
+    "bull_signals": 2,
+    "bear_signals": 1,
+    "bias": "偏多",
+    "confidence": 0.6,
+    "red_flags": [
+      "致欧科技: 小市值(73亿)，流动性风险",
+      "星德胜: 小市值(60亿)，流动性风险",
+      "迪威尔: 小市值(74亿)，流动性风险",
+      "主力出货散户接盘——危险信号"
+    ],
+    "recommendations": [
+      "当前数据源覆盖完整",
+      "维持现有持仓基本面评估",
+      "中兴通讯: MA20附近整理，等突破确认",
+      "致欧科技: MA20附近整理，等突破确认",
+      "星德胜: MA20附近整理，等突破确认",
+      "友发集团: MA20附近整理，等突破确认",
+      "迪威尔: MA20附近整理，等突破确认",
+      "TCL科技: MA20附近整理，等突破确认",
+      "白云电器: MA20附近整理，等突破确认",
+      "瀚蓝环境: MA20附近整理，等突破确认",
+      "晨光股份: MA20附近整理，等突破确认",
+      "观望——多方信号不足",
+      "高风偏标的控制仓位 ≤ 11.1%，严格执行止损",
+      "维持现有资金面评估"
+    ],
+    "hypotheses_created": 9
+  },
+  {
+    "topic": "每日推荐池标的研判 — 2026-06-04",
+    "timestamp": "2026-06-04T22:24:23.472689",
+    "bull_signals": 2,
+    "bear_signals": 2,
+    "bias": "中性",
+    "confidence": 0.5,
+    "red_flags": [
+      "auction_diagnosis.json 严重过期 (6.2h)",
+      "致欧科技: 小市值(73亿)，流动性风险",
+      "星德胜: 小市值(60亿)，流动性风险",
+      "迪威尔: 小市值(74亿)，流动性风险",
+      "主力出货散户接盘——危险信号"
+    ],
+    "recommendations": [
+      "当前数据源覆盖完整",
+      "维持现有持仓基本面评估",
+      "中兴通讯: MA20附近整理，等突破确认",
+      "致欧科技: MA20附近整理，等突破确认",
+      "星德胜: MA20附近整理，等突破确认",
+      "友发集团: MA20附近整理，等突破确认",
+      "迪威尔: MA20附近整理，等突破确认",
+      "TCL科技: MA20附近整理，等突破确认",
+      "白云电器: MA20附近整理，等突破确认",
+      "瀚蓝环境: MA20附近整理，等突破确认",
+      "晨光股份: MA20附近整理，等突破确认",
+      "观望——多方信号不足",
+      "高风偏标的控制仓位 ≤ 11.1%，严格执行止损",
+      "维持现有资金面评估"
+    ],
+    "hypotheses_created": 9
   }
 ]

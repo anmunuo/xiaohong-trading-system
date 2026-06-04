@@ -22,7 +22,7 @@ DATA_DIR = WORKSPACE / "data"
 KB_DIR = DATA_DIR / "kb"
 REPORTS_DIR = WORKSPACE / "reports"
 
-__version__ = "1.0.0"
+__version__ = "1.3.0"
 
 
 def check_data_freshness() -> dict:
@@ -242,28 +242,84 @@ def check_data_pipeline() -> dict:
     }
 
 
-def check_scout_sniper() -> dict:
-    """维度6: 侦察兵/狙击手状态"""
+def check_cron_execution_health() -> dict:
+    """维度6: 侦察兵/狙击手状态 + cron 执行健康（v1.2: 增强退出码检测）"""
     results = {}
+    issues = []
 
-    # 侦察兵最近一次输出
-    scout_dir = SCRIPT_DIR.parent / 'cron' / 'output' / 'a6b4e31d3919'
+    # ── 扫描所有 cron output 目录，检测最近一次执行的退出状态 ──
+    output_root = SCRIPT_DIR.parent / 'cron' / 'output'
+    if output_root.exists():
+        now = time.time()
+        failed_jobs = []
+        for job_dir in sorted(output_root.iterdir()):
+            if not job_dir.is_dir():
+                continue
+            files = sorted(job_dir.glob('*.md'), key=lambda p: p.stat().st_mtime, reverse=True)
+            if not files:
+                continue
+            latest = files[0]
+            age_h = (now - latest.stat().st_mtime) / 3600
+            # 只看 24 小时内的执行
+            if age_h > 24:
+                continue
+            content = latest.read_text()[:2000]
+            # 检测脚本执行失败
+            if 'script failed' in content or 'exited with code' in content:
+                # 提取 job ID 后8位作为短标识
+                job_short = job_dir.name[:8]
+                # 尝试提取退出码
+                exit_code = '?'
+                for line in content.split('\n'):
+                    if 'exited with code' in line:
+                        exit_code = line.strip().split('exited with code')[-1].strip()
+                        break
+                failed_jobs.append(f'{job_short}(exit={exit_code})')
+
+        if failed_jobs:
+            results['cron_failures'] = {
+                'status': 'down',
+                'count': len(failed_jobs),
+                'jobs': failed_jobs,
+            }
+            issues.append(f'{len(failed_jobs)}个cron job脚本执行失败: {", ".join(failed_jobs[:8])}')
+        else:
+            results['cron_failures'] = {'status': 'ok', 'count': 0}
+
+    # ── 侦察兵最近一次输出 ──
+    scout_dir = output_root / 'a6b4e31d3919'
     if scout_dir.exists():
         files = sorted(scout_dir.glob('*.md'), key=lambda p: p.stat().st_mtime, reverse=True)
         if files:
             latest = files[0]
             age_h = (time.time() - latest.stat().st_mtime) / 3600
-            # 读最后输出看数据源状态
             content = latest.read_text()[:1000]
             has_degraded = '数据源降级' in content
             results['scout'] = {
                 'last_run_h': round(age_h, 1),
                 'status': 'degraded' if has_degraded else 'ok',
             }
+
+    # ── 狙击手存活检测 ──
+    try:
+        import subprocess
+        r = subprocess.run(['systemctl', '--user', 'is-active', 'sniperd.service'],
+                           capture_output=True, text=True, timeout=5)
+        results['sniper'] = {'status': 'ok' if r.stdout.strip() == 'active' else 'down'}
+        if r.stdout.strip() != 'active':
+            issues.append('狙击手守护进程(sniperd.service)未运行')
+    except Exception:
+        results['sniper'] = {'status': 'unknown'}
+
+    if issues:
+        results['issues'] = issues
+        # 如果只是数据源降级，保持 degraded；如果有脚本失败，标记 down
+        if any('脚本执行失败' in i for i in issues):
+            results['status'] = 'down'
         else:
-            results['scout'] = {'last_run_h': None, 'status': 'no_output'}
+            results['status'] = 'degraded'
     else:
-        results['scout'] = {'last_run_h': None, 'status': 'no_dir'}
+        results['status'] = 'ok'
 
     return results
 
@@ -470,6 +526,96 @@ def check_gold_quality() -> dict:
     }
 
 
+def check_cron_scripts() -> dict:
+    """维度12: Cron 脚本完整性 — 检测行号污染"""
+    scripts_dir = SCRIPT_DIR
+    issues = []
+    corrupted = []
+    for f in sorted(scripts_dir.glob('cron_*.sh')):
+        try:
+            raw = f.read_bytes()
+            # 检测行号污染: 前10字节含 'N|' 模式
+            first_bytes = raw[:20].decode('utf-8', errors='replace')
+            if '|' in first_bytes and not first_bytes.startswith('#!'):
+                corrupted.append(f.name)
+        except Exception:
+            pass
+    for f in sorted(scripts_dir.glob('sniper_healthcheck.sh')):
+        try:
+            raw = f.read_bytes()
+            first_bytes = raw[:20].decode('utf-8', errors='replace')
+            if '|' in first_bytes and not first_bytes.startswith('#!'):
+                corrupted.append(f.name)
+        except Exception:
+            pass
+
+    if corrupted:
+        issues.append(f'{len(corrupted)}个cron脚本被行号污染: {", ".join(corrupted[:5])}{"..." if len(corrupted)>5 else ""}')
+        return {'status': 'down', 'issues': issues, 'corrupted': corrupted}
+
+    return {'status': 'ok', 'issues': [], 'total_checked': len(list(scripts_dir.glob('cron_*.sh')))}
+
+
+def check_data_veracity() -> dict:
+    """🆕 维度13: 数据真实度 — 检查所有关键数据是否通过质检"""
+    issues = []
+    results = {}
+    
+    try:
+        from data_quality import verify as qv
+        from data_pipeline import get_north_flow, get_market_money_flow, get_index_data
+        
+        # 北向资金
+        nf = get_north_flow()
+        qs_nf = qv(nf, "north_flow", "get_north_flow")
+        results["north_flow"] = {
+            "trust": qs_nf.trust.name,
+            "stars": qs_nf.stars,
+            "passed": len(qs_nf.passed_gates),
+            "failed": len(qs_nf.failed_gates),
+        }
+        if qs_nf.failed_gates:
+            for fg in qs_nf.failed_gates:
+                issues.append(f"北向: [{fg['priority']}] {fg['gate']} — {fg['detail'][:100]}")
+        if qs_nf.repair_hint:
+            issues.append(f"北向修复: {qs_nf.repair_hint}")
+
+        # 市场资金
+        mf = get_market_money_flow()
+        qs_mf = qv(mf, "market_flow", "get_market_money_flow")
+        results["market_flow"] = {
+            "trust": qs_mf.trust.name,
+            "stars": qs_mf.stars,
+            "passed": len(qs_mf.passed_gates),
+            "failed": len(qs_mf.failed_gates),
+        }
+        if qs_mf.failed_gates:
+            for fg in qs_mf.failed_gates:
+                issues.append(f"市场资金: [{fg['priority']}] {fg['gate']} — {fg['detail'][:100]}")
+
+        # 全球指数
+        idx = get_index_data()
+        qs_idx = qv(idx, "index_data", "get_index_data")
+        results["index_data"] = {
+            "trust": qs_idx.trust.name,
+            "stars": qs_idx.stars,
+            "passed": len(qs_idx.passed_gates),
+            "failed": len(qs_idx.failed_gates),
+        }
+
+    except ImportError:
+        return {"status": "degraded", "issues": ["data_quality 模块未加载"], "results": {}}
+    except Exception as e:
+        return {"status": "degraded", "issues": [f"质检异常: {e}"], "results": results}
+
+    # 综合状态
+    blocked = any(r.get("trust") == "BLOCKED" for r in results.values())
+    degraded = any(r.get("trust") in ("DEGRADED", "BLOCKED") for r in results.values())
+    
+    status = "down" if blocked else ("degraded" if degraded else "ok")
+    return {"status": status, "issues": issues, "results": results}
+
+
 def run_full_check() -> dict:
     """执行全维扫描"""
     checks = {
@@ -478,12 +624,14 @@ def run_full_check() -> dict:
         '3_parliament_flow':   check_parliament_flow(),
         '4_ammo_risk':         check_ammo_risk(),
         '5_data_pipeline':     check_data_pipeline(),
-        '6_scout_sniper':      check_scout_sniper(),
+        '6_cron_execution':    check_cron_execution_health(),
         '7_researcher_quality': check_researcher_reports(),
         '8_factor_quality':    check_factor_quality(),
         '9_portfolio_risk':    check_portfolio_risk(),
         '10_silver_quality':   check_silver_quality(),
         '11_gold_quality':     check_gold_quality(),
+        '12_cron_scripts':     check_cron_scripts(),
+        '13_data_veracity':   check_data_veracity(),  # 🆕 v1.3
     }
 
     # 汇总
@@ -518,12 +666,14 @@ def format_report(result: dict) -> str:
         '3_parliament_flow': '🏛️ 议会链路',
         '4_ammo_risk': '🛡️ 弹药库风控',
         '5_data_pipeline': '🔌 数据管线',
-        '6_scout_sniper': '🔍 侦察兵',
+        '6_cron_execution': '⚙️ Cron执行',
         '7_researcher_quality': '🧠 研究员质量',
         '8_factor_quality': '📊 因子有效性',
         '9_portfolio_risk': '🛡️ 组合风险',
         '10_silver_quality': '🥈 Silver质量',
-        '11_gold_quality':   '🏆 Gold质量',
+        '11_gold_quality': '🏅 Gold质量',
+        '12_cron_scripts': '📜 Cron脚本',
+        '13_data_veracity': '🔍 数据真实度',
     }
 
     for key, label in labels.items():
@@ -567,19 +717,42 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--json', action='store_true')
     parser.add_argument('--push', action='store_true')
+    parser.add_argument('--fix', action='store_true',
+                        help='扫描后自动执行修复 (auto-repair)')
     args = parser.parse_args()
 
     result = run_full_check()
+
+    if args.fix:
+        try:
+            from auto_repair import run_auto_repair, format_fix_report
+            fix_result = run_auto_repair(result)
+            result['auto_fix'] = fix_result
+        except ImportError:
+            result['auto_fix'] = {"summary": "auto_repair 模块不可用", "fixes_applied": []}
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     else:
         print(format_report(result))
+        if args.fix and result.get('auto_fix'):
+            print("")
+            try:
+                from auto_repair import format_fix_report
+                print(format_fix_report(result['auto_fix']))
+            except ImportError:
+                print("## 🩺 自主修复: 模块不可用")
 
     if args.push:
         try:
             from feishu_push import push_text
             report = format_report(result)
+            if args.fix and result.get('auto_fix'):
+                try:
+                    from auto_repair import format_fix_report
+                    report += "\n" + format_fix_report(result['auto_fix'])
+                except ImportError:
+                    report += "\n## 🩺 自主修复: 模块不可用"
             push_text(report)
         except Exception as e:
             print(f"推送失败: {e}")

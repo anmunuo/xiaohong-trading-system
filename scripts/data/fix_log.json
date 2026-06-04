@@ -1,0 +1,20 @@
+[
+  {
+    "ts": "2026-06-04T22:21:31.571980",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
+    "ok": false
+  },
+  {
+    "ts": "2026-06-04T22:21:36.550388",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
+    "ok": false
+  },
+  {
+    "ts": "2026-06-04T22:23:47.003395",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
+    "ok": false
+  }
+]

@@ -1,6 +1,5 @@
-     1|#!/bin/bash
-     2|# 📊 文工团 - 周度复盘 (周六 09:00)
-     3|# no_agent cron: stdout 直接投递到飞书
-     4|cd /home/pc/.hermes/profiles/xiaohong/scripts
-     5|exec /home/pc/.hermes/hermes-agent/venv/bin/python3 weekly_review.py
-     6|
+#!/bin/bash
+# 📊 文工团 - 周度复盘 (周六 09:00)
+# no_agent cron: stdout 直接投递到飞书
+cd /home/pc/.hermes/profiles/xiaohong/scripts
+exec /home/pc/.hermes/hermes-agent/venv/bin/python3 weekly_review.py

@@ -12,7 +12,7 @@ stock_recommender.py — 选股推荐引擎 v2.0 (V8.0 瞭望塔)
 排除规则:
   1. ST / *ST
   2. 连板股 (≥2连板，保留首板)
-  3. 市值 < 50亿 或 > 3000亿
+  3. 市值 < 40亿 或 > 2400亿
 """
 
 import json, os, sys, math, re
@@ -535,7 +535,7 @@ class StockRecommender:
     # ═══════════════════════════════════════════
 
     def _apply_filters(self, candidates: List[Dict]) -> List[Dict]:
-        """四重排除：ST → 连板(≥2板) → 停牌 → 市值(50-3000亿)"""
+        """四重排除：ST → 连板(≥2板) → 停牌 → 市值(40-2400亿)"""
         valid = candidates.copy()
         st_codes = self._get_st_codes()
         multi_lianban_codes = self._get_multi_lianban_codes()
@@ -560,14 +560,14 @@ class StockRecommender:
                 self.excluded['suspended'].append(c)
                 continue
 
-            # 排除 市值 < 50亿 或 > 3000亿
+            # 排除 市值 < 30亿 或 > 2000亿
             mkt_cap = self._get_market_cap(code)
             if mkt_cap is not None:
-                if mkt_cap < 50.0:
+                if mkt_cap < 30.0:
                     c['market_cap'] = mkt_cap
                     self.excluded['small_cap'].append(c)
                     continue
-                if mkt_cap > 3000.0:
+                if mkt_cap > 2000.0:
                     c['market_cap'] = mkt_cap
                     self.excluded['large_cap'].append(c)
                     continue
@@ -1173,8 +1173,32 @@ class StockRecommender:
     # 7. 持久化
     # ═══════════════════════════════════════════
 
+    def _run_researcher_analysis(self):
+        """🆕 v2.3: 对每只推荐股运行 6 位研究员深度分析"""
+        try:
+            from researchers import analyze_stock
+        except ImportError:
+            return  # 研究员模块不可用时静默跳过
+
+        for rec in self.recommendations:
+            code = str(rec.get('code', ''))
+            name = str(rec.get('name', ''))
+            if not code:
+                continue
+            try:
+                analysis = analyze_stock(code, name)
+                rec['researcher_analysis'] = analysis
+            except Exception:
+                rec['researcher_analysis'] = {
+                    'timestamp': datetime.now().isoformat(),
+                    'error': '分析失败',
+                }
+
     def _save_pool(self):
         POOL_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+        # 🆕 v2.3: 研究员全链路 — 逐只跑 6 位研究员分析
+        self._run_researcher_analysis()
 
         # 读取现有池，仅保留当日盘中侦察兵新增（08:25 推荐引擎生成新池，旧日 intraday 自然清除）
         existing = {'scout_additions': [], 'scout_last_update': None}
@@ -1224,7 +1248,7 @@ class StockRecommender:
                     'Sina批量行情', 'tushare PE/ROE', '历史日线MA20/均量',
                     'KB LLM洞察', 'mega_collector公告/龙虎榜'
                 ],
-                'filters': ['ST/*ST', '连板(≥2板)', '停牌', '市值<50亿', '市值>3000亿'],
+                'filters': ['ST/*ST', '连板(≥2板)', '停牌', '市值<30亿', '市值>2000亿'],
                 'max_picks': 9,
                 'reset': 'daily'
             }
@@ -1232,6 +1256,13 @@ class StockRecommender:
 
         with open(POOL_PATH, 'w') as f:
             json.dump(output, f, ensure_ascii=False, indent=2, default=str)
+
+        # 🆕 历史归档：存一份带日期的副本，防止数据丢失
+        archive_dir = SCRIPT_DIR / 'data' / 'pool_archive'
+        archive_dir.mkdir(parents=True, exist_ok=True)
+        archive_path = archive_dir / f'{self.date_str}.json'
+        with open(archive_path, 'w') as af:
+            json.dump(output, af, ensure_ascii=False, indent=2, default=str)
 
         # 🆕 同步写入跟踪系统
         try:

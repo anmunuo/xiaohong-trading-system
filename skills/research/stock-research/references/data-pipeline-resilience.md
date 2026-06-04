@@ -1,86 +1,53 @@
-# 数据管线韧性模式 v1.0
+# 数据管线韧性模式 v1.1
 
-> 2026-06-03 会话总结：三次数据故障 + 自动健康检查体系
+> 2026-06-04 更新：新增故障 4（cron 脚本行号污染）和故障 5（北向资金实时通道关闭）
 
 ---
 
-## 故障 1: 东方财富 push2 f62 字段盘中归零
+## 故障 4: Cron 脚本行号污染（22/26 脚本静默失败）
 
-**症状**：侦察兵「双重确认」永远为 0，所有 `net_flow` 字段为 `0.0` 万元。
+**症状**：侦察兵(09:25)、盘中扫描(11:00)、KB采集(每小时)、竞价采集器(09:15)、市场快照(08:28)、研究员研学(02:00)等多个 cron job 连续多日报 `last_status: error`，但健康检查从未告警。
 
-**根因**：东方财富 `push2.eastmoney.com/api/qt/clist/get` 的 `f62`（主力净流入）、`f66`（超大单）、`f69`（大单）、`f184`（小单）字段在盘中间歇性全部返回 0。涨跌幅 `f3` 正常。
+**根因**（双重）：
+1. **脚本层**：22/26 个 `cron_*.sh` 文件内容被写入了带行号前缀的内容，如 `     1|#!/bin/bash` 而非 `#!/bin/bash`。bash 无法解析 shebang，报 `行 1: 1: 未找到命令`。但管道 `N|cmd` 中后半段 `exec python3 scout.py` 仍能执行，所以 stdout 有产出。
+2. **监控层**：`check_scout_sniper()` 只检查输出文件是否存在和内容，**从不检查 cron 退出码**。脚本 exit code=2 但 stdout 有报告文本 → 标记 `ok`。
 
 **修复链**：
-1. `get_top_flow_stocks()` — f62 健康检测：TopN 的 `net_flow` 全为 0 时，自动切换动量 fallback（`abs(涨跌幅)×0.7 + 换手率×0.2 + 量比×0.1`），`net_flow` 置 None、`_quality` 标记 `fallback`
-2. `check_data_health()` — 新函数，探测 10 只样本统计 `f62_valid`/`f184_valid`/`f66_valid` 比率，<30% 返回 `status: degraded, flow_field: momentum`
-3. `scout.py` `run_scout()` — 开头调用 `check_data_health()`，动量模式放宽涨跌幅门槛（±3%），报告显示「⚠️ 数据源降级」
+1. `sed -i 's/^[[:space:]]*[0-9]\+|//'` 批量清除 22 个脚本的行号前缀
+2. `bash -n` 逐个语法验证
+3. `system_health_check.py` v1.2.0：
+   - 维度6 重构：`check_scout_sniper()` → `check_cron_execution_health()` — 扫描所有 cron output 目录，检测 `script failed` / `exited with code` → 标记 `status: down`
+   - 维度12 新增：`check_cron_scripts()` — 检测 26 个 `cron_*.sh` 是否以 `#!` 开头
 
-**关键教训**：API 字段间歇性归零是常见模式，必须在每次调用后做健康检测，不能假设字段永远有效。
-
----
-
-## 故障 2: 市值过滤器形同虚设
-
-**症状**：立讯精密（5391亿）、中际旭创（13287亿）等万亿巨头通过侦察兵筛选。
-
-**根因**：
-1. Sina 实时 API 不含 `market_cap` 字段 → `is_market_cap_ok(code)` 永远读不到市值 → 全部通过
-2. 东方财富 push2 虽有 `f20`（总市值），但未传递到过滤逻辑
-3. `f20` 单位是**元** → 转亿需 `÷1e8`（错误用了 `÷1e4`）
-
-**修复链**：
-1. `get_top_flow_stocks()` — 输出中加入 `total_mv`（`f20 / 1e8`，元→亿）
-2. `is_market_cap_ok(code, pre_fetched_mv)` — 新增参数，优先用预取市值
-3. 侦察兵循环 + `feed_intraday_pool()` — 传 `s.get('total_mv')`
-4. `feed_intraday_pool()` 的 `new_entries` — 保留 `net_flow`/`change_pct`/`_quality`
-
-**关键教训**：跨 API 字段传递时必须验证单位转换（东方财富元→亿 ÷1e8，tushare 万元→亿 ÷1e4），并在中间结构体保留源字段。
+**关键教训**：监控产出物 ≠ 监控管道。产出物可能从破裂管道漏出来（bash pipeline 后半段仍执行），只有查 exit code 才知道管道破了。健康检查必须同时看「产物存在性」和「执行退出码」。
 
 ---
 
-## 故障 3: review.py 盘后选股复盘永远为空
+## 故障 5: 北向资金实时通道永久关闭
 
-**症状**：每日文工团复盘显示「今日无涨幅 ≥6% 数据（非交易日或数据未就绪）」，即使当天是交易日。
+**症状**：`get_north_flow()` 连续多日返回 `net_flow: 0.0`，日期新鲜（当日），数据源 `akshare_hsgt`。用户怀疑数据有误。
 
 **根因**（三重）：
-1. `po` 参数方向错误：`po=1`（升序）+ `fid=f3` → 取跌幅最大 50 只 → 筛涨≥6% 永远空。正确应为 `po=0`（降序）。此前 v3.0 将 `po=0→po=1` 的"修复"方向是反的
-2. 东方财富 push2 盘后/晚间 HTTP 000 不可达（已知行为），cron 17:00 运行时 API 已关闭
-3. 无回退数据源
+1. **政策层**：2024年5月起交易所不再实时披露北向资金买卖额。东方财富实时通道已关闭，AKShare `stock_hsgt_fund_flow_summary_em()` 的 `成交净买额` 字段永久返回 0。
+2. **管线策略Bug**：`get_north_flow()` 择优逻辑为 `if akshare_date >= yesterday or net_flow != 0` — 日期新鲜永远命中 → 永远用 AKShare 的 0。
+3. **tushare回退Bug**：tushare `moneyflow_hsgt` 只有7天回退窗口，但最新数据在8天前（5月27日）→ 查不到 → 回退失效。
 
 **修复链**：
-1. `po=1` → `po=0`（`fid=f3` 取涨幅降序）
-2. 新增 tushare daily 回退：`pro.daily(trade_date=today)` → 自算涨跌幅 → 批量 `stock_basic` 补名称
-3. cron 从 17:00 提前到 15:30（盘后即跑）
-4. `system_health_check.py` 增加 `push2_gainers` 专项检测（po=0 取 top5 → 验证 top_chg≥5%）
+1. 策略变更：`if net_flow != 0` 才信 AKShare，否则回退 tushare
+2. tushare 回退窗口 7天 → 30天，逐日尝试最近10个交易日
+3. 新增 `_quality: T-N`（滞后天数）和 `data_type` 追加 `(滞后N天)` 标记
 
-**关键教训**：东方财富 push2 的 `po` 参数 `0=降序`、`1=升序`。每次盘后操作必须有一个非 push2 的回退通道。
+**验证**：修复后返回 `net_flow: 5.4亿, data_source: tushare_pro, date: 20260603, _quality: T-1`
+
+**关键教训**：API 字段永久归零（vs 间歇性归零）需要不同的处理策略 — 不是 health check + fallback，而是彻底改变择优逻辑。当数据源因政策/业务原因永久失效时，必须将其降级为备用而非主力。
 
 ---
 
-## 自动健康检查体系
+## 健康检查维度演变
 
-`system_health_check.py` — 7 维扫描，每次发现问题以非零 exit code 退出，cron 自动推送告警。
-
-### 7 个维度
-
-| 维度 | 检查项 | 关键判据 |
-|------|------|------|
-| 1. 数据新鲜度 | mega_latest / daily_pool / kb_insights / holdings / market_snapshot | 文件 mtime 年龄 vs 阈值 |
-| 2. 持仓估值 | holdings.json | lastPrice 不为 None/0 |
-| 3. 议会链路 | daily_pool.json | parliament.bias 字段存在 |
-| 4. 弹药库风控 | holdings.json | R值/回撤/净值已更新 |
-| 5. 数据管线 | push2_list(f62) + push2_gainers(po=0) + sina + tushare + baostock | 4+路连通性 |
-| 6. 侦察兵 | 最近输出文件 | 运行时次 + 数据源降级标记 |
-| 7. 研究员质量 | 研学报告 | 内容非空壳（非仅"自主学习完成"） |
-
-### Cron 时间
-
-| 时间 | 意义 |
-|------|------|
-| 08:15 | 开盘前 — 数据就绪、侦察兵准备 |
-| 15:15 | 收盘后 — 估值同步、风控状态 |
-| 22:15 | 夜间 — 数据管线、研究员质量 |
-
-### 路径
-
-所有路径以 `WORKSPACE = SCRIPT_DIR.parent`（`~/.hermes/profiles/xiaohong/`）为基准，不是 `SCRIPT_DIR`。
+| 版本 | 维度数 | 关键变更 |
+|:--|:--:|:--|
+| v1.0 | 7维 | 数据新鲜度 / 持仓估值 / 议会链路 / 弹药库 / 数据管线 / 侦察兵 / 研究员 |
+| v8.7 | 9维 | +因子有效性 / +组合风险 |
+| v8.9 | 11维 | +Silver质量 / +Gold质量 |
+| **v8.10** | **12维** | +Cron脚本完整性(12) / 维度6重构为Cron执行退出码检测 |
