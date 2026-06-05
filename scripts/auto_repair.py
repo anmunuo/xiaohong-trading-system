@@ -19,7 +19,8 @@ DATA_DIR = SCRIPT_DIR / "data"
 REPORTS_DIR = WORKSPACE / "reports"
 
 FIX_LOG_PATH = DATA_DIR / "fix_log.json"
-VENV_PYTHON = str(Path.home() / ".hermes" / "hermes-agent" / "venv" / "bin" / "python3")
+# 🔧 用绝对路径，避免 profile $HOME 覆盖导致 Path.home() 返回错误路径
+VENV_PYTHON = "/home/pc/.hermes/hermes-agent/venv/bin/python3"
 
 
 def _log_fix(action: str, detail: str, success: bool):

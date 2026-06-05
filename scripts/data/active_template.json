@@ -1,0 +1,55 @@
+{
+  "active": "balanced",
+  "applied_at": "2026-06-05T19:34:13.334053",
+  "applied_by": "manual",
+  "template": {
+    "name": "均衡模板",
+    "description": "日常默认，五因子均衡配置，适合震荡市",
+    "version": "1.0",
+    "market_condition": [
+      "震荡",
+      "方向不明",
+      "中性"
+    ],
+    "recommender": {
+      "factor_weights": {
+        "event": 0.3,
+        "fund": 0.25,
+        "sentiment": 0.18,
+        "technical": 0.15,
+        "research": 0.07,
+        "new_factors": 0.05
+      },
+      "weight_sum": 1.0,
+      "exclude": {
+        "min_market_cap": 30,
+        "max_market_cap": 2000,
+        "max_lianban": 2,
+        "max_change_pct": 9
+      }
+    },
+    "scout": {
+      "flow_threshold_neutral": 5000,
+      "flow_threshold_strong": 3000,
+      "flow_threshold_weak": 8000,
+      "max_picks_double": 6,
+      "max_picks_new": 4,
+      "min_change_pct": -3,
+      "max_change_pct": 9
+    },
+    "risk": {
+      "default_stop_loss": -5.0,
+      "chinext_stop_loss": -7.0,
+      "star_stop_loss": -8.0,
+      "max_position_pct": 33.3,
+      "max_portfolio_stocks": 9,
+      "r_value_target": 2.0
+    },
+    "position": {
+      "light": 0.3,
+      "medium": 0.5,
+      "heavy": 0.7,
+      "full": 0.9
+    }
+  }
+}

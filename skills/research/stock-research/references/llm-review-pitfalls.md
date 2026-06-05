@@ -42,21 +42,48 @@ print(f'最新议会: {latest}')
 
 ---
 
-## 陷阱 3: Gold ETL cron 路径双写
+## 陷阱 3: Gold ETL cron 路径双写 + 自主修复全管线失败 (v8.12 修正根因)
 
-**症状**: 15:50 Gold ETL cron 报错:
+**症状**:
+1. 15:50 Gold ETL cron 报错:
 ```
 can't open file '/home/pc/.hermes/profiles/xiaohong/home/.hermes/profiles/xiaohong/scripts/gold_pipeline.py'
 ```
 路径出现双重 `home/.hermes/profiles/xiaohong`。
 
-**根因**: 非 `cron_gold.sh` 脚本本身问题（脚本用 `cd $HOME/...` + 相对路径 `gold_pipeline.py` 正常）。可能在 hermes cron 调度层将工作目录前缀重复拼接。
+2. `auto_repair.py` 所有管线修复返回 rc=-1:
+```
+bronze_ingest.py: rc=-1
+silver_pipeline.py: rc=-1
+gold_pipeline.py: rc=-1
+```
 
-**影响**: Gold 层因子面板 + ML 数据集 + Pool 归档今日未产出。
+**真正的根因 (v8.12 修正)**: **不是** hermes cron 调度层路径拼接 bug。根因是 **hermes profile 系统将 `$HOME` 环境变量覆盖为 `/home/pc/.hermes/profiles/xiaohong/home`**（而非真实 `/home/pc`）。这导致：
+
+| 受影响代码 | 原始写法 | 展开结果（错误） | 正确路径 |
+|:--|:--|:--|:--|
+| `auto_repair.py:22` | `Path.home() / ".hermes"/.../python3` | `.../xiaohong/home/.hermes/.../python3` ❌ | `/home/pc/.hermes/.../python3` |
+| `cron_gold.sh:8` | `cd "$HOME/.hermes/..."` | `.../xiaohong/home/.hermes/...` ❌ | `/home/pc/.hermes/...` |
+
+**影响范围**:
+- `auto_repair.py` VENV_PYTHON 指向不存在文件 → 所有 `_run_script()` 返回 rc=-1 → 全管线修复静默失败
+- `cron_gold.sh` cd 失败 → Gold ETL 不执行
+- 其他 28 个 `.sh` 脚本无影响（已用绝对路径）
+
+**修复**:
+```python
+# auto_repair.py — 使用绝对路径，不依赖 $HOME
+VENV_PYTHON = "/home/pc/.hermes/hermes-agent/venv/bin/python3"
+```
+```bash
+# cron_gold.sh — 使用绝对路径，不依赖 $HOME
+cd /home/pc/.hermes/profiles/xiaohong/scripts
+```
 
 **检测**:
 ```bash
-cat cron/output/<gold_dir>/stderr  # 检查路径是否双写
+echo "HOME=$HOME"  # 若输出为 profile home 而非真实 home，问题存在
+grep -rn '\$HOME\|Path\.home()' scripts/*.sh scripts/auto_repair.py  # 扫描残留
 ```
 
 ---

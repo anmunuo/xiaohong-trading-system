@@ -20,11 +20,12 @@ triggers:
   - "文工团|每日复盘|选股复盘|涨幅.*6%|纪律.*清单|错误.*归类"
   - "交叉验证|多维选股"
   - "自查.*数据|假数据|虚构|数据真实"
-  - "知识库|知识库检索|每小时采集|最新线索"
+  - 知识库|知识库检索|每小时采集|最新线索|SQLite.*知识库|stock_kb|本地.*数据库
+  - 个股.*事件|公告|新闻.*爬取|消息.*传言|催化.*事件|event.*type
   - "Skills.*MCP|claude-trading-skills|Skills架构"
   - "交易系统.*架构|系统全景|整体架构"
   - "部署|Docker.*交易|硬件盒子|Pi.*交易"
-  - "TradingSkill|交易系统升级|产品化|硬件盒子|小程序|MCP"
+  - "TradingSkill|交易系统升级|产品化|硬件盒子|小程序|MCP|商业化|PRD|产品需求"
   - 进化引擎|自动进化|LLM复盘|全域进化|推荐池.*逻辑|推荐引擎|诊断.*执行|沙箱.*超时|沙箱.*验证
   - 因子.*分析|因子IC|因子.*有效性|ICIR|因子.*淘汰|新因子
   - 组合风控|VaR|CVaR|相关性.*矩阵|压力测试|portfolio.*risk
@@ -101,6 +102,41 @@ python3 -c "from data_pipeline import get_index_data; print(get_index_data())"
 **holdings.json 实时估值字段**：运行 `python3 scripts/ammo_risk.py --update` 同步写入 `lastPrice / marketValue / unrealizedPnL / pnlPct / lastUpdate`，同时更新 `currentNetValue` 和触发移动止盈计算。
 
 完整 API 见 → `references/data-source-cheatsheet.md`。
+
+### SQLite 本地知识库 (stock_kb.py v1.1) 🆕
+
+位于 `~/.hermes/profiles/xiaohong/scripts/stock_kb.py`，将所有 A 股历史数据爬取到本地 SQLite，毫秒级查询，不依赖远程 API。
+
+```bash
+# 查询单票（行情+财务+事件一键）
+python3 scripts/stock_kb.py --query 600519
+
+# 条件筛选
+python3 scripts/stock_kb.py --query "ROE>15 PE<20" --query-type screen
+
+# 事件/公告/新闻
+python3 scripts/stock_kb.py --query 600519 --query-type events --limit 20
+python3 scripts/stock_kb.py --query 600519 --query-type event_summary
+
+# 数据库统计
+python3 scripts/stock_kb.py --stats
+```
+
+**6 表设计**: `stocks`(主表) / `daily_kline`(日K+MA+PE/PB) / `financials`(ROE/毛利率等) / `fund_flow`(主力资金) / `index_daily`(5大指数) / `stock_events`(公告/新闻/传言)。
+
+**3 数据源**: akshare(列表+财务+事件) / baostock(K线+指数) / tushare(备用)。全量初始化约 75 分钟，之后 `--update` 增量秒级。
+
+**常见查询模式**:
+```python
+from stock_kb import StockKBQuery
+q = StockKBQuery('data/stock_kb.db')
+q.get_kline('600519', start='2025-06-01')        # K线
+q.screen_stocks({'min_roe': 15, 'max_pe': 20})   # 筛选
+q.get_events(code='600519', days=30)              # 事件
+q.get_event_summary('600519')                     # 事件画像
+```
+
+> 完整 API 和陷阱见 → `references/stock-kb-design.md`
 
 ### data fetch CLI（便捷但受限）
 
@@ -250,6 +286,8 @@ PB 分布 (N=3961):
 | ⭐ ProcessPool pickle 闭包失败 | `Can't pickle local object '_worker'` → worker 函数必须是**模块级**（非闭包）。`data_pipeline.py` 采用 `_baostock_batch_worker(args)` tuple 传参绕过。tushare 基本面并行化可用 ThreadPool（独立 `pro_api` 实例，10 workers） |
 | ⭐ 竞价学习器 v1.0 目标函数错误（做多系统不应为"猜对下跌"加分） | **根因**：v1.0 `caution + actual<0 → hit +α`，下跌市中永远猜跌得高分，但对做多系统毫无价值。v2.0 改为做多导向：`strong/moderate+涨→learn +α`、`strong/moderate+跌→penalize +β`（假突破）、`caution+跌→skip`（熊市噪音）、`caution+涨→penalize +β`（漏掉反转）。详见 `auction_learner.py` v2.0。 |
 | ⭐ **反复回归** Cron 脚本行号污染 (v8.10→v8.12) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀（如 `     1|#!/bin/bash`），bash 无法解析 shebang 报 `未找到命令` → exit 2。**此问题会反复回归** — 健康检查上次运行没问题不代表这次没问题，每次 cron 扫描都要检查。**诊断**：`xxd cron_scout.sh | head -3` 看首字节是否为 `2020 2020 2031 7c`（空格+`1|`）而非 `2321`（`#!`）。**修复**：`python3 -c "import re; [open(f,'w').write(re.sub(r'^\s*\d+\|','',open(f).read(),flags=re.MULTILINE)) for f in ...]"` 或 `sed -i 's/^[[:space:]]*[0-9]\+\|//' cron_*.sh`。**自动防御**：`system_health_check.py` v1.2 维度12 + `auto_repair.py` `_clean_cron_line_numbers()` 自动清理。
+| ⭐ **BaoStock 日期格式必须是 YYYY-MM-DD** | **致命 bug**：`bs.query_history_k_data_plus()` 的 `start_date`/`end_date` 只接受 `YYYY-MM-DD` 格式。传入 `YYYYMMDD` 不会报错但返回 `rs.error_msg='日期格式不正确，请修改'` 且 `rs.data` 为空，导致全部 K 线写入静默失败。`stock_kb.py` v1.0 因此 4915 只股票全返回 0 条。**修复**：所有调用点必须：1) 默认参数用 `'2020-01-01'`，2) 接收外部参数时加格式转换 `if len(start_date)==8: start_date=f"{start_date[:4]}-{start_date[4:6]}-{start_date[6:8]}"`。baostock 没有此问题的文档说明。 |
+| ⭐ **SQLite INSERT OR REPLACE 列/值数量不匹配静默失败** | **致命 bug**：`INSERT OR REPLACE INTO t(c1,c2,...,c13) VALUES (?,?,...,?)` 当 VALUES 的 `?` 数量与列名数量不一致时，SQLite 报 `X values for Y columns` 错误。此错误在 `try/except Exception: continue` 块中被静默吞掉，进度日志正常（`进度: 4915/4915, 累计 0 条`），极易误判为数据源问题。`stock_kb.py` v1.0 因 13 列只写 12 个 `?` 浪费数小时调试。**防御**：1) 用命名参数 `INSERT ... VALUES (:code, :date, ...)` 而非位置 `?`，2) 新表建立后立即 `INSERT` 一条测试数据验证列数，3) `except Exception` 至少打 `_log.warning`。 |
 | akshare `stock_zt_pool_em` 列名不同于文档 | 涨停板列名是 `封板资金`、`连板数`（非 `封单金额`），最新价列是 `最新价`；跌停用 `stock_zt_pool_dtgc_em` |
 | 东方财富 API 周末/晚间限流 | 非交易时段 `_em_api_get` 返回 None 或 RemoteDisconnected，属正常现象。代码中 `try/except` 兜底即可，不可据此判断 API 故障 |
 | `_em_api_get` 批量请求限流 | 单票请求间隔 ≥150ms，批量时用 `time.sleep(0.15)` 避免触发东方财富反爬 |
@@ -314,6 +352,9 @@ PB 分布 (N=3961):
 | ⭐ Cron 裸 python3 导致 26 脚本静默失败 (v8.7) | **根因**：cron 环境的 PATH 仅为 `/usr/bin:/bin`，不包含 venv。`cron_*.sh` 中写 `python3` 或 `exec python3` → cron 找不到解释器 → `exit 127`。影响 26 个脚本，4 个 job 标记 error（选股推荐 08:25、竞价采集 09:15、侦察兵盘中 11:00、健康检查 08:15）。**修复**：全量替换为 `/home/pc/.hermes/hermes-agent/venv/bin/python3`。新 cron 脚本**必须**使用绝对路径。验证：`grep -l 'venv/bin/python3' cron_*.sh | wc -l` → 应为 26。 |
 | ⭐ Cron 脚本行号污染 (v8.10) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀的内容（如 `     1|#!/bin/bash`）。bash 无法解析 shebang 报 `未找到命令`。22/26 脚本受影响。stdout 仍有产出（pipeline 后半段 `exec python3` 仍能执行）→ 健康检查只看输出文件永远发现不了。**修复**：`sed -i 's/^[[:space:]]*[0-9]\+|//'` 批量去行号；`system_health_check.py` v1.2.0 新增维度12（Cron脚本完整性 - shebang 检测）+ 维度6重构（Cron执行退出码 - 扫描所有 output 目录的 `script failed` / `exited with code` 标记）。**教训**：监控产出物≠监控管道。写 cron 脚本时务必验证文件以 `#!` 开头。 |
 | ⭐ 北向资金实时通道永久关闭 (v8.10) | **根因**：2024年5月起交易所不再实时披露北向资金。AKShare `stock_hsgt_fund_flow_summary_em()` 的 `成交净买额` 永久返回 0。`get_north_flow()` 择优逻辑 `if date>=yesterday or net_flow!=0` → 日期新鲜命中 → 永远用 AKShare 的 0。tushare 回退只查 7 天但最新数据 8 天前。**修复**：(1) `if net_flow != 0` 才信 AKShare，否则回退 tushare，(2) tushare 回退窗口 7→30天，(3) 新增 `_quality: T-N` 标记滞后天数。**教训**：API 永久归零与间歇性归零需要不同策略——不是 fallback，是彻底改变择优逻辑。 |
+| ⭐⭐ **P0** 盘前推荐引擎全停牌误判 + 超时三重根因 (v8.12) | **根因链**：(1) `$HOME` 被 profile 覆盖→`Path.home()` 返回假路径→venv 找不着→所有 subprocess rc=-1，(2) `data fetch` CLI 是完整 hermes agent（每只启动 10s+），176只 subprocess 补漏=洪水，(3) 盘前 Sina 全返回 close=0→`close==0 AND change_pct==0` 误判全市场停牌。**修复**：subprocess 补漏全砍、`get_stock_realtime` 慢路径全砍、盘前 Baostock 昨收复 Sina 0 值、移除 close==0 停牌判断、`--fast` 跳过 tushare PE/研究员/议会。详见 `references/recommender-engine-timeout-fix.md` + `references/data-pipeline-resilience.md`。|
+| ⭐⭐ **P0** `$HOME` profile 覆盖导致路径解析错误 | **根因**：hermes profile 系统将 `$HOME` 设为 `/home/pc/.hermes/profiles/xiaohong/home`（非真实 `/home/pc`）。`Path.home()` 依赖 `$HOME`→返回假路径；shell `$HOME` 同样被覆盖→`cd "$HOME/..."` 失败。**影响链**：`auto_repair.py` VENV_PYTHON 指向假路径→所有 `_run_script` rc=-1；`cron_gold.sh` cd 失败→Gold ETL 不执行。**修复**：(1) 所有 py 脚本用 `/home/pc/.hermes/hermes-agent/venv/bin/python3` 绝对路径，(2) 所有 `.sh` 脚本用 `/home/pc/...` 绝对路径，(3) 禁止 `Path.home()` 和 `$HOME` 在 cron/auto_repair 上下文中使用。**验证**：`grep -rn '\$HOME' scripts/*.sh` 应为空。|
+| ⭐ **P1** 侦察兵 v4.0 只做资金流筛选不分析个股 | **根因**：`run_scout()` 仅基于 `get_top_flow_stocks(40)` 做资金流交叉验证，选中的股票无任何技术面/基本面分析。用户反馈「不能只根据资金面情况，还要个股详细分析」。**修复 v4.1**：新增 `_enrich_with_kline_analysis()` — 选中股票后批量拉 Baostock K线（`get_historical_k_with_ma`，~2s for ≤15 codes），为每只附加 MA20偏离(%)、量比(vs 5日均量)、PE(TTM)。三张表格（双重确认/新增异动/待确认）全部新增 MA20/量比/PE 列。详见 `references/scout-v4-design.md`。|
 | ⭐⭐ **P0** 北向字段张冠李戴 — ggt_ss/ggt_sz 是南向！(v8.12) | **致命 bug (2026-06-04发现)**：`get_north_flow()` tushare 回退逻辑用了 `ggt_ss + ggt_sz` 字段计算北向。但 `ggt_ss`=港股通(沪)、`ggt_sz`=港股通(深) → 南向！正确北向字段是 `north_money`（或 `hgt+sgt`）。真实北向 36.5亿 被算成 5.4亿 → 误差 6.8x，系统宏观判断失真数月。**修复**：`north_money = float(row.get('north_money', 0)); north_total = north_money / 1e4`。**防御**：1) `DataResearcher._validate_data_content()` 直接拉 tushare 交叉比对 north_money vs south_money，如果当前值更接近 south → 🚩字段混淆红旗。2) `CapitalFlowResearcher.analyze()` 前置验证：北向 <10亿 → 🚩严重偏低+暂停决策。3) 每次修改数据管线函数后，打印 tushare 原始行并逐字段标注含义，确认字段映射正确。 |
 | ⭐⭐ **P1** 研究员数据内容盲区 (v2.2) | **根因**：`DataResearcher.analyze()` 只检查数据源连通性和文件时效，不验证数据**内容**的正确性。`CapitalFlowResearcher.analyze()` 盲信 `north_flow` 输入不做前置校验。导致北向字段混淆 bug 存活数月无人发现。**修复 (v2.2)**：`DataResearcher` 新增 `_validate_data_content()` → 直接拉 tushare 原始数据交叉比对字段一致性、检测值异常（<10亿偏低→红旗）。`CapitalFlowResearcher` 新增前置验证：北向 <10亿 → 标记红旗 + 暂停决策 + 不生成失真假设。**教训**：连通性检查 ≠ 内容检查。研究员必须像审计师一样对待数据——不只确认管道通不通，还要确认数据对不对。 |
 | ⭐ `_em_api_get` 从 `_core` 导入非 `__init__` (v8.10) | **根因**：v8.5 `data_pipeline` 拆分子模块后，私有函数 `_em_api_get` 只在 `data_pipeline/_core.py` 定义，**未从 `data_pipeline/__init__.py` 重导出**。`review.py` 仍用 `from data_pipeline import _em_api_get` → ImportError。**修复**：改为 `from data_pipeline._core import _em_api_get`。**检测**：`grep -rn "_em_api_get" scripts/*.py | grep "from data_pipeline import"` 扫描所有引用。 |
@@ -497,7 +538,7 @@ URL: https://so.eastmoney.com/news/s?keyword=公司名+关键词&page=1
 | 时间 | 角色 | 投递 |
 |------|------|:--:|
 | **每小时** | 📚 知识库·采集 | local |
-| 08:25 | 🎯 推荐引擎 v2.3 → daily_pool.json (含 parliament + 🆕六类因子) | 飞书 |
+| 08:00 | 🎯 推荐引擎 v2.3 --fast → daily_pool.json (⚠️ 必须在晨报08:30之前，含 context_from 依赖) | 飞书 |
 | 08:28 | 📊 市场统一快照 → market_snapshot.json | local |
 | 09:15 | 🔬 竞价采集器 v1.2 | 飞书(DB) |
 | 09:25 | 🔍 侦察兵 v4.0 开盘确认 + 竞价 | 飞书 |
@@ -665,6 +706,7 @@ idx = get_index_data(); nf = get_north_flow()
 
 ## 脚本资产
 
+- `scripts/stock_kb.py` — 🆕 v1.0 SQLite 本地股票知识库（5表：stocks/daily_kline/financials/fund_flow/index_daily，akshare+baostock+tushare 三源爬取全A历史数据）。CLI: `--init`全量 `--init-fast`快速 `--update`增量 `--query`查询(单票/条件/涨幅榜/市场快照) `--stats`统计。毫秒级 WAL 查询。后台运行全量爬取约40分钟(4915只×日K线)。
 - `scripts/bronze_ingest.py` — 🆕 v8.6 Bronze 层写入引擎 (不可变原始数据冻结，gzip JSON，幂等)
 - `scripts/bronze_verifier.py` — 🆕 v8.6 Bronze 完整性验证 (4维检测)
 - `scripts/silver_pipeline.py` — 🆕 v8.6 Silver 层 ETL (Bronze→清洗→统一格式，含 stock_master)
@@ -687,7 +729,7 @@ idx = get_index_data(); nf = get_north_flow()
 - `scripts/auction_collector.py` — 🆕 竞价采集器 v1.2（三通道降级：东方财富→腾讯→Sina，09:15-09:25每3秒轮询，API预热+异常隔离+降级标的+通道统计）
 - `scripts/auction_features.py` — 🆕 竞价五维特征提取（价格斜率+量能+不平衡+溢价+板块偏离）
 - `scripts/auction_learner.py` — 🆕 Bayesian学习器 v1.1.1（盘后验证→α/β更新→权重自适应，`_get_latest_date_in_db()` 自动找最近交易日，--diagnose诊断空数据）
-- `scripts/scout.py` — 🔍 侦察兵 v4.0（开盘确认 + 盘中池更新。--intraday 模式：资金异动扫描→多因子综合评分(资金40%+技术30%+情绪20%+板块10%)→基本面快筛→动态写入 daily_pool。无板块/数量硬上限，评分竞争9席，高分替低分。权重为可进化参数(intra_*_weight)）
+- `scripts/scout.py` — 🔍 侦察兵 v4.1（开盘确认 + 盘中池更新 + 🆕 个股K线技术分析：MA20偏离/量比/PE。`_enrich_with_kline_analysis()` 批量拉 Baostock K线 ~2s for ≤15 codes，三张表格全部附加 MA20/量比/PE 列。--intraday 模式：资金异动扫描→多因子综合评分(资金40%+技术30%+情绪20%+板块10%)→基本面快筛→动态写入 daily_pool。无板块/数量硬上限，评分竞争9席，高分替低分。权重为可进化参数(intra_*_weight)）\n- `scripts/strategy_templates.py` — 🆕 v1.0 策略模板参数化引擎（三模板：balanced/aggressive/defensive，JSON配置+因子权重条形图+CLI。`stock_recommender._load_factor_weights()` 自动读取 `data/active_template.json`，模板权重 × IC动态微调 → 最终权重。借鉴 VibetradingLabs 模板思路）\n- `scripts/backtest_chart.py` — 🆕 v1.0 回测曲线可视化引擎（生成权益曲线+回撤曲线 PNG，matplotlib+Noto CJK。`review.py` v3.1 复盘末尾自动嵌入 MEDIA: 路径 → 飞书渲染为图片。颜色方案：安幕诺绿 `#2f9e44`）
 - `scripts/sniper.py` — 🎯 狙击手 v3.0（手动备用，P0-P3分级止损+入场信号）
 - `scripts/sniperd.py` — 🎯 狙击手 v4.0 实时守护进程 🆕（systemd 服务，3s轮询+状态机去重+秒级止损响应，11 可进化参数。`--once` 单次扫描，`--dry-run` 不写日志）
 - `scripts/sniper_healthcheck.sh` — 💓 狙击手存活检测 🆕（交易日每5分钟 cron，自动检测+恢复 sniperd.service）
@@ -750,7 +792,10 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/llm-review-pitfalls.md` — 🆕 v8.11 LLM复盘工作流陷阱（议会静默/20%边界/路径双写/三链路断裂）
 - `references/v8.6-factor-and-risk.md` — 🆕 v8.6 因子扩充+组合风控升级（22因子注册表+IC/ICIR管线+3层组合风控+关键设计决策）
 - `references/researcher-parliament.md` — 🆕 研究员议会 v1.1（5角色协同研究，3轮辩论协议，全链路集成：推荐引擎→daily_pool.parliament→瞭望塔/决策官/LLM复盘/进化引擎 veto）
-- `references/scout-v4-design.md` — 侦察兵 v4.0 升级设计（独立侦察+板块排名+基本面快筛+反哺推荐池）
+- `references/recommender-engine-timeout-fix.md` — 🆕 v8.12 推荐引擎超时修复（$HOME/profile覆盖 + data fetch CLI agent洪水 + 盘前Sina全0 + --fast模式 + cron时序）
+- `references/strategy-templates.md` — 🆕 v1.0 策略模板参数化引擎（三模板+buildtin JSON+CLI+集成链路+VibetradingLabs对比）
+- `references/backtest-chart.md` — 🆕 v1.0 回测曲线可视化引擎（权益曲线+回撤曲线+中文字体+MEDIA嵌入+颜色方案）
+- `references/PRD-小红量化交易系统商业化.md` — 🆕 v1.0 商业化 PRD（现状评估→产品定义→差距分析→目标架构→模块详设→券商对接→SaaS→路线图→风险。提交于 2026-06-05，已推送 GitHub）
 - `references/knowledge-base-design.md` — 知识库架构
 - `references/claude-trading-skills-analysis.md` — Claude Trading Skills 生态分析
 - `references/tradingskill-benchmark.md` — TradingSkill vs 小红系统对标矩阵
@@ -814,3 +859,4 @@ skills-framework/                    # 声明式技能层
 - `~/wiki/交易系统/小红交易系统/用户手册.md` — 小程序/Web/API 用户指南
 - `~/wiki/交易系统/系统建设需求文档.md` — 原始需求文档
 - `~/wiki/交易系统/Claude-Trading-Skills分析.md` — Skills 生态深度分析
+- `~/wiki/交易系统/PRD-小红量化交易系统商业化.md` — 🆕 v1.0 商业化 PRD（752行，14章）

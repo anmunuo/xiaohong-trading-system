@@ -17,6 +17,8 @@ triggers:
   - 狙击手|弹药库|文工团|交易规则|规则体系|R值|凯利
   - 进化引擎|自我进化|自动调参|参数优化|broker|券商|xtquant|实盘下单
   - 账户.*重置|清空.*持仓|重置.*净值
+  - 商业化|产品化|对外.*销售|PRD|可复制|量化.*产品|SaaS.*交易
+  - 券商.*接口.*标准|BrokerDriver|券商.*抽象|券商.*统一
 category: research
 ---
 
@@ -501,3 +503,12 @@ docker-compose logs -f trading-engine
 | redis | xiaohong-redis | — | 缓存+消息队列 |
 | postgres | xiaohong-postgres | — | 多租户数据库 |
 | grafana | xiaohong-grafana | 3000 | 监控仪表盘（可选） |
+
+## 商业化相关参考 🆕
+
+- **PRD 完整文档**: `~/wiki/交易系统/PRD-小红量化交易系统商业化.md` (752行 / 14章节)
+- **架构图**: `diagrams/小红商业化目标架构-v1.0.html` (三层: 界面→平台→引擎)
+- **商业化差距速查**: 本skill `references/commercialization-roadmap.md` (券商接口标准+ SaaS分层+合规清单)
+- **券商接口标准**: 所有券商统一实现 `BrokerDriver` 抽象基类 — `connect/get_account/get_positions/submit_order/cancel_order/get_order/subscribe_quote/get_quote`
+- **SaaS 四层**: Free(¥0/1策略/Paper) → Pro(¥299/实盘) → Studio(¥999/API) → Enterprise(白标)
+- **实盘验证路线**: QMT(招商/国金) → Easytrader(华泰/银河) → CTP/XTP(直连低延迟)

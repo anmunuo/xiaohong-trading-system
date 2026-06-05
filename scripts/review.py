@@ -15,7 +15,7 @@ v3.0 升级:
   python3 review.py
 """
 
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 import sys, json, os, re
 from pathlib import Path
@@ -552,7 +552,22 @@ def generate_review() -> Report:
             r.text(f"🔴 {l['name']} {l['code']}  "
                    f"浮亏 {l['pnl_pct']:+.1f}% (¥{l['loss']:+,.0f})  —  {tags}")
 
-    r.footer(f"v3.0 · data_pipeline · {time_str}")
+    r.footer(f"v3.1 · data_pipeline · {time_str}")
+
+    # 🆕 v3.1: 回测曲线嵌入
+    try:
+        from backtest_chart import generate_all_charts, generate_markdown_embed
+        charts = generate_all_charts()
+        if charts:
+            r.section("📈 策略回测")
+            embed = generate_markdown_embed(charts)
+            for line in embed.split('\n'):
+                if line.startswith('MEDIA:'):
+                    r.text(line)  # MEDIA: 路径由飞书渲染为图片
+                elif line.strip() and not line.startswith('#'):
+                    r.text(line)
+    except Exception:
+        pass  # 图表生成失败不影响复盘报告
 
     return r
 

@@ -1,78 +1,90 @@
 {
-  "date": "20260604",
-  "diagnosis": "全局偏空震荡市，推荐池数量回升至9只（v2.3首板源生效）但捕获率仍为0%。文工团15:30崩盘（_em_api_get导入→15:33已修复）。议会停摆2天未运行。系统处于「有信号无行动」的尴尬期——池有标的、账户空仓、狙击手未启动。最大断点：从推荐池→实际下单的链路完全断裂。",
+  "date": "20260605",
+  "diagnosis": "沪指4027(-0.74%)连续下跌，推荐池9只中6跌(67%)、3只触发止损(德明利-7.4%/立讯精密-7.8%/蓝科高新-5.98%)。捕获率连续5天0%(0/50只≥6%大涨股)——不是阈值问题而是候选源结构性问题：过度依赖单一公告事件源。议会第3天停摆——crontab中完全缺parliament调度。sniperd运行3天但零交易——从推荐池到下单的链路虽建好了信号管道，执行层仍是空转。正向信号：中兴通讯(+3.68%,scout盘中发现)和白云电器(+3.69%)验证了部分选股逻辑有效。核心瓶颈：30-50亿小市值候选被排除过多+议会认知层缺失+执行层僵尸运行。",
   "module_scores": {
     "recommender": {
-      "status": "warn",
-      "note": "池内9只（回升显著，v2.3首板源生效）。但reflection_log显示捕获率0%、错过50只6%+。排除结构：ST=15、连板=1、停牌=2、大市值=7、小市值=105——105只被小市值过滤（占有效候选的~80%）。TCL科技(986亿)漏入池：市值985亿却未触发大市值过滤（daily_basic逐只查询慢，可能部分候选跳过）。v2.3综合评分体系运行正常，因子分布合理。建议：市值下限从50亿→30亿（释放30-50亿区间，当前过滤过严）。"
+      "status": "error",
+      "note": "池内9只（同昨日数量，持稳）。今日表现：3涨3跌3中性——中兴+3.68%/白云+3.69%/汇川+1.25%验证部分选股逻辑有效；但德明利-7.4%/立讯精密-7.8%/蓝科高新-5.98%全部触发-5%止损线，选股质量恶化。捕获率连续5天0%(0/50只6%+)——进化v5已将市值下限从50→40，但仍在0%说明问题不是阈值差距而是候选源结构：review.py诊断提示「候选源过度依赖公告事件(单一source=announcement)」。进化v5的市值上限3000→2400合理但需继续推进到1000（step 1/3）。选股逻辑本身有亮点（3只涨），但风险端暴露严重（3只触发止损）。"
     },
     "scout": {
       "status": "warn",
-      "note": "盘中侦察兵10:02发现中兴通讯(80.0分)加入推荐池。scout日志目录不存在（data/sniper_logs/），无法回溯盘中扫描记录。scout_intraday模式4次cron是否全部正常运行待验证。"
+      "note": "盘中侦察兵10:02发现中兴通讯(80.0分)加入推荐池→收盘+3.68%，单次命中有效。但全天4次cron(10/11/13/14:00)仅新增1只标的入池——盘中异动扫描灵敏度可能偏低。sniper_logs目录存在且今日有产出(sniper_20260605.jsonl)，日志管道正常。f62健康检测机制工作中，整体管道完整但捕获量不够。"
     },
     "sniper": {
-      "status": "warn",
-      "note": "sniper_logs目录完全不存在——sniperd守护进程未产出任何日志。systemd服务可能未启动或已挂掉。无交易执行记录。推荐池→下单链路完全断裂。"
+      "status": "error",
+      "note": "sniperd.service已连续运行3天(自6/1 22:30，PID 315353)。日志目录存在(sniper_20260605.jsonl)。但零交易执行——三日持仓始终为0，净值¥100,000不变。根因不是sniperd进程挂了，而是：当前市场判定为「轻仓/防御（整体偏贵）」，在弹药库零持仓状态下sniperd的策略判定层拒绝开仓。问题是「主动不交易」而非「无法交易」——需要审视当前偏空判断是否过度保守。"
     },
     "ammo": {
       "status": "ok",
-      "note": "弹药库15:30正常运行。零持仓，净值¥100,000，回撤0%。R值¥832。风控正常——空仓状态符合当前市场偏空判断。"
+      "note": "零持仓，净值¥100,000，回撤0%。R值≈¥832。风控参数均未触发——空仓状态在此估值偏贵环境下合理。但连续空仓时间过长(≥5天)，如果推荐池中有正期望标的（中兴+3.68%已验证），弹药库应考虑是否允许极小仓位试错（如2%观察仓）。"
     },
     "knowledge_base": {
       "status": "ok",
-      "note": "mega_collector每小时正常产出（06/04 00:00-17:07共18个时段文件）。但议会已2天未消费KB数据，parliament_log停在6/2。KB→议会的数据流存在断点。"
+      "note": "mega_collector每小时正常产出。mega_latest.json路径存在。KB洞察数据流入推荐引擎scoring正常工作。但KB→议会的下游消费链路完全断裂——parliament已3天未运行，KB洞察积累无人解读。"
     },
     "auction": {
       "status": "warn",
-      "note": "竞价学习器连续第2天运行（1520帧/8只）。但signal starvation持续——3/5维度(量能加速/失衡/板块偏离)两日16只标的中零触发。仅价格斜率+溢价各有1次触发(1/1准确)。这不是权重问题而是触发机制问题：震荡市中竞价信号天然弱+阈值偏保守+板块偏离与跨行业标的池结构性冲突。auction_diagnosis.json已详细诊断，本次LLM复盘不做重复建议。"
+      "note": "竞价诊断停在6/3（2天未更新）。auction_diagnosis.json仍引用6/3的5样本冷启动数据。竞价采集器(09:15 cron)和竞价学习器(16:00 cron)可能均未产出新诊断。auction_weights.json存在但不知是否更新。建议：确认09:15和16:00两个cron是否执行、学习器v1.1.1的_get_latest_date_in_db()是否找到今日数据。"
     },
     "review": {
-      "status": "error",
-      "note": "文工团15:30崩盘：review.py ImportError _em_api_get未从data_pipeline/__init__.py导出。根因：v8.5 data_pipeline拆分子模块后_em_api_get在_core.py定义但未在__init__.py重导出。15:33已将import改为from data_pipeline._core import _em_api_get。明日cron应正常。今日无文工团复盘产出，错过了选股复盘和纪律检查。"
+      "status": "ok",
+      "note": "文工团review.py今日可正常运行——手动触发生成完整复盘（50只≥6%，0命中，纪律清单7/7通过）。cron 17:00可能未执行（无output文件产出），但脚本本身无bug。复盘报告已手动生成并保存至reports/daily/文工团复盘-2026-06-05.md。建议排查cron调度执行情况。"
     },
     "parliament": {
       "status": "error",
-      "note": "议会自6/2后停摆2天。parliament_log.json仅有6/2的两条记录（01:32和01:33，且为重复数据）。daily_pool.json的parliament section仍引用6/2的偏空裁决(bias=偏空, bull=1, bear=8)。6/3和6/4均无议会产出。议会cron未运行或运行失败但静默——需排查researchers.py或parliament cron调度。议会是连接KB洞察→推荐池→瞭望塔→决策官的关键认知层，停摆2天导致整个多空判断链路依赖2天旧数据。"
+      "note": "议会连续第3天停摆(6/2最后一次产出→6/3+6/4+6/5三天无记录)。根因定位：crontab中完全没有parliament相关的cron调度条目。researchers.py import正常但无cron触发。parliament_log.json停在6/4 22:24（偏多→中性），daily_pool.json的parliament section引用的是过期裁决。这是整个系统最严重的认知层断点——市场的多空判断依赖3天前的旧数据。"
     }
   },
   "rule_changes_suggested": [
     {
       "rule": "市值下限",
-      "change": "市值下限从50亿降低到30亿",
-      "reason": "连续3天数据确认：105/130有效候选被50亿阈值过滤(80.8%)。30-50亿区间(中证2000成分)有大量成长型标的被误杀。降低至30亿可释放约15-20只候选，同时仍然排除30亿以下微盘垃圾股。与6/1诊断建议一致但当时未被进化引擎落地（self_evolution.py v1.0不消费review_diagnosis.json）。",
+      "change": "市值下限从40亿降低到30亿",
+      "reason": "进化v5已将50→40（step 1/2），按原计划继续推进到30。连续5天0%捕获率的核心瓶颈不是阈值而是候选源，但40→30可释放10-15只中证2000成分标的，作为配合候选源扩展的同步动作。目标新值:30亿。",
       "confidence": "high"
     },
     {
       "rule": "市值上限",
-      "change": "市值上限从2000亿收紧至1000亿",
-      "reason": "TCL科技(985.96亿)今日漏入推荐池，已超1000亿但因子评分仍达68.0。大市值股票在震荡市中流动性好但弹性差，不符合小红「中小盘弹性」定位。收紧上限并修复large_cap过滤逻辑中的查询遗漏（daily_basic逐只查询慢→部分跳过后fallback到市值=None→不过滤）。",
+      "change": "市值上限从2400亿收紧到2000亿",
+      "reason": "进化v5已将3000→2400（step 1/3），按分步计划继续推进。TCL科技(986亿→当时漏入)、美的集团(大市值)等超千亿标的弹性差，不符合小红中小盘定位。目标:1000亿，当前步:2000亿。",
       "confidence": "medium"
     }
   ],
   "no_change": false,
-  "critical_fixes_today": [
+  "structural_issues": [
     {
-      "module": "review",
-      "bug": "ImportError: _em_api_get not in __init__.py",
-      "fix": "改为 from data_pipeline._core import _em_api_get",
-      "time": "15:33",
-      "verified": "python3 -c 'from data_pipeline._core import _em_api_get; from data_pipeline import get_market_money_flow, get_stock_realtime; print(\"OK\")'",
-      "impact": "明日cron恢复正常，今日复盘数据缺失"
+      "severity": "P0",
+      "module": "parliament",
+      "problem": "议会cron完全缺失——crontab中无parliament调度条目",
+      "impact": "认知层断裂3天：KB洞察→议会多空辩论→推荐池parliament→瞭望塔/决策官的整条链路依赖3天前旧数据",
+      "fix_needed": "在crontab中添加议会调度（建议每日01:00和13:00两次运行researchers.py的议会模式）"
     },
     {
-      "module": "gold_pipeline",
-      "bug": "cron_gold.sh 路径错误：/home/pc/.hermes/profiles/xiaohong/home/.hermes/...",
-      "discovery": "15:50 cron exit code 2, path双写home",
-      "impact": "Gold ETL今日未产出，因子面板无6/4数据",
-      "needs_investigation": true
+      "severity": "P0",
+      "module": "recommender",
+      "problem": "推荐池捕获率连续5天0%——候选源结构性问题而非参数阈值",
+      "impact": "50只大涨股全部错过，推荐池与市场真实热点脱节",
+      "fix_needed": "候选源不能仅依赖resource_pool公告事件。需在stock_recommender.py中增加资金流TOP候选（get_top_flow_stocks）和板块共振候选两个独立源"
+    },
+    {
+      "severity": "P1",
+      "module": "sniper",
+      "problem": "执行层零交易——sniperd运行但3天不执行",
+      "impact": "推荐池→下单链路完全断裂，系统沦为空转观察",
+      "fix_needed": "审视偏空判断是否过度保守（PE分位88.4%虽高但非极端），考虑允许极小观察仓（2%单票）以激活执行链路"
+    },
+    {
+      "severity": "P1",
+      "module": "recommender",
+      "problem": "选股质量恶化：池内3/9触发-5%止损",
+      "impact": "德明利-7.4%/立讯精密-7.8%/蓝科高新-5.98%——即使捕获率0%，入池的标的本身也在亏钱",
+      "fix_needed": "增强选股前的下行风险过滤：近5日涨幅>15%的高位股排除、MA20偏离>5%的不纳入、财报披露前窗口期(±3天)禁入"
+    },
+    {
+      "severity": "P2",
+      "module": "auction",
+      "problem": "竞价诊断2天未更新（停在6/3的5样本冷启动）",
+      "impact": "竞价学习器失去实际参考价值，侦察兵的竞价确认信号无依据",
+      "fix_needed": "排查09:15采集器cron和16:00学习器cron是否执行"
     }
-  ],
-  "data_integrity_note": {
-    "holdings": "✅ 零持仓，净值100,000，连续5天未变",
-    "daily_pool": "✅ v2.3 9只推荐，评分体系正常",
-    "parliament_log": "⚠️ 仅6/2数据，6/3和6/4缺失",
-    "reflection_log": "✅ 数据一致——连续3天捕获率0%",
-    "auction_diagnosis": "✅ 6/4数据完整，signal starvation已识别",
-    "market_snapshot": "✅ 08:28正常生成，美股三指齐跌(-0.7~-1.2%)"
-  }
+  ]
 }

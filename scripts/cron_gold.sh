@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-cd "$HOME/.hermes/profiles/xiaohong/scripts"
+cd /home/pc/.hermes/profiles/xiaohong/scripts
 
 DATE=$(date +%Y-%m-%d)
 

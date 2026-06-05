@@ -1,53 +1,48 @@
-# 数据管线韧性模式 v1.1
+# 数据管线韧性陷阱 (v8.12 更新)
 
-> 2026-06-04 更新：新增故障 4（cron 脚本行号污染）和故障 5（北向资金实时通道关闭）
+## 🆕 `data fetch` CLI 是完整 agent — 禁止用 subprocess 逐只调用！
 
----
+```bash
+which data → /home/pc/.local/bin/data  # hermes CLI
+```
 
-## 故障 4: Cron 脚本行号污染（22/26 脚本静默失败）
+每次 `subprocess.run(['data', 'fetch', 'stock', '--symbol', code, ...])` 启动完整 hermes agent。
 
-**症状**：侦察兵(09:25)、盘中扫描(11:00)、KB采集(每小时)、竞价采集器(09:15)、市场快照(08:28)、研究员研学(02:00)等多个 cron job 连续多日报 `last_status: error`，但健康检查从未告警。
+| 调用方式 | 1只耗时 | 176只耗时 | 可行？ |
+|----------|---------|-----------|--------|
+| Sina 批量 HTTP | <0.05s (全量) | — | ✅ |
+| Baostock ProcessPool | ~10s (全量) | — | ✅ |
+| `data fetch` subprocess | ~10s/只 (agent 启动) | ~1760s | ❌ |
 
-**根因**（双重）：
-1. **脚本层**：22/26 个 `cron_*.sh` 文件内容被写入了带行号前缀的内容，如 `     1|#!/bin/bash` 而非 `#!/bin/bash`。bash 无法解析 shebang，报 `行 1: 1: 未找到命令`。但管道 `N|cmd` 中后半段 `exec python3 scout.py` 仍能执行，所以 stdout 有产出。
-2. **监控层**：`check_scout_sniper()` 只检查输出文件是否存在和内容，**从不检查 cron 退出码**。脚本 exit code=2 但 stdout 有报告文本 → 标记 `ok`。
+**修复**: `get_stock_realtime` 和 `_prefetch_indicators` 的 subprocess fallback 已移除。
+Sina/Baostock 覆盖不足的码由上层容错处理——宁可缺数据，不可让 agent 洪水淹死管线。
 
-**修复链**：
-1. `sed -i 's/^[[:space:]]*[0-9]\+|//'` 批量清除 22 个脚本的行号前缀
-2. `bash -n` 逐个语法验证
-3. `system_health_check.py` v1.2.0：
-   - 维度6 重构：`check_scout_sniper()` → `check_cron_execution_health()` — 扫描所有 cron output 目录，检测 `script failed` / `exited with code` → 标记 `status: down`
-   - 维度12 新增：`check_cron_scripts()` — 检测 26 个 `cron_*.sh` 是否以 `#!` 开头
+## 🆕 Sina 批量 API URL 长度限制
 
-**关键教训**：监控产出物 ≠ 监控管道。产出物可能从破裂管道漏出来（bash pipeline 后半段仍执行），只有查 exit code 才知道管道破了。健康检查必须同时看「产物存在性」和「执行退出码」。
+>200 只股票时 Sina URL 被拒。**修复**: 100 只/批。
 
----
+## 🆕 盘前 Sina 返回全 0 (v8.12)
 
-## 故障 5: 北向资金实时通道永久关闭
+09:30 开盘前 Sina 返回 `close=0, change_pct=0` 对所有股票。
 
-**症状**：`get_north_flow()` 连续多日返回 `net_flow: 0.0`，日期新鲜（当日），数据源 `akshare_hsgt`。用户怀疑数据有误。
+**不要**用 `close==0 AND change_pct==0` 判断停牌——盘前全市场都是这个信号。
+**修复**: 用 Baostock 昨收(`ind['close_history'][-1]`) 补 Sina 的 0 值。
 
-**根因**（三重）：
-1. **政策层**：2024年5月起交易所不再实时披露北向资金买卖额。东方财富实时通道已关闭，AKShare `stock_hsgt_fund_flow_summary_em()` 的 `成交净买额` 字段永久返回 0。
-2. **管线策略Bug**：`get_north_flow()` 择优逻辑为 `if akshare_date >= yesterday or net_flow != 0` — 日期新鲜永远命中 → 永远用 AKShare 的 0。
-3. **tushare回退Bug**：tushare `moneyflow_hsgt` 只有7天回退窗口，但最新数据在8天前（5月27日）→ 查不到 → 回退失效。
+## 🆕 `$HOME` 被 profile 覆盖
 
-**修复链**：
-1. 策略变更：`if net_flow != 0` 才信 AKShare，否则回退 tushare
-2. tushare 回退窗口 7天 → 30天，逐日尝试最近10个交易日
-3. 新增 `_quality: T-N`（滞后天数）和 `data_type` 追加 `(滞后N天)` 标记
+Profile 模式下 `$HOME` 指向 `<profile>/home`，非真实 `/home/pc`。
+`Path.home()` 和 `$HOME` shell 变量都必须替换为绝对路径。
 
-**验证**：修复后返回 `net_flow: 5.4亿, data_source: tushare_pro, date: 20260603, _quality: T-1`
+## 已有陷阱（保留）
 
-**关键教训**：API 字段永久归零（vs 间歇性归零）需要不同的处理策略 — 不是 health check + fallback，而是彻底改变择优逻辑。当数据源因政策/业务原因永久失效时，必须将其降级为备用而非主力。
+### push2 f62 归零 (v4.1)
+东方财富 push2 `f62`(主力净流入)盘中偶发全0 → 需 `check_data_health()` 健康检测 + 动量 fallback。
 
----
+### push2 盘后不可达 (v4.2)
+盘后 HTTP 000，`review.py` 的 push2 涨幅榜需回退 tushare。
 
-## 健康检查维度演变
+### 市值过滤 → Sina 无 market_cap
+Sina 实时行情 API 不含 `market_cap` 字段 → 过滤时必须用 push2 `f20`(元÷1e8) 或 tushare `total_mv`(万元÷1e4) 预取市值。
 
-| 版本 | 维度数 | 关键变更 |
-|:--|:--:|:--|
-| v1.0 | 7维 | 数据新鲜度 / 持仓估值 / 议会链路 / 弹药库 / 数据管线 / 侦察兵 / 研究员 |
-| v8.7 | 9维 | +因子有效性 / +组合风险 |
-| v8.9 | 11维 | +Silver质量 / +Gold质量 |
-| **v8.10** | **12维** | +Cron脚本完整性(12) / 维度6重构为Cron执行退出码检测 |
+### po=0 是降序(高到低)
+`review.py get_top_gainers()` po=0=降序取涨幅最大。po=1 方向反了。

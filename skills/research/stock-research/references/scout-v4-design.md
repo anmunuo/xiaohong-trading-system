@@ -84,3 +84,37 @@ score = (fund_score * 0.40 + tech_score * 0.30 +
 1. **无硬上限**: 不设板块上限和数量上限，让评分自然竞争。系统通过 evolution engine 学习最优权重。
 2. **可替换**: 盘中标的可被更高分候选替代，推荐引擎标的不可替换。
 3. **跨日清除**: 推荐引擎 `_save_pool` 检查 `date` 字段，旧日 intraday 自然清除。
+
+## v4.1 更新：个股K线技术分析 (2026-06-05)
+
+**问题**：v4.0 只做资金流筛选，没有对被选中的股票做个股维度分析。用户明确要求「不能只根据资金面情况，还要把选中的股票进行个股的详细分析」。
+
+**新增 `_enrich_with_kline_analysis()`**：
+
+```python
+def _enrich_with_kline_analysis(entries: list):
+    """批量拉取K线，为每只股票附加 MA20偏离/量比/PE/昨收"""
+    codes = [e['code'] for e in entries]
+    kdata = get_historical_k_with_ma(codes, days=30)   # ~2s for ≤15 codes
+    
+    for e in entries:
+        bars = kdata[e['code']]
+        closes = [b['close'] for b in bars if b['close'] > 0]
+        volumes = [b['volume'] for b in bars if b['volume'] > 0]
+        
+        e['ma20_dev']  = round((closes[-1] / (sum(closes[-20:])/20) - 1) * 100, 1)
+        e['vol_ratio'] = round(volumes[-1] / (sum(volumes[-5:])/5), 1)
+        e['pe']        = bars[-1].get('peTTM')  # from BaoStock
+```
+
+**表格新增列**：
+
+| 表 | 新增列 |
+|:--|:--|
+| 双重确认 | MA20偏离 / 量比 / PE |
+| 新增异动 | MA20偏离 / 量比 |
+| 待确认 | MA20偏离 / 量比 / PE |
+
+**调用位置**：`run_scout()` 中，三个列表 (double_confirm/new_alert/pending) 完成分类和截断后、返回前调用。K线数据拉取后由于是原地修改（list of dicts），需按长度重新切片回三个列表。
+
+**性能**：`get_historical_k_with_ma` 使用 ProcessPoolExecutor，≤15 只代码约 2s 完成。

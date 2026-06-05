@@ -155,5 +155,114 @@
     "reason": "LLM复盘建议：105只小市值被排除(80.8%)致候选池过窄，降低下限放宽筛选；上限收紧排除无操作价值的大盘股",
     "status": "applied",
     "version": "v3.0"
+  },
+  {
+    "date": "2026-06-05 17:12:19",
+    "version": "#5",
+    "dry_run": true,
+    "changes_attempted": 7,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-05 17:13:02",
+    "version": "#6",
+    "dry_run": false,
+    "changes_attempted": 7,
+    "changes_applied": 3,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "description": "竞价价格斜率权重",
+        "old_value": 0.25,
+        "new_value": 0.2,
+        "reason": "🔴 竞价学习器已运行4天(6/2-6/5)但权重组完全冻结在先验值(α=1,β=1)。双重根因：(1)维度阈值60%过高——即使在penalize事件中维度得分也从不触发更新，导致9只×5维=45次更新机会全部miss；(2)volume_accel/imbalance/sector_dev三维护完全无区分力——9只标的得分完全相同(10/25, 6/20, 7/15)，说明特征提取使用了全局均值而非个股数据，或竞价采集器的volume字段全部为0。当前'学习器'实际是'占位器'。",
+        "test_result": {
+          "param": "auction_weight_price_slope",
+          "old_value": 0.25,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.3,
+        "reason": "🔴 竞价学习器已运行4天(6/2-6/5)但权重组完全冻结在先验值(α=1,β=1)。双重根因：(1)维度阈值60%过高——即使在penalize事件中维度得分也从不触发更新，导致9只×5维=45次更新机会全部miss；(2)volume_accel/imbalance/sector_dev三维护完全无区分力——9只标的得分完全相同(10/25, 6/20, 7/15)，说明特征提取使用了全局均值而非个股数据，或竞价采集器的volume字段全部为0。当前'学习器'实际是'占位器'。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.3,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_sector_dev",
+        "description": "竞价板块偏离权重",
+        "old_value": 0.15,
+        "new_value": 0.15,
+        "reason": "🔴 竞价学习器已运行4天(6/2-6/5)但权重组完全冻结在先验值(α=1,β=1)。双重根因：(1)维度阈值60%过高——即使在penalize事件中维度得分也从不触发更新，导致9只×5维=45次更新机会全部miss；(2)volume_accel/imbalance/sector_dev三维护完全无区分力——9只标的得分完全相同(10/25, 6/20, 7/15)，说明特征提取使用了全局均值而非个股数据，或竞价采集器的volume字段全部为0。当前'学习器'实际是'占位器'。",
+        "test_result": {
+          "param": "auction_weight_sector_dev",
+          "old_value": 0.15,
+          "new_value": 0.15,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      }
+    ]
+  },
+  {
+    "version": 6,
+    "date": "2026-06-05",
+    "timestamp": "2026-06-05T17:32:32.085176",
+    "dry_run": false,
+    "changes_attempted": 2,
+    "changes_applied": 2,
+    "changes_rejected": 0,
+    "note": "今日LLM复盘(17:12)建议的rule_changes(市值下限40→30, 市值上限2400→2000)已被昨晚evol_20260604_001/002单日全步完成。本次仅同步修复残留的旧版docstring注释(40→30, 2400→2000)。",
+    "details": [
+      {
+        "action": "docstring: 市值下限注释同步",
+        "param_id": "recommender_market_cap_min_comment",
+        "file": "stock_recommender.py",
+        "line": 15,
+        "old_text": "市值 < 40亿 或 > 2400亿",
+        "new_text": "市值 < 30亿 或 > 2000亿",
+        "change_pct": "0% (仅注释)",
+        "source": "llm_review",
+        "status": "applied"
+      },
+      {
+        "action": "docstring: 市值过滤函数注释同步",
+        "param_id": "recommender_market_cap_filter_comment",
+        "file": "stock_recommender.py",
+        "line": 509,
+        "old_text": "市值(40-2400亿)",
+        "new_text": "市值(30-2000亿)",
+        "change_pct": "0% (仅注释)",
+        "source": "llm_review",
+        "status": "applied"
+      }
+    ],
+    "review_diagnosis_summary": {
+      "rule_changes_requested": 2,
+      "already_applied": 2,
+      "new_changes_required": 0,
+      "structural_issues_noted": 5,
+      "key_structural": [
+        "P0: 议会cron完全缺失(连续3天停摆)",
+        "P0: 推荐池捕获率连续5天0%",
+        "P1: sniperd零交易(3天空转)",
+        "P1: 选股质量恶化(3/9触发止损)",
+        "P2: 竞价诊断2天未更新"
+      ]
+    }
   }
 ]

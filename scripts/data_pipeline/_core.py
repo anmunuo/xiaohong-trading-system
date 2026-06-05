@@ -1293,38 +1293,11 @@ def get_stock_realtime(stock_codes: list) -> Dict[str, Dict]:
     sina_results = _sina_batch_fetch(missing)
     _QUOTE_CACHE.update(sina_results)
 
-    # ── 慢路径：data fetch CLI 补漏 ──
+    # ── v8.7: 跳过 data fetch CLI 慢路径（每只启动 agent，不可行）──
+    # Sina 覆盖 A 股主力，缺失的码由上层容错处理
     still_missing = [c for c in missing if c not in sina_results]
     if still_missing:
-        import subprocess
-        for code in still_missing:
-            try:
-                proc = subprocess.run(
-                    ['data', 'fetch', 'stock', '--symbol', code, '--category', 'quote'],
-                    capture_output=True, text=True, timeout=15,
-                    env={**os.environ, 'HERMES_PROFILE': 'xiaohong'}
-                )
-                if proc.returncode == 0:
-                    data_raw = json.loads(proc.stdout)
-                    for p in data_raw.get('providers_attempted', []):
-                        records = p.get('data', [])
-                        if isinstance(records, list) and len(records) > 0:
-                            latest = records[0]
-                            _QUOTE_CACHE[code] = {
-                                'close': float(latest.get('close', 0)),
-                                'change_pct': float(latest.get('pct_chg', 0)),
-                                'open': float(latest.get('open', 0)),
-                                'high': float(latest.get('high', 0)),
-                                'low': float(latest.get('low', 0)),
-                                'volume': float(latest.get('vol', 0)),
-                                'amount': float(latest.get('amount', 0)),
-                                'name': str(latest.get('name', '')),
-                                'data_source': f"hermes:{p['provider']}",
-                                'trade_date': str(latest.get('trade_date', '')),
-                            }
-                            break
-            except Exception:
-                pass
+        _log.info(f'get_stock_realtime: {len(still_missing)} codes not covered by Sina, skipping slow path')
 
     _QUOTE_CACHE_TIME = now
     result = {c: _QUOTE_CACHE[c] for c in stock_codes if c in _QUOTE_CACHE}

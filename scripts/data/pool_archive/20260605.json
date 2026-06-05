@@ -1,0 +1,235 @@
+{
+  "date": "20260605",
+  "generated_at": "2026-06-05T09:26:48.156045",
+  "version": "v2.3",
+  "recommendations": [
+    {
+      "code": "001309",
+      "name": "德明利",
+      "event_weight": 3.3000000000000003,
+      "source": "announcement+limit_up",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 59.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 622.77,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离-1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "002475",
+      "name": "立讯精密",
+      "event_weight": 1.1,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 56.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 69.35,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离-1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "001332",
+      "name": "锡装股份",
+      "event_weight": 1.3,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 56.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 45.42,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离+1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "300124",
+      "name": "汇川技术",
+      "event_weight": 3.3000000000000003,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "total_score": 56.0,
+      "stop_loss": {
+        "method": "default",
+        "price": 69.27,
+        "ratio": -7.0
+      },
+      "sector": "金融",
+      "operation": "创业板MA20下方-2%，超跌等放量止跌信号后轻仓博弈，止损-7%",
+      "risk_level": "高"
+    },
+    {
+      "code": "601798",
+      "name": "蓝科高新",
+      "event_weight": 15.000000000000002,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "total_score": 56.0,
+      "stop_loss": {
+        "method": "default",
+        "price": 8.02,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离-1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "603861",
+      "name": "白云电器",
+      "event_weight": 5.5,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "total_score": 55.3,
+      "stop_loss": {
+        "method": "default",
+        "price": 16.15,
+        "ratio": -5.0
+      },
+      "sector": "电气设备",
+      "operation": "MA20附近(偏离+3%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "000333",
+      "name": "美的集团",
+      "event_weight": 2.2,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "total_score": 55.3,
+      "stop_loss": {
+        "method": "default",
+        "price": 78.18,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离+2%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "600157",
+      "name": "永泰能源",
+      "event_weight": 1.1,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 55.3,
+      "stop_loss": {
+        "method": "default",
+        "price": 1.74,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离+2%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    }
+  ],
+  "excluded": {
+    "st": 9,
+    "lianban": 1,
+    "suspended": 1,
+    "large_cap": 0,
+    "small_cap": 0,
+    "no_data": 0
+  },
+  "scout_additions": [],
+  "scout_last_update": null,
+  "parliament": {},
+  "methodology": {
+    "factors": {
+      "event": 0.3,
+      "fund": 0.25,
+      "sentiment": 0.2,
+      "technical": 0.15,
+      "research": 0.1
+    },
+    "data_sources": [
+      "Sina批量行情",
+      "tushare PE/ROE",
+      "历史日线MA20/均量",
+      "KB LLM洞察",
+      "mega_collector公告/龙虎榜"
+    ],
+    "filters": [
+      "ST/*ST",
+      "连板(≥2板)",
+      "停牌",
+      "市值<30亿",
+      "市值>2000亿"
+    ],
+    "max_picks": 9,
+    "reset": "daily"
+  }
+}

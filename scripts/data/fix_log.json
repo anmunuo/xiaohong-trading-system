@@ -16,5 +16,17 @@
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
     "ok": false
+  },
+  {
+    "ts": "2026-06-05T08:21:15.574431",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-05T08:21:23.696452",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
   }
 ]

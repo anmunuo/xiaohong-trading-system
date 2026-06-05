@@ -154,5 +154,57 @@
     ],
     "final_status": "unknown",
     "final_issues": 0
+  },
+  {
+    "version": "1.0.0",
+    "timestamp": "2026-06-05T08:10:56.984484",
+    "dry_run": false,
+    "rounds": 3,
+    "log": [
+      {
+        "round": 1,
+        "overall_before": "down",
+        "issue_count_before": 1,
+        "issues_found": 1,
+        "fixes": [
+          {
+            "strategy": "run_parliament",
+            "desc": "议会日志缺失",
+            "dry_run": false,
+            "success": false
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "overall_before": "down",
+        "issue_count_before": 1,
+        "issues_found": 1,
+        "fixes": [
+          {
+            "strategy": "run_parliament",
+            "desc": "议会日志缺失",
+            "dry_run": false,
+            "success": false
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "overall_before": "down",
+        "issue_count_before": 1,
+        "issues_found": 1,
+        "fixes": [
+          {
+            "strategy": "run_parliament",
+            "desc": "议会日志缺失",
+            "dry_run": false,
+            "success": false
+          }
+        ]
+      }
+    ],
+    "final_status": "unknown",
+    "final_issues": 0
   }
 ]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-stock_recommender.py — 选股推荐引擎 v2.0 (V8.0 瞭望塔)
+stock_recommender.py — 选股推荐引擎 v2.4 (V8.0 瞭望塔)
 
 多因子综合打分 → 排除过滤 → 板块归类 → 每日推荐池 (每日重置)
 
@@ -12,7 +12,7 @@ stock_recommender.py — 选股推荐引擎 v2.0 (V8.0 瞭望塔)
 排除规则:
   1. ST / *ST
   2. 连板股 (≥2连板，保留首板)
-  3. 市值 < 40亿 或 > 2400亿
+  3. 市值 < 30亿 或 > 2000亿
 """
 
 import json, os, sys, math, re
@@ -105,6 +105,7 @@ class StockRecommender:
         self._insights_index = {}  # KB LLM 洞察索引
         self._new_factors = {}     # 🆕 新增因子面板 {code: {factor_id: value}}
         self._factor_weights = {}  # 🆕 IC 动态权重
+        self._fast_mode = False    # 🆕 快速模式标志
 
     # ═══════════════════════════════════════════
     # 主流程
@@ -119,13 +120,25 @@ class StockRecommender:
         # Step 1: 候选池
         candidates = self._get_candidates(kb)
 
-        # ── 批量预取实时行情 + 技术指标 ──
+        # ── 批量预取实时行情（分批100只，避免Sina URL过长）+ 技术指标 ──
         all_codes = [c['code'] for c in candidates]
         if all_codes:
             from data_pipeline import get_stock_realtime
-            self._quote_cache = get_stock_realtime(all_codes)
+            self._quote_cache = {}
+            for i in range(0, len(all_codes), 100):
+                batch = all_codes[i:i+100]
+                self._quote_cache.update(get_stock_realtime(batch))
             self._prefetch_indicators(all_codes)  # MA20/均量/PE
             self._prefetch_new_factors(all_codes) # 🆕 新因子面板
+            # 🆕 v8.7: 盘前 Sina close=0 → 用 Baostock 昨收补
+            for code in all_codes:
+                q = self._quote_cache.get(code, {})
+                if float(q.get('close', 0)) == 0:
+                    ind = self._indicators.get(code, {})
+                    closes = ind.get('close_history', [])
+                    if closes and closes[-1] > 0:
+                        q['close'] = closes[-1]
+                        q['change_pct'] = 0.0  # 盘前无涨跌幅
         else:
             self._quote_cache = {}
             self._indicators = {}
@@ -148,8 +161,9 @@ class StockRecommender:
         # Step 6: 板块归类 + 操作策略 + 风险等级
         self._enrich_recommendations(kb)
 
-        # Step 6.5: 🆕 研究员议会 — 多视角交叉验证推荐池
-        self._parliament_consult()
+        # Step 6.5: 🆕 研究员议会 — 多视角交叉验证推荐池（fast模式跳过）
+        if not getattr(self, '_fast_mode', False):
+            self._parliament_consult()
 
         # Step 7: 持久化（保留盘中侦察兵新增的标的）
         self._save_pool()
@@ -250,89 +264,46 @@ class StockRecommender:
         except Exception as e:
             print(f'   [BaoStock] fallback triggered: {e}')
 
-        # ── 慢路径：subprocess 补漏 ──
-        remaining = [c for c in codes if c not in bs_fetched]
-        if not remaining:
-            # 全部被 BaoStock 覆盖，直接跳到 tushare 基本面
-            pass
-        else:
-            print(f'   [subprocess] pulling {len(remaining)} remaining codes...')
-            def _fetch_one(code):
-                """拉取单只股票日线，返回 (code, indicators_dict)"""
-                try:
-                    proc = subprocess.run(
-                        ['data', 'fetch', 'stock', '--symbol', code, '--category', 'daily', '--days', '30'],
-                        capture_output=True, text=True, timeout=25,
-                        env={**os.environ, 'HERMES_PROFILE': 'xiaohong'}
-                    )
-                    if proc.returncode != 0:
+        # ── v8.7: 跳过 subprocess 补漏（hermes CLI 每只启动 agent，176只→不可行）──
+        # Baostock 覆盖 ~60% 已足够打分，缺失指标由评分函数容错处理
+
+        # ── tushare 基本面 PE/PB/市值（fast模式跳过，用Sina+Baostock替代）──
+        if not getattr(self, '_fast_mode', False):
+            try:
+                import tushare as ts
+                token = os.environ.get('TUSHARE_TOKEN', '')
+                if token:
+                    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y%m%d')
+
+                    def _fetch_fundamental(code):
+                        """单只查询基本面（独立 pro_api 实例，线程安全）"""
+                        try:
+                            _pro = ts.pro_api(token)
+                            ts_code = code + '.SZ' if code.startswith(('0','3')) else code + '.SH'
+                            df = _pro.daily_basic(
+                                ts_code=ts_code, trade_date=yesterday,
+                                fields='ts_code,pe_ttm,pb,total_mv,circ_mv'
+                            )
+                            if df is not None and not df.empty:
+                                row = df.iloc[0]
+                                return (code, {
+                                    'pe': float(row.get('pe_ttm', 0) or 0),
+                                    'pb': float(row.get('pb', 0) or 0),
+                                    'total_mv': float(row.get('total_mv', 0) or 0) / 1e4,
+                                    'circ_mv': float(row.get('circ_mv', 0) or 0) / 1e4,
+                                })
+                        except Exception:
+                            pass
                         return (code, None)
-                    data = json.loads(proc.stdout)
-                    closes = []
-                    volumes = []
-                    for p in data.get('providers_attempted', []):
-                        records = p.get('data', [])
-                        if isinstance(records, list) and records:
-                            for r in records:
-                                closes.append(float(r.get('close', 0)))
-                                volumes.append(float(r.get('vol', 0)))
-                            break
-                    ind = {}
-                    if len(closes) >= 20:
-                        ind['ma20'] = round(sum(closes[-20:]) / 20, 2)
-                    if len(volumes) >= 5:
-                        ind['avg_vol_5'] = round(sum(volumes[-5:]) / 5, 0)
-                    if closes:
-                        ind['close_history'] = closes
-                    return (code, ind)
-                except Exception:
-                    return (code, None)
 
-            with ThreadPoolExecutor(max_workers=8) as ex:
-                futures = {ex.submit(_fetch_one, c): c for c in remaining}
-                for fut in as_completed(futures):
-                    code, ind = fut.result()
-                    if ind is not None:
-                        self._indicators[code] = ind
-
-        # ── tushare 基本面 PE/PB/市值 ──
-        # 注意: daily_basic 不支持 roe 字段，且多码批量查询不稳定，逐只查询
-        # v8.5: ThreadPoolExecutor 并行（10 workers，避免触发 tushare 限流）
-        try:
-            import tushare as ts
-            token = os.environ.get('TUSHARE_TOKEN', '')
-            if token:
-                yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y%m%d')
-
-                def _fetch_fundamental(code):
-                    """单只查询基本面（独立 pro_api 实例，线程安全）"""
-                    try:
-                        _pro = ts.pro_api(token)
-                        ts_code = code + '.SZ' if code.startswith(('0','3')) else code + '.SH'
-                        df = _pro.daily_basic(
-                            ts_code=ts_code, trade_date=yesterday,
-                            fields='ts_code,pe_ttm,pb,total_mv,circ_mv'
-                        )
-                        if df is not None and not df.empty:
-                            row = df.iloc[0]
-                            return (code, {
-                                'pe': float(row.get('pe_ttm', 0) or 0),
-                                'pb': float(row.get('pb', 0) or 0),
-                                'total_mv': float(row.get('total_mv', 0) or 0) / 1e4,  # 万元→亿元
-                                'circ_mv': float(row.get('circ_mv', 0) or 0) / 1e4,
-                            })
-                    except Exception:
-                        pass
-                    return (code, None)
-
-                with ThreadPoolExecutor(max_workers=10) as ex:
-                    futures = {ex.submit(_fetch_fundamental, c): c for c in codes}
-                    for fut in as_completed(futures):
-                        code, fund = fut.result()
-                        if fund and code in self._indicators:
-                            self._indicators[code].update(fund)
-        except Exception:
-            pass
+                    with ThreadPoolExecutor(max_workers=10) as ex:
+                        futures = {ex.submit(_fetch_fundamental, c): c for c in codes}
+                        for fut in as_completed(futures):
+                            code, fund = fut.result()
+                            if fund and code in self._indicators:
+                                self._indicators[code].update(fund)
+            except Exception:
+                pass
 
     def _prefetch_new_factors(self, codes: List[str]):
         """🆕 从已预取的 indicators 中直接计算新增因子（避免重复拉K线）"""
@@ -428,8 +399,20 @@ class StockRecommender:
         return min(max(bonus, 0), 100)
 
     def _load_factor_weights(self):
-        """🆕 从 factor_ic.json 加载 IC 动态权重"""
+        """🆕 从 strategy_templates + factor_ic.json 加载动态权重"""
         self._factor_weights = {}
+
+        # 优先级1: 策略模板（因子权重）
+        try:
+            from strategy_templates import TemplateManager
+            tmpl = TemplateManager()
+            fw = tmpl.get_factor_weights()
+            if fw:
+                self._factor_weights = dict(fw)
+        except Exception:
+            pass
+
+        # 优先级2: IC 动态权重微调（叠加在模板之上）
         ic_path = SCRIPT_DIR / 'data' / 'factor_ic.json'
         if not ic_path.exists():
             return
@@ -449,8 +432,12 @@ class StockRecommender:
                 mean_ic = sum(recent) / len(recent)
                 std_ic = (sum((x - mean_ic)**2 for x in recent) / len(recent)) ** 0.5
                 icir = mean_ic / std_ic if std_ic > 0 else 0
-                weight = max(0.5, min(1.5, 1.0 + icir))
-                self._factor_weights[fid] = round(weight, 3)
+                # IC 微调系数: 0.8 ~ 1.2，乘法叠加到模板权重
+                adj = max(0.8, min(1.2, 1.0 + icir * 0.5))
+                if fid in self._factor_weights:
+                    self._factor_weights[fid] = round(self._factor_weights[fid] * adj, 3)
+                else:
+                    self._factor_weights[fid] = round(adj, 3)
         except Exception:
             pass
 
@@ -535,7 +522,7 @@ class StockRecommender:
     # ═══════════════════════════════════════════
 
     def _apply_filters(self, candidates: List[Dict]) -> List[Dict]:
-        """四重排除：ST → 连板(≥2板) → 停牌 → 市值(40-2400亿)"""
+        """四重排除：ST → 连板(≥2板) → 停牌 → 市值(30-2000亿)"""
         valid = candidates.copy()
         st_codes = self._get_st_codes()
         multi_lianban_codes = self._get_multi_lianban_codes()
@@ -591,7 +578,7 @@ class StockRecommender:
         return st_codes
 
     def _get_suspended_codes(self) -> set:
-        """检测停牌股：KB洞察含「停牌」关键词 + 行情数据 (change_pct==0 且 close==0)"""
+        """检测停牌股：仅用 KB 洞察索引中的「停牌」标记（盘前Sina全0不可靠）"""
         suspended = set()
         # 方法1：KB 洞察索引中的停牌标记
         for code, insights in self._insights_index.items():
@@ -600,12 +587,14 @@ class StockRecommender:
                 if '停牌' in text:
                     suspended.add(code)
                     break
-        # 方法2：实时行情中涨跌幅和收盘价均为0（经典停牌信号）
-        for code, q in getattr(self, '_quote_cache', {}).items():
-            change_pct = float(q.get('change_pct', 1))
-            close = float(q.get('close', 1))
-            if change_pct == 0 and close == 0:
-                suspended.add(code)
+        # 方法2：Baostock/indicators 中最新的 close=0 且 volume=0（v8.7: 不用Sina，盘前全0误判）
+        for code, ind in self._indicators.items():
+            closes = ind.get('close_history', [])
+            if closes and closes[-1] == 0:
+                # 检查该股在 quote_cache 中是否也有异常
+                q = self._quote_cache.get(code, {})
+                if float(q.get('volume', 1)) == 0 and code not in suspended:
+                    suspended.add(code)
         return suspended
 
     def _get_multi_lianban_codes(self) -> set:
@@ -1065,9 +1054,9 @@ class StockRecommender:
             elif neg > pos:
                 insight_bias = 'negative'
 
-        # 3. 特殊状态：停牌检测（无涨跌+有收盘价+洞察含停牌，或无数据）
+        # 3. 特殊状态：停牌检测（仅KB洞察，盘前Sina全0不可靠）
         insight_text = ' '.join(str(i.get('title','')) + ' ' + str(i.get('body','')) for i in insights)
-        is_suspended = ('停牌' in insight_text) or (change_pct == 0 and close == 0)
+        is_suspended = ('停牌' in insight_text)
         if is_suspended:
             return f"停牌中，复牌首日观察竞价方向与量能，止损按复牌价{stop_ratio:+.0f}%"
 
@@ -1174,31 +1163,41 @@ class StockRecommender:
     # ═══════════════════════════════════════════
 
     def _run_researcher_analysis(self):
-        """🆕 v2.3: 对每只推荐股运行 6 位研究员深度分析"""
+        """🆕 v2.4: 并行研究员分析（ThreadPoolExecutor，避免逐只串行超时）"""
         try:
             from researchers import analyze_stock
         except ImportError:
             return  # 研究员模块不可用时静默跳过
 
-        for rec in self.recommendations:
+        if not self.recommendations:
+            return
+
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        def _analyze_one(rec):
             code = str(rec.get('code', ''))
             name = str(rec.get('name', ''))
             if not code:
-                continue
+                return rec, None
             try:
                 analysis = analyze_stock(code, name)
-                rec['researcher_analysis'] = analysis
+                return rec, analysis
             except Exception:
-                rec['researcher_analysis'] = {
-                    'timestamp': datetime.now().isoformat(),
-                    'error': '分析失败',
-                }
+                return rec, {'timestamp': datetime.now().isoformat(), 'error': '分析失败'}
+
+        # 并行执行，max_workers=4（避免 Baostock 子进程过多）
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            futures = {ex.submit(_analyze_one, r): r for r in self.recommendations}
+            for fut in as_completed(futures):
+                rec, analysis = fut.result()
+                rec['researcher_analysis'] = analysis
 
     def _save_pool(self):
         POOL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-        # 🆕 v2.3: 研究员全链路 — 逐只跑 6 位研究员分析
-        self._run_researcher_analysis()
+        # 🆕 v2.3: 研究员全链路 — 逐只跑 6 位研究员分析（fast模式跳过）
+        if not getattr(self, '_fast_mode', False):
+            self._run_researcher_analysis()
 
         # 读取现有池，仅保留当日盘中侦察兵新增（08:25 推荐引擎生成新池，旧日 intraday 自然清除）
         existing = {'scout_additions': [], 'scout_last_update': None}
@@ -1282,9 +1281,12 @@ def main():
     p = argparse.ArgumentParser(description='Stock Recommender v2.0 — 选股推荐引擎')
     p.add_argument('--top', type=int, default=9, help='推荐数量 (默认9)')
     p.add_argument('--json', action='store_true', help='JSON格式输出')
+    p.add_argument('--fast', action='store_true', help='快速模式：跳过研究员分析和议会（用于cron）')
     args = p.parse_args()
 
     rec = StockRecommender()
+    if args.fast:
+        rec._fast_mode = True
     results = rec.run(top_n=args.top)
 
     if args.json:

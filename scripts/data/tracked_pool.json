@@ -74,6 +74,35 @@
       "stocks": [
         "002895"
       ]
+    },
+    {
+      "date": "20260605",
+      "stock_count": 6,
+      "stocks": [
+        "001309",
+        "600358",
+        "001332",
+        "300685",
+        "002456",
+        "688506"
+      ]
+    },
+    {
+      "date": "20260605",
+      "stock_count": 2,
+      "stocks": [
+        "002475",
+        "300124"
+      ]
+    },
+    {
+      "date": "20260605",
+      "stock_count": 3,
+      "stocks": [
+        "601798",
+        "000333",
+        "600157"
+      ]
     }
   ],
   "stocks": [
@@ -1214,6 +1243,325 @@
         "return_pct": -7.36,
         "reason": "触发止损价 33.03（收盘 32.21）"
       }
+    },
+    {
+      "code": "001309",
+      "name": "德明利",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 56.8,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "600358",
+      "name": "国旅联合",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 53.8,
+      "entry_factors": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "001332",
+      "name": "锡装股份",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 53.8,
+      "entry_factors": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300685",
+      "name": "艾德生物",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 52.3,
+      "entry_factors": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "entry_sector": "医药生物",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002456",
+      "name": "欧菲光",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 52.3,
+      "entry_factors": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "entry_sector": "通信",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "688506",
+      "name": "百利天恒",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 51.8,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 60,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002475",
+      "name": "立讯精密",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 53.8,
+      "entry_factors": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300124",
+      "name": "汇川技术",
+      "entry_date": "20260605",
+      "entry_close": 0.0,
+      "entry_score": 53.0,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": null,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 0.0,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "601798",
+      "name": "蓝科高新",
+      "entry_date": "20260605",
+      "entry_close": 8.44,
+      "entry_score": 56.0,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 8.02,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 8.44,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "000333",
+      "name": "美的集团",
+      "entry_date": "20260605",
+      "entry_close": 82.3,
+      "entry_score": 55.3,
+      "entry_factors": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 78.18,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 82.3,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "600157",
+      "name": "永泰能源",
+      "entry_date": "20260605",
+      "entry_close": 1.83,
+      "entry_score": 55.3,
+      "entry_factors": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 1.74,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260605",
+          "close": 1.83,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
     }
   ]
 }

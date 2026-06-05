@@ -14,7 +14,7 @@ v4.0 新增:
   python3 scout.py [--push] [--auction] [--intraday]
 """
 
-__version__ = "4.0.0"
+__version__ = "4.1.0"
 
 import sys, os, json, math
 from pathlib import Path
@@ -275,6 +275,15 @@ def run_scout() -> dict:
     new_alert = new_alert[:4]
     pending = pending[:5]
 
+    # 🆕 v4.1: 个股详细技术分析 — 批量K线 + MA20偏离 + 量比 + PE
+    all_selected = double_confirm + new_alert + pending
+    if all_selected:
+        _enrich_with_kline_analysis(all_selected)
+        dc_len, na_len = len(double_confirm), len(new_alert)
+        double_confirm = all_selected[:dc_len]
+        new_alert = all_selected[dc_len:dc_len+na_len]
+        pending = all_selected[dc_len+na_len:]
+
     return {
         'timestamp': datetime.now().strftime('%H:%M'),
         'threshold': threshold,
@@ -290,6 +299,43 @@ def run_scout() -> dict:
 # ═══════════════════════════════════════════
 # 8. 盘中推荐池更新 (v4.0)
 # ═══════════════════════════════════════════
+
+# 🆕 v4.1: 个股K线技术分析
+def _enrich_with_kline_analysis(entries: list):
+    """批量拉取K线，为每只股票附加 MA20偏离/量比/PE/昨收"""
+    if not entries:
+        return
+    codes = [e['code'] for e in entries]
+    try:
+        from data_pipeline import get_historical_k_with_ma
+        kdata = get_historical_k_with_ma(codes, days=30)
+    except Exception:
+        return
+
+    for e in entries:
+        code = e['code']
+        bars = kdata.get(code, [])
+        if not bars:
+            continue
+        closes = [b['close'] for b in bars if b.get('close', 0) > 0]
+        volumes = [b['volume'] for b in bars if b.get('volume', 0) > 0]
+
+        if len(closes) >= 20:
+            ma20 = sum(closes[-20:]) / 20
+            e['ma20_dev'] = round((closes[-1] / ma20 - 1) * 100, 1)
+            e['last_close'] = closes[-1]
+        else:
+            e['ma20_dev'] = None
+            e['last_close'] = closes[-1] if closes else None
+
+        if len(volumes) >= 5:
+            avg5 = sum(volumes[-5:]) / 5
+            e['vol_ratio'] = round(volumes[-1] / avg5, 1) if avg5 > 0 else None
+        else:
+            e['vol_ratio'] = None
+
+        pe = bars[-1].get('peTTM')
+        e['pe'] = round(pe, 1) if pe and pe > 0 else None
 
 # ── 盘中多因子评分权重（可进化）──
 INTRA_FUND_WEIGHT = 0.40      # 资金流权重
@@ -638,8 +684,8 @@ def format_report(result: dict) -> str:
         lines.append(f"> V8.0推荐池 + 资金流入同时命中，今日最强信号")
         lines.append(f"")
         if result.get('auction_enabled'):
-            lines.append(f"| 代码 | 名称 | 板块 | 资金 | 涨跌 | 竞价 | 操作策略 | 风险 |")
-            lines.append(f"|------|------|------|------|------|:--:|------|:--:|")
+            lines.append(f"| 代码 | 名称 | 板块 | 资金 | 涨跌 | MA20 | 量比 | PE | 竞价 | 操作策略 | 风险 |")
+            lines.append(f"|------|------|------|------|------|------|------|------|:--:|------|:--:|")
             for s in dc:
                 sl = s['stop_loss']
                 op = s.get('operation', '') or f"回踩分时均线介入"
@@ -649,22 +695,30 @@ def format_report(result: dict) -> str:
                 auc_score = auc.get('score', 0)
                 auc_icon_str = auction_icon(auc.get('signal', ''))
                 auc_str = f"{auc_icon_str} {auc_score:.0f}" if auc_score > 0 else '-'
+                ma20 = f"{s.get('ma20_dev', 0):+.1f}%" if s.get('ma20_dev') is not None else '-'
+                vol_r = f"{s.get('vol_ratio', 0):.1f}x" if s.get('vol_ratio') else '-'
+                pe = f"{s.get('pe', 0):.0f}" if s.get('pe') else '-'
                 lines.append(
                     f"| {s['code']} | {s['name']} | {s['sector']} | "
                     f"{s['net_flow']:.0f}万 | {s['change_pct']:+.1f}% | "
+                    f"{ma20} | {vol_r} | {pe} | "
                     f"{auc_str} | {op} 止损{sl['ratio']:+.0f}% | {s['risk_level']} |"
                 )
         else:
-            lines.append(f"| 代码 | 名称 | 板块 | 资金 | 涨跌 | 操作策略 | 风险 |")
-            lines.append(f"|------|------|------|------|------|------|:--:|")
+            lines.append(f"| 代码 | 名称 | 板块 | 资金 | 涨跌 | MA20 | 量比 | PE | 操作策略 | 风险 |")
+            lines.append(f"|------|------|------|------|------|------|------|------|------|:--:|")
             for s in dc:
                 sl = s['stop_loss']
                 op = s.get('operation', '') or f"回踩分时均线介入"
                 if len(op) > 30:
                     op = op[:28] + '..'
+                ma20 = f"{s.get('ma20_dev', 0):+.1f}%" if s.get('ma20_dev') is not None else '-'
+                vol_r = f"{s.get('vol_ratio', 0):.1f}x" if s.get('vol_ratio') else '-'
+                pe = f"{s.get('pe', 0):.0f}" if s.get('pe') else '-'
                 lines.append(
                     f"| {s['code']} | {s['name']} | {s['sector']} | "
                     f"{s['net_flow']:.0f}万 | {s['change_pct']:+.1f}% | "
+                    f"{ma20} | {vol_r} | {pe} | "
                     f"{op} 止损{sl['ratio']:+.0f}% | {s['risk_level']} |"
                 )
         lines.append(f"")
@@ -682,10 +736,12 @@ def format_report(result: dict) -> str:
         lines.append(f"")
         lines.append(f"> 推荐池外，资金显著流入。需自行判断基本面和催化剂")
         lines.append(f"")
-        lines.append(f"| 代码 | 名称 | 板块 | 资金 | 涨跌 | 操作建议 | 风险 |")
-        lines.append(f"|------|------|------|------|------|------|:--:|")
+        lines.append(f"| 代码 | 名称 | 板块 | 资金 | 涨跌 | MA20 | 量比 | 操作建议 | 风险 |")
+        lines.append(f"|------|------|------|------|------|------|------|------|:--:|")
         for s in na:
             sl = s['stop_loss']
+            ma20 = f"{s.get('ma20_dev', 0):+.1f}%" if s.get('ma20_dev') is not None else '-'
+            vol_r = f"{s.get('vol_ratio', 0):.1f}x" if s.get('vol_ratio') else '-'
             if s['change_pct'] > 5:
                 op = f"高开不追，等回踩 止损{sl['ratio']:+.0f}%"
             else:
@@ -693,6 +749,7 @@ def format_report(result: dict) -> str:
             lines.append(
                 f"| {s['code']} | {s['name']} | {s['sector']} | "
                 f"{s['net_flow']:.0f}万 | {s['change_pct']:+.1f}% | "
+                f"{ma20} | {vol_r} | "
                 f"{op} | {s['risk_level']} |"
             )
         lines.append(f"")
@@ -727,14 +784,18 @@ def format_report(result: dict) -> str:
         lines.append(f"")
         lines.append(f"> 推荐池内但资金暂未明显流入，继续观察等放量")
         lines.append(f"")
-        lines.append(f"| 代码 | 名称 | 板块 | 操作策略 | 风险 |")
-        lines.append(f"|------|------|------|------|:--:|")
+        lines.append(f"| 代码 | 名称 | 板块 | MA20偏离 | 量比 | PE | 操作策略 | 风险 |")
+        lines.append(f"|------|------|------|------|------|------|------|:--:|")
         for s in pd:
             op = s.get('operation', '观望') or '观望'
             if len(op) > 30:
                 op = op[:28] + '..'
+            ma20 = f"{s.get('ma20_dev', 0):+.1f}%" if s.get('ma20_dev') is not None else '-'
+            vol_r = f"{s.get('vol_ratio', 0):.1f}x" if s.get('vol_ratio') else '-'
+            pe = f"{s.get('pe', 0):.0f}" if s.get('pe') else '-'
             lines.append(
                 f"| {s['code']} | {s['name']} | {s['sector']} | "
+                f"{ma20} | {vol_r} | {pe} | "
                 f"{op} | {s['risk_level']} |"
             )
     lines.append(f"")
@@ -743,7 +804,7 @@ def format_report(result: dict) -> str:
     lines.append(f"")
     lines.append(f"⚠️ 机器筛选仅供参考，不构成投资建议")
     lines.append(f"")
-    lines.append(f"*侦察兵 v4.0 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
+    lines.append(f"*侦察兵 v4.1 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
 
     return '\n'.join(lines)
 
