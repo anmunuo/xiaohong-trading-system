@@ -165,6 +165,27 @@ CREATE TABLE IF NOT EXISTS crawl_log (
 );
 
 CREATE INDEX IF NOT EXISTS idx_crawl_log ON crawl_log(table_name, data_date);
+
+-- 个股事件/新闻/公告/传言
+CREATE TABLE IF NOT EXISTS stock_events (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    code        TEXT NOT NULL,            -- 股票代码
+    event_date  TEXT NOT NULL,            -- 事件日期 YYYY-MM-DD
+    title       TEXT NOT NULL,            -- 标题
+    content     TEXT,                     -- 内容摘要
+    source      TEXT,                     -- 来源（证券时报/财联社/公司公告等）
+    event_type  TEXT,                     -- 类型: announcement/news/research/rumor/policy/insider
+    url         TEXT,                     -- 原文链接
+    keywords    TEXT,                     -- 关键词（逗号分隔）
+    impact      INTEGER DEFAULT 0,        -- 影响: +2大利好/+1利好/0中性/-1利空/-2大利空
+    created_at  TEXT,                     -- 入库时间
+    UNIQUE(code, event_date, title)
+);
+
+CREATE INDEX IF NOT EXISTS idx_events_code ON stock_events(code, event_date);
+CREATE INDEX IF NOT EXISTS idx_events_date ON stock_events(event_date);
+CREATE INDEX IF NOT EXISTS idx_events_type ON stock_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_events_impact ON stock_events(impact);
 """
 
 # ═══════════════════════════════════════════
@@ -519,6 +540,97 @@ class StockKBCrawler:
         _log.info(f"指数数据: {total} 条")
         return total
 
+    def crawl_events(self, codes: List[str] = None, days: int = 30) -> int:
+        """爬取个股新闻/公告/事件 (使用 akshare 东方财富新闻)"""
+        import akshare as ak
+
+        if codes is None:
+            codes = self._get_all_codes()
+
+        total = 0
+        cutoff = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+
+        # 1) 爬取全市场公告（高效，一次获取所有）
+        _log.info("爬取全市场公告...")
+        try:
+            for d_offset in range(min(days, 30)):
+                d = (datetime.now() - timedelta(days=d_offset)).strftime('%Y%m%d')
+                try:
+                    df = ak.stock_notice_report(symbol='全部', date=d)
+                    if df.empty:
+                        continue
+                    with self._get_conn() as conn:
+                        for _, r in df.iterrows():
+                            try:
+                                code = str(r.get('代码', '')).zfill(6)
+                                conn.execute(
+                                    """INSERT OR IGNORE INTO stock_events
+                                       (code, event_date, title, content, source, event_type, url, keywords, created_at)
+                                       VALUES (?,?,?,?,?,?,?,?,?)""",
+                                    (code, str(r.get('公告日期', d)),
+                                     str(r.get('公告标题', '')),
+                                     '',  # 公告需单独请求获取正文
+                                     str(r.get('名称', '')),
+                                     'announcement',
+                                     str(r.get('网址', '')),
+                                     str(r.get('公告类型', '')),
+                                     datetime.now().isoformat())
+                                )
+                                total += 1
+                            except Exception:
+                                continue
+                except Exception:
+                    continue
+            _log.info(f"公告: {total} 条")
+        except Exception as e:
+            _log.warning(f"公告爬取失败: {e}")
+
+        # 2) 爬取个股新闻（逐只，可指定数量）
+        _log.info(f"爬取个股新闻 ({len(codes)} 只)...")
+        news_total = 0
+        for i, code in enumerate(codes):
+            try:
+                df = ak.stock_news_em(symbol=code)
+                if df.empty:
+                    continue
+                df = df[df['发布时间'] >= cutoff]
+                if df.empty:
+                    continue
+
+                with self._get_conn() as conn:
+                    for _, r in df.iterrows():
+                        try:
+                            conn.execute(
+                                """INSERT OR IGNORE INTO stock_events
+                                   (code, event_date, title, content, source, event_type, url, keywords, created_at)
+                                   VALUES (?,?,?,?,?,?,?,?,?)""",
+                                (code,
+                                 str(r.get('发布时间', ''))[:10],
+                                 str(r.get('新闻标题', '')),
+                                 str(r.get('新闻内容', ''))[:500],  # 截断长文本
+                                 str(r.get('文章来源', '')),
+                                 'news',
+                                 str(r.get('新闻链接', '')),
+                                 str(r.get('关键词', '')),
+                                 datetime.now().isoformat())
+                            )
+                            news_total += 1
+                            total += 1
+                        except Exception:
+                            continue
+            except Exception:
+                continue
+            if (i+1) % 500 == 0:
+                _log.info(f"新闻进度: {i+1}/{len(codes)}, 累计 {news_total} 条")
+
+        _log.info(f"事件总计: {total} 条 (公告+新闻)")
+        return total
+
+    def crawl_events_batch(self, days: int = 30, news_codes: int = 100) -> int:
+        """快速模式：全市场公告 + 只爬前N只股票新闻"""
+        codes = self._get_all_codes()[:news_codes]
+        return self.crawl_events(codes=codes, days=days)
+
     def crawl_all(self, start_date: str = '2020-01-01'):
         """一键爬取所有数据"""
         _log.info("=" * 50)
@@ -530,21 +642,24 @@ class StockKBCrawler:
         self.init_schema()
 
         n_stocks = self.crawl_stock_list()
-        _log.info(f"[1/4] 股票列表: {n_stocks} 只 ({time.time()-t0:.0f}s)")
+        _log.info(f"[1/5] 股票列表: {n_stocks} 只 ({time.time()-t0:.0f}s)")
 
         n_kline = self.crawl_daily_kline(start_date=start_date)
-        _log.info(f"[2/4] 日K线: {n_kline} 条 ({time.time()-t0:.0f}s)")
+        _log.info(f"[2/5] 日K线: {n_kline} 条 ({time.time()-t0:.0f}s)")
 
         n_fin = self.crawl_financials()
-        _log.info(f"[3/4] 财务数据: {n_fin} 条 ({time.time()-t0:.0f}s)")
+        _log.info(f"[3/5] 财务数据: {n_fin} 条 ({time.time()-t0:.0f}s)")
+
+        n_events = self.crawl_events_batch(days=30, news_codes=200)
+        _log.info(f"[4/5] 事件数据: {n_events} 条 ({time.time()-t0:.0f}s)")
 
         n_idx = self.crawl_indices()
-        _log.info(f"[4/4] 指数: {n_idx} 条 ({time.time()-t0:.0f}s)")
+        _log.info(f"[5/5] 指数: {n_idx} 条 ({time.time()-t0:.0f}s)")
 
         _log.info(f"全量爬取完成! 总耗时 {time.time()-t0:.0f}s")
         return {
             'stocks': n_stocks, 'kline': n_kline,
-            'financials': n_fin, 'indices': n_idx
+            'financials': n_fin, 'events': n_events, 'indices': n_idx
         }
 
     def update_recent(self, days: int = 7):
@@ -662,6 +777,91 @@ class StockKBQuery:
             ).fetchall()
         return [dict(r) for r in rows]
 
+    def get_events(self, code: str = None, event_type: str = None,
+                   days: int = 30, limit: int = 50, min_impact: int = None) -> List[Dict]:
+        """
+        查询事件/新闻/公告
+
+        Args:
+            code: 股票代码（None=全市场）
+            event_type: announcement/news/research/rumor/policy/insider
+            days: 最近N天
+            limit: 最大返回条数
+            min_impact: 最小影响级别（1=利好及以上, -1=利空及以下）
+        """
+        with self._get_conn() as conn:
+            sql = "SELECT * FROM stock_events WHERE 1=1"
+            params = []
+
+            if code:
+                sql += " AND code=?"
+                params.append(code)
+
+            if event_type:
+                sql += " AND event_type=?"
+                params.append(event_type)
+
+            if min_impact is not None:
+                if min_impact > 0:
+                    sql += " AND impact >= ?"
+                else:
+                    sql += " AND impact <= ?"
+                params.append(min_impact)
+
+            cutoff = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+            sql += " AND event_date >= ?"
+            params.append(cutoff)
+
+            sql += " ORDER BY event_date DESC, impact DESC LIMIT ?"
+            params.append(limit)
+
+            rows = conn.execute(sql, params).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_event_summary(self, code: str, days: int = 90) -> Dict:
+        """获取个股事件摘要统计"""
+        with self._get_conn() as conn:
+            cutoff = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+
+            # 按类型统计
+            type_stats = conn.execute(
+                """SELECT event_type, COUNT(*) as cnt
+                   FROM stock_events
+                   WHERE code=? AND event_date >= ?
+                   GROUP BY event_type ORDER BY cnt DESC""",
+                (code, cutoff)
+            ).fetchall()
+
+            # 最近事件
+            recent = conn.execute(
+                """SELECT event_date, title, source, event_type, impact
+                   FROM stock_events
+                   WHERE code=? AND event_date >= ?
+                   ORDER BY event_date DESC LIMIT 10""",
+                (code, cutoff)
+            ).fetchall()
+
+            # 影响分布
+            impact_stats = conn.execute(
+                """SELECT
+                     SUM(CASE WHEN impact > 0 THEN 1 ELSE 0 END) as positive,
+                     SUM(CASE WHEN impact < 0 THEN 1 ELSE 0 END) as negative,
+                     SUM(CASE WHEN impact = 0 THEN 1 ELSE 0 END) as neutral
+                   FROM stock_events WHERE code=? AND event_date >= ?""",
+                (code, cutoff)
+            ).fetchone()
+
+        return {
+            'code': code,
+            'days': days,
+            'total': sum(r['cnt'] for r in type_stats),
+            'by_type': {r['event_type']: r['cnt'] for r in type_stats},
+            'positive': impact_stats['positive'] or 0,
+            'negative': impact_stats['negative'] or 0,
+            'neutral': impact_stats['neutral'] or 0,
+            'recent': [dict(r) for r in recent],
+        }
+
     def screen_stocks(self, conditions: Dict[str, Any]) -> List[Dict]:
         """
         条件筛选股票
@@ -751,7 +951,7 @@ class StockKBQuery:
     def get_stats(self) -> Dict:
         """获取数据库统计"""
         with self._get_conn() as conn:
-            tables = ['stocks', 'daily_kline', 'financials', 'fund_flow', 'index_daily']
+            tables = ['stocks', 'daily_kline', 'financials', 'fund_flow', 'index_daily', 'stock_events']
             stats = {}
             for t in tables:
                 row = conn.execute(f"SELECT COUNT(*) as cnt FROM {t}").fetchone()
@@ -826,7 +1026,7 @@ def main():
     ap.add_argument('--init-fast', action='store_true', help='仅爬股票列表+最近1年K线(快速体验)')
     ap.add_argument('--update', action='store_true', help='增量更新最近7天')
     ap.add_argument('--query', type=str, help='查询: 代码(如600519) 或 条件(如"ROE>15 PE<20")')
-    ap.add_argument('--query-type', type=str, default='stock', choices=['stock', 'screen', 'top', 'snapshot', 'stats', 'index'],
+    ap.add_argument('--query-type', type=str, default='stock', choices=['stock', 'screen', 'top', 'snapshot', 'stats', 'index', 'events', 'event_summary'],
                     help='查询类型')
     ap.add_argument('--limit', type=int, default=30, help='结果数量')
     ap.add_argument('--date', type=str, help='指定日期 YYYYMMDD')
@@ -968,6 +1168,35 @@ def main():
                 print(f"\n  📊 {rows[0].get('name', args.query)} 最近 {len(rows)} 天")
                 for r in rows[:10]:
                     print(f"  {r['trade_date']}: {r.get('close','?')}  {r.get('change_pct',0):>+.2f}%")
+
+        elif query_type == 'events':
+            code = args.query.strip() if args.query else None
+            events = q.get_events(code=code, days=args.limit, limit=args.limit)
+            print(f"\n  📰 事件/新闻 ({'全市场' if not code else code}) 最近 {len(events)} 条")
+            print(f"  {'-'*70}")
+            for e in events:
+                impact_label = {2:'🔥大利好', 1:'📈利好', 0:'➖', -1:'📉利空', -2:'💥大利空'}.get(e.get('impact',0), '➖')
+                print(f"  [{e['event_date']}] [{e['event_type']:12s}] {impact_label}")
+                print(f"    {e.get('title','')[:80]}")
+                print(f"    来源: {e.get('source','')}")
+                if e.get('url'):
+                    print(f"    {e['url']}")
+                print()
+
+        elif query_type == 'event_summary':
+            code = args.query.strip()
+            summary = q.get_event_summary(code, days=90)
+            print(f"\n  📊 事件摘要: {code} (近90天)")
+            print(f"  总事件: {summary['total']}")
+            print(f"  利好: {summary['positive']}  利空: {summary['negative']}  中性: {summary['neutral']}")
+            print(f"\n  类型分布:")
+            for t, cnt in summary['by_type'].items():
+                type_cn = {'announcement':'公告','news':'新闻','research':'研报','rumor':'传言','policy':'政策','insider':'高管'}.get(t, t)
+                print(f"    {type_cn}: {cnt}")
+            print(f"\n  最近事件:")
+            for e in summary['recent']:
+                impact_label = {2:'🔥', 1:'📈', 0:'➖', -1:'📉', -2:'💥'}.get(e['impact'], '')
+                print(f"    {e['event_date']} {impact_label} {e['title'][:70]}")
         return
 
 
