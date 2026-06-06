@@ -58,6 +58,8 @@ PYTHON3="/home/pc/.hermes/hermes-agent/venv/bin/python3"
 | 健康检查每日 error | `degraded` → `exit 1`，「黄灯当红灯」 | 改为仅 `down/critical` 非零 |
 | 竞价/侦察兵偶发 error | 东方财富 API 冷启动 + cron 超时 | PATH 修复 + 超时延长 |
 | 大量暂停 cron 堆积 | v1.0 系统残留（已被 v2.0 替代） | 确认后直接删除 |
+| **🆕 Script not found** | cron `script` 参数被传入带命令行参数（如 `xxx.py --fix`），整体当成文件名 | 创建 wrapper shell 脚本包装参数 |
+| **🆕 Script timed out** | 默认超时仅 120s，长脚本不够用 | `config.yaml` → `cron.script_timeout_seconds: 300` |
 
 ## 验证
 

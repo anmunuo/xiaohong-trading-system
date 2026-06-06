@@ -29,8 +29,19 @@ python3 system_health_check.py --fix --push # + 飞书推送
 
 ## 调度
 
-Cron: `15 8,15,22 * * *` → `system_health_check.py --fix`
-每次 scan 后自动 repair，修复报告附在健康报告末尾。
+Cron: `15 8,15,22 * * *`，脚本路径 `cron_health_fix.sh`
+
+**🚨 致命陷阱：cron 的 `script` 参数不支持命令行参数**
+
+`system_health_check.py --fix` 会被当成**完整文件名**去查找——文件系统里不存在 `system_health_check.py --fix` 这个文件 → 永远 `Script not found`。修复：创建 wrapper shell 脚本包装参数传递：
+
+```bash
+#!/bin/bash
+# cron_health_fix.sh
+exec /path/to/venv/bin/python3 system_health_check.py --fix --push
+```
+
+cron 调度器指向 `cron_health_fix.sh` 而不是带参数的 python 命令。**任何需要参数的 cron 脚本都必须用 wrapper 模式。**
 
 ## 🚨 陷阱: profile $HOME 覆盖导致修复全管线静默失败 (v8.12)
 

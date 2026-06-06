@@ -1317,3 +1317,104 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def score_single_stock(code: str, name: str = "", sector: str = "", 
+                       change_pct: float = 0, net_flow: float = 0) -> Dict:
+    """
+    🆕 v2.4 单票快速五因子评分 — 盘中侦察兵调用。
+
+    拉取单票K线 → 构建最小候选结构 → 复用 StockRecommender._score_candidates()。
+    返回五因子分项 + 综合得分 + 新因子加分。
+
+    返回:
+      {total_score, factor_scores: {event, fund, sentiment, technical, research, new_factors}, error: str|None}
+    """
+    result = {
+        "code": code, "name": name,
+        "total_score": 0.0, "factor_scores": {},
+        "error": None
+    }
+    try:
+        from data_pipeline import get_historical_k_with_ma, get_stock_realtime
+        from pathlib import Path
+
+        # Step 1: 拉取K线 (30天，含PE/PB)
+        kdata = get_historical_k_with_ma([code], days=30)
+        bars = kdata.get(code, [])
+        if not bars:
+            result["error"] = "无K线数据"
+            return result
+        closes = [b.get("close", 0) for b in bars if b.get("close", 0) > 0]
+        volumes = [b.get("volume", 0) for b in bars if b.get("volume", 0) > 0]
+        last_bar = bars[-1]
+        ma5 = last_bar.get("ma5", 0) or (sum(closes[-5:]) / min(5, len(closes[-5:])) if closes else 0)
+        ma10 = last_bar.get("ma10", 0) or (sum(closes[-10:]) / min(10, len(closes[-10:])) if closes else 0)
+        ma20 = sum(closes[-20:]) / min(20, len(closes[-20:])) if closes else 0
+        pe = last_bar.get("peTTM", 0) or 0
+        pb = last_bar.get("pbMRQ", 0) or 0
+
+        # Step 2: 构建候选结构
+        candidate = {
+            "code": code,
+            "name": name,
+            "sector": sector or "综合",
+            "change_pct": change_pct,
+            "net_flow": net_flow,
+            "pe": pe,
+            "pb": pb,
+            "total_mv": 0,
+            "close_history": closes,
+            "volume_history": volumes,
+            "ma5": ma5, "ma10": ma10, "ma20": ma20,
+            "last_close": closes[-1] if closes else 0,
+            "last_volume": volumes[-1] if volumes else 0,
+            "avg_volume_5": sum(volumes[-5:]) / min(5, len(volumes[-5:])) if volumes else 0,
+        }
+
+        if candidate["last_close"] <= 0:
+            result["error"] = "latest close is 0"
+            return result
+
+        # Step 3: 构建最小 kb (insights 空，让各因子用默认值)
+        minimal_kb = {
+            "insights": [],
+            "modules": {
+                "announcements": [], "broker_views": [], "hot_events": [],
+                "industry_news": [], "policy_macro": [],
+            }
+        }
+
+        # Step 4: 用 StockRecommender 的内部方法评分
+        recommender = StockRecommender.__new__(StockRecommender)
+        recommender._indicators = {code: candidate}
+        recommender._knowledge_base = minimal_kb
+        recommender._new_factors = {}
+
+        # 计算新因子（动量/波动/MA偏离/筹码）
+        nf = {}
+        if len(closes) >= 5:
+            nf["momentum_5d"] = round((closes[-1] / closes[-5] - 1) * 100, 1)
+        if len(closes) >= 10:
+            nf["momentum_10d"] = round((closes[-1] / closes[-10] - 1) * 100, 1)
+        if len(closes) >= 21:
+            nf["volatility_20d"] = round(
+                (sum((c / ma20 - 1)**2 for c in closes[-20:]) / 20) ** 0.5 * 100, 1)
+        if ma20 > 0:
+            nf["ma_deviation"] = round((closes[-1] / ma20 - 1) * 100, 1)
+        if candidate["avg_volume_5"] > 0:
+            nf["volume_ratio"] = round(candidate["last_volume"] / candidate["avg_volume_5"], 1)
+        recommender._new_factors = {code: nf}
+
+        # 评分
+        recommender._score_candidates([candidate], minimal_kb)
+
+        result["total_score"] = round(candidate.get("total_score", 0), 1)
+        result["factor_scores"] = candidate.get("factor_scores", {})
+
+    except ImportError as e:
+        result["error"] = f"导入失败: {e}"
+    except Exception as e:
+        result["error"] = f"评分异常: {str(e)[:120]}"
+
+    return result

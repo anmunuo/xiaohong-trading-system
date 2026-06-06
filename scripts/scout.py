@@ -14,7 +14,7 @@ v4.0 新增:
   python3 scout.py [--push] [--auction] [--intraday]
 """
 
-__version__ = "4.1.0"
+__version__ = "4.2.0"
 
 import sys, os, json, math
 from pathlib import Path
@@ -27,6 +27,9 @@ sys.path.insert(0, str(WORKSPACE))
 sys.path.insert(0, str(SCRIPT_DIR))
 
 from data_pipeline import get_top_flow_stocks, get_market_money_flow, check_data_health
+
+# 🆕 目标池开关: 设为 False 禁用目标池功能
+TARGET_POOL_ENABLED = True
 
 POOL_PATH = SCRIPT_DIR / 'data' / 'daily_pool.json'
 
@@ -467,43 +470,167 @@ def score_intraday_candidate(s: dict, hot_sectors: list) -> float:
     return round(total, 1)
 
 
+# ═══════════════════════════════════════════
+# 8. 盘中三级认证门 (v4.2)
+# ═══════════════════════════════════════════
+
+def _intraday_gate(entry: dict) -> dict:
+    """
+    盘中三级认证门 — 新发现标的是否能加入推荐池/目标池。
+
+    Gate 1: 研究员快速议会 → bias != "偏空" 且 confidence ≥ 0.5
+    Gate 2: 多因子认证       → total_score ≥ 60
+    Gate 3: 基本面快筛       → PE>0, PB>0, ROE≥5%, 负债率<70%
+
+    返回:
+      {passed, verdict, score_result, fund_result, details}
+    """
+    code = entry.get("code", "")
+    name = entry.get("name", "")
+    sector = entry.get("sector", "综合")
+    change_pct = entry.get("change_pct", 0)
+    net_flow = entry.get("net_flow", 0)
+
+    gates = {}
+    all_passed = True
+
+    # ── Gate 1: 研究员快速议会 ──
+    try:
+        from researchers import run_quick_parliament
+        verdict = run_quick_parliament(code, name)
+        gates["parliament"] = {
+            "passed": verdict.get("passed", False),
+            "bias": verdict.get("bias", "?"),
+            "confidence": verdict.get("confidence", 0),
+            "bull_signals": verdict.get("bull_signals", 0),
+            "bear_signals": verdict.get("bear_signals", 0),
+            "red_flags": verdict.get("red_flags", []),
+            "duration_s": verdict.get("duration_s", 0),
+        }
+    except ImportError:
+        gates["parliament"] = {"passed": True, "bias": "skip", "confidence": 0,
+                               "note": "researchers 模块不可用，跳过"}
+    except Exception as e:
+        gates["parliament"] = {"passed": True, "bias": "error", "confidence": 0,
+                               "note": f"议会异常: {str(e)[:80]}"}
+
+    if not gates["parliament"]["passed"]:
+        all_passed = False
+
+    # ── Gate 2: 多因子认证 ──
+    try:
+        from stock_recommender import score_single_stock
+        score_result = score_single_stock(code, name, sector, change_pct, net_flow)
+        total_score = score_result.get("total_score", 0)
+        gates["factor"] = {
+            "passed": total_score >= 60,
+            "total_score": total_score,
+            "factor_scores": score_result.get("factor_scores", {}),
+            "error": score_result.get("error"),
+        }
+    except ImportError:
+        gates["factor"] = {"passed": True, "total_score": 50,
+                           "note": "推荐引擎不可用，默认通过"}
+    except Exception as e:
+        gates["factor"] = {"passed": True, "total_score": 50,
+                           "note": f"因子评分异常: {str(e)[:80]}"}
+
+    if not gates["factor"]["passed"]:
+        all_passed = False
+
+    # ── Gate 3: 基本面快筛 ──
+    try:
+        pe = float(entry.get("pe", 0) or 0)
+        pb = float(entry.get("pb", 0) or 0)
+        roe = float(entry.get("roe", 0) or 0)
+        debt = float(entry.get("debt_ratio", entry.get("debt_to_assets", 50)) or 50)
+
+        fund_checks = {
+            "pe_ok": pe > 0,
+            "pb_ok": pb > 0,
+            "roe_ok": roe >= 5,
+            "debt_ok": debt < 70,
+        }
+        fund_passed = all(fund_checks.values())
+        gates["fundamental"] = {
+            "passed": fund_passed,
+            "pe": pe, "pb": pb, "roe": roe, "debt_ratio": debt,
+            "checks": fund_checks,
+        }
+    except Exception as e:
+        gates["fundamental"] = {"passed": True, "note": f"基本面数据缺失: {str(e)[:80]}"}
+        fund_passed = True
+
+    if not fund_passed:
+        all_passed = False
+
+    gate_summary = " → ".join([
+        f"议会{'✅' if gates.get('parliament',{}).get('passed') else '❌'}",
+        f"因子{gates.get('factor',{}).get('total_score',0):.0f}分{'✅' if gates.get('factor',{}).get('passed') else '❌'}",
+        f"基本面{'✅' if gates.get('fundamental',{}).get('passed') else '❌'}",
+    ])
+
+    return {
+        "code": code, "name": name,
+        "passed": all_passed,
+        "gate_summary": gate_summary,
+        "verdict": gates.get("parliament", {}),
+        "score_result": gates.get("factor", {}),
+        "fund_result": gates.get("fundamental", {}),
+        "gates": gates,
+    }
+
+
+# ═══════════════════════════════════════════
+# 9. 盘中推荐池更新 (v4.0 → v4.2)
+# ═══════════════════════════════════════════
+
 def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
     """
-    盘中推荐池动态更新 (v4.0)。
+    盘中推荐池动态更新 (v4.2)。
 
     规则:
-      · 无板块上限 — 让系统自然竞争
-      · 无数量上限 — 由池总容量 9 只自然约束
-      · 高资金流入标的替换低分标的
-      · 基本面快筛通过
+      · 新标的通过三级认证门（议会→多因子→基本面）才入池
+      · 盘中标的按评分竞争，高分替低分
+      · 通过认证的标的同步推入目标池
       · 标记 source: "scout_intraday"
 
-    返回: 新加入池中的标的列表
+    返回: (pool_additions, gate_results)
     """
     if not new_alert:
-        return []
+        return [], []
 
     # 获取今日热门板块
     hot_sectors = get_sector_flow_rank_top3()
 
-    # 基本面快筛 + 多因子综合评分
-    candidates = []
+    # ── 三级认证门 ──
+    gate_results = []
+    passed_candidates = []
+
     for s in new_alert:
-        # 只跳过推荐引擎标的，盘中标的可被更新
         if s['code'] in pool_codes:
-            continue
-        if not quick_fundamental_check(s['code']):
             continue
         if not is_market_cap_ok(s['code'], s.get('total_mv')):
             continue
-        score = score_intraday_candidate(s, hot_sectors)
-        candidates.append((score, s))
 
-    if not candidates:
-        return []
+        # 运行三级认证
+        gate = _intraday_gate(s)
+        gate_results.append(gate)
+
+        if gate["passed"]:
+            # 计算综合评分（用于池内排序）
+            score = score_intraday_candidate(s, hot_sectors)
+            # 叠加多因子评分（权重 0.5 侦察兵 + 0.5 推荐引擎）
+            factor_score = gate["score_result"].get("total_score", 50)
+            blended_score = round(score * 0.5 + factor_score * 0.5, 1)
+
+            passed_candidates.append((blended_score, s, gate))
+
+    if not passed_candidates:
+        return [], gate_results
 
     # 按综合评分降序
-    candidates.sort(key=lambda x: x[0], reverse=True)
+    passed_candidates.sort(key=lambda x: x[0], reverse=True)
 
     # 读取现有池
     pool = {'date': datetime.now().strftime('%Y%m%d'), 'recommendations': [],
@@ -519,28 +646,44 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
     recommender_recs = [r for r in existing_recs if r.get('source') != 'scout_intraday']
     intraday_recs = [r for r in existing_recs if r.get('source') == 'scout_intraday']
 
-    # 构建新 entry
+    # 构建新 entry (含 gate 数据)
     ts = datetime.now().strftime('%H:%M')
     seen = set()
     new_entries = []
-    for score, s in candidates:
+    gate_map = {}  # code → gate result
+
+    for blended_score, s, gate in passed_candidates:
         code = str(s['code'])
         if code in seen:
             continue
         seen.add(code)
+        gate_map[code] = gate
         new_entries.append({
             'code': code,
             'name': s['name'],
             'net_flow': s.get('net_flow', 0),
             'change_pct': s.get('change_pct', 0),
             'sector': s.get('sector', '综合'),
-            'operation': f"盘中侦察兵发现 · 综合评分{score:.1f}",
+            'operation': f"盘中侦察兵认证 · 综合{blended_score:.1f} | {gate['gate_summary']}",
             'risk_level': s.get('risk_level', '中'),
             'stop_loss': s.get('stop_loss', {}),
-            'total_score': score,
+            'total_score': blended_score,
             'source': 'scout_intraday',
             'added_at': ts,
             '_quality': s.get('_quality', 'ok'),
+            # 🆕 附加议会结论 + 基本面
+            'parliament': {
+                'bias': gate['verdict'].get('bias', '?'),
+                'confidence': gate['verdict'].get('confidence', 0),
+                'bull_signals': gate['verdict'].get('bull_signals', 0),
+                'bear_signals': gate['verdict'].get('bear_signals', 0),
+            },
+            'fundamental': {
+                'pe': gate['fund_result'].get('pe', 0),
+                'pb': gate['fund_result'].get('pb', 0),
+                'roe': gate['fund_result'].get('roe', 0),
+                'debt_ratio': gate['fund_result'].get('debt_ratio', 0),
+            },
         })
 
     # 合并：推荐引擎标的 + (盘中标的 ∪ 新候选) → 按 score 排序 → 截取前 9
@@ -575,7 +718,7 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
         except Exception:
             entry['researcher_analysis'] = {'timestamp': datetime.now().isoformat(), 'error': '分析失败'}
 
-    # 持久化
+    # 持久化 daily_pool
     pool['recommendations'] = merged
     pool.setdefault('scout_additions', [])
     for a in actually_added:
@@ -588,11 +731,34 @@ def feed_intraday_pool(new_alert: list, pool_codes: set) -> list:
     with open(POOL_PATH, 'w') as f:
         json.dump(pool, f, ensure_ascii=False, indent=2)
 
-    return actually_added
+    # 🆕 目标池更新 — 通过认证的新标的同步推入目标池
+    if TARGET_POOL_ENABLED:
+        try:
+            from target_pool import update_target_pool
+            for entry in actually_added:
+                code = entry.get('code', '')
+                gate = gate_map.get(code, {})
+                target_stock = {
+                    "code": code,
+                    "name": entry.get('name', ''),
+                    "sector": entry.get('sector', '综合'),
+                    "score": entry.get('total_score', 0),
+                    "parliament": entry.get('parliament', {}),
+                    "factor_scores": entry.get('factor_scores', {}),
+                    "fundamental": entry.get('fundamental', {}),
+                    "source": "scout_intraday",
+                }
+                update_target_pool(target_stock)
+        except ImportError:
+            pass
+        except Exception as e:
+            print(f"  [目标池] 更新失败: {e}")
+
+    return actually_added, gate_results
 
 
 # ═══════════════════════════════════════════
-# 9. 盘中池更新报告
+# 10. 盘中池更新报告
 # ═══════════════════════════════════════════
 
 def is_intraday_time() -> bool:
@@ -829,13 +995,37 @@ def main():
 
     # ── 盘中池更新 ──
     pool_additions = []
+    gate_results = []
     if args.intraday:
         # 只保护推荐引擎标的，盘中标的可被更高分候选取代
         pool = load_daily_pool()
         recommender_codes = {c for c, info in pool.items()
                             if info.get('source') != 'scout_intraday'}
-        pool_additions = feed_intraday_pool(result.get('new_alert', []), recommender_codes)
+        pool_additions, gate_results = feed_intraday_pool(result.get('new_alert', []), recommender_codes)
+
+        # 🆕 09:30 首次盘中扫描 → 初始化目标池
+        now = datetime.now()
+        if TARGET_POOL_ENABLED and now.hour == 9 and now.minute >= 30 and now.minute < 45:
+            try:
+                from target_pool import select_target_pool
+                tp = select_target_pool(force=True)
+                print(f"\n🎯 目标池已初始化: {len(tp.get('stocks',[]))} 只")
+                for i, s in enumerate(tp.get('stocks', []), 1):
+                    p = s.get('parliament', {})
+                    print(f"  {i}. {s['code']} {s['name']}  评分:{s['score']:.1f}  议会:{p.get('bias','?')}")
+            except ImportError:
+                pass
+
+        # 输出三级认证结果
+        if gate_results:
+            passed_count = sum(1 for g in gate_results if g.get('passed'))
+            print(f"\n🔐 三级认证门: {passed_count}/{len(gate_results)} 通过")
+            for g in gate_results:
+                status = '✅' if g.get('passed') else '❌'
+                print(f"  {status} {g['code']} {g.get('name',''):8s}  {g.get('gate_summary','')}")
+
     result['pool_additions'] = pool_additions
+    result['gate_results'] = gate_results
 
     report = format_report(result)
     print(report)

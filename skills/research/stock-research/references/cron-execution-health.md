@@ -53,3 +53,22 @@ def check_cron_scripts():
 ## 教训
 
 **监控产出物 ≠ 监控管道。** 产出物可能从破裂管道漏出来，但只有查退出码才知道管道破了。
+
+## 🆕 新增失败模式
+
+### "Script not found" — cron 参数传递反模式
+
+```
+Status: script failed
+Script not found: /path/to/scripts/system_health_check.py --fix
+```
+
+**根因**：cron 调度器的 `script` 参数把整串当文件名。`--fix` 被当作文件名一部分。**修复**：创建 wrapper shell 脚本包装参数。
+
+### "Script timed out" — 超时可配置
+
+默认 120s 不足以跑推荐引擎/竞价采集器。在 `config.yaml` 设置全局超时：
+```yaml
+cron:
+  script_timeout_seconds: 300  # 5 分钟，覆盖所有 no_agent 脚本
+```

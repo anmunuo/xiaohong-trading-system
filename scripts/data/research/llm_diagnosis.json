@@ -1,66 +1,134 @@
 {
-  "timestamp": "2026-06-06T02:10:00+08:00",
+  "timestamp": "2026-06-07T02:10:00+08:00",
+  "generated_by": "研究员深度诊断 v2.1",
   "scores": {
     "data_integrity": 5,
-    "signal_quality": 5,
+    "signal_quality": 6,
     "execution_health": 4,
     "recommendation_quality": 4,
-    "gap_risk": 5
+    "gap_risk": 4
   },
+  "score_details": {
+    "data_integrity": {
+      "score": 5,
+      "change": 0,
+      "reason": "daily_pool 36h stale（06/05 09:26→周末正常），market_snapshot 42h stale，push2双通道周末DOWN（预期内）。mega_latest新鲜但hot_events/broker_views/dragon_tiger三模块全空。Silver/Gold 06-07未生成（周六无交易数据）。kb_insights极新鲜(0.0h/50条)。北向字段修复后数据质量已验证(VERIFIED 5星)。"
+    },
+    "signal_quality": {
+      "score": 6,
+      "change": 1,
+      "reason": "KB洞察质量显著提升：02:05窗口产出「制造业扩产进攻」+「银企战略合作」结构性信号，与06/05「回购注销洪峰」「并购执行落地」形成连贯叙事。多窗口深度覆盖（23:05→08:05连续16个窗口），signals从碎片化→结构化。但hot_events/broker_views空白导致sentiment模块单腿走路，制约推荐引擎情绪因子准确性。"
+    },
+    "execution_health": {
+      "score": 4,
+      "change": 0,
+      "reason": "sniperd守护进程稳定运行(5天无重启)。但：1个cron job失败(ea214c0b exit=1)。$HOME profile覆盖路径bug持续影响（06/06 error.log中多次data_pipeline import失败）。DeepSeek流中断(RemoteProtocolError)导致06/06 22:09 cron会话丢弃。patch工具多次失败（escape-drift/f-string语法错误）。auto_repair陷入死循环——fix_log中15条entry全部重复parliament_flow/pipeline_retry，无一次成功记录(result全为?)。"
+    },
+    "recommendation_quality": {
+      "score": 4,
+      "change": 0,
+      "reason": "daily_pool仍为06/05产出（中兴通讯+德明利+立讯精密等9只），sector映射bug未修复（致欧科技/迪威尔/星德胜/瀚蓝环境/TCL均标「金融」→两日P0未落地）。pool无parliament结论。pool_archive停在06/05。evolution_action_items 7条pending全为P1/P2，无P0推动力。"
+    },
+    "gap_risk": {
+      "score": 4,
+      "change": -1,
+      "reason": "较昨日恶化。核心风险：周一(06/08)开盘面临美股暴跌(纳指-4.18%)冲击，但系统无波动率指数→无法自动触发冷却保护。push2 API周末DOWN属正常，但若周一09:15前未恢复→竞价采集器被迫走腾讯/Sina降级通道→东方财富竞价数据缺失（最精准的虚拟匹配价不可用）。4个缺失数据源零进展。hot_events P0仍开放。7条pending evolution items无进展。"
+    }
+  },
+  "trend": "declining",
+  "trend_detail": "数据完整度持平但缺口风险上升。信号质量因KB洞察结构化提升而改善(+1)，但周一开盘前系统缺少关键保护机制（波动率冷却+push2不确定）。auto_repair陷入循环是新增风险点。06/05识别的5个P0中0个已落地修复，累积技术债增加。",
   "top_actions": [
     {
       "priority": "P0",
-      "action": "修复Silver/Gold 06/05管线缺失 — 周五15:45/15:50 cron未产出",
-      "rationale": "Bronze→Silver→Gold ETL应在每个交易日15:45-15:50产出。但06/05(Silver)和06/05(Gold panel)均未找到文件。根因可能是：(1) cron_gold.sh路径双写（已知$HOME profile覆盖问题），(2) Bronze→Silver输入数据为空导致静默跳过。周一08:15需验证ETL恢复，否则factor_evaluator/ML/压力测试均无输入。",
-      "module": "silver_pipeline.py → gold_pipeline.py → cron_gold.sh"
+      "action": "【新】周一美股暴跌应急预案 — 手动设置侦察兵/狙击手升高资金门槛",
+      "rationale": "纳指-4.18%为本轮最大单日跌幅。系统无波动率指数→无法自动触发冷却。周一08:15 health check前手动：(1) 侦察兵intraday_gate资金流门槛从默认×1.5，(2) 狙击手开仓确认从P2升级为P1（至少2个独立信号），(3) 弹药库新开仓上限临时降低至单票5%（从8%），(4) 暂停创业板开仓（20cm波动+美股科技领跌）。若push2恢复→资金流数据可判断是否恐慌盘涌现。",
+      "module": "scout.py → _intraday_gate() / sniper.py → _build_entry_signal() / ammo_risk.py"
     },
     {
       "priority": "P0",
-      "action": "09:15前确认push2 API恢复 + 竞价采集器可运行",
-      "rationale": "当前02:08 push2_list/gainers同时DOWN（Remote end closed connection without response）。周末夜间可接受，但周一09:15竞价采集器依赖至少一个行情通道。如果push2仍DOWN → 三通道降级（腾讯→Sina）需在预报中启用。美股周五重挫-2.86%意味着周一A股高波动开盘，竞价信号价值极高。",
-      "module": "data_pipeline.py → check_data_health() → auction_collector.py"
-    },
-    {
-      "priority": "P0",
-      "action": "排查4个cron job脚本执行失败（exit=1/exit=?）",
-      "rationale": "system_health_check发现4个cron job失败: 5c2e0700(exit=?), 911d8e44(exit=1), 99d740ca(exit=?), ea214c0b(exit=?)。exit=?表示脚本未正常返回退出码（可能被信号终止或路径错误）。需：(1) xxd检查对应cron脚本首字节是否#!(行号污染回归)，(2) 检查venv绝对路径是否正确，(3) 手动重跑确认。",
-      "module": "cron_*.sh → system_health_check.py维度6"
-    },
-    {
-      "priority": "P0",
-      "action": "修复sector分类映射系统性错误（致欧科技/迪威尔/星德胜/瀚蓝环境/TCL → 均标记为「金融」）",
-      "rationale": "昨日(06/05)诊断已标记此P0，今日仍未修复。daily_pool中5/9标的sector显示「金融」——致欧=跨境电商、迪威尔=油气设备、星德胜=电机、瀚蓝=环保、TCL=面板，无一为金融行业。sector映射直接影响瞭望塔板块聚类和侦察兵板块热度评分。根因在stock_recommender.py _enrich_sector()的tushare industry字段映射偏移。周一08:25推荐引擎运行前必须修复。连续两日标记P0未修复→升级P0+。",
+      "action": "【升级P0+】修复sector分类映射 — 致欧科技/迪威尔/星德胜/瀚蓝环境/TCL均错标「金融」",
+      "rationale": "连续两日标记P0未修复→升级P0+。5/9标的(56%)行业分类错误，影响：瞭望塔板块聚类、侦察兵板块热度评分、推荐引擎sentiment.industry_bonus。根因在stock_recommender.py _enrich_sector()中tushare industry字段→显示名称映射偏移。周一08:25推荐引擎运行前必须修复，否则新pool继续产出错误行业标签。修复方法：确认tushare industry字段取值→建立正确映射表（如'家用电器'→'家电'、'环保'→'公用事业'）。",
       "module": "stock_recommender.py → _enrich_sector()"
     },
     {
       "priority": "P0",
-      "action": "修复hot_events数据质量（data_hub --discover标记P0）",
-      "rationale": "hot_events数据质量不稳定是唯一被gap discovery标记P0的数据源缺陷，直接影响推荐引擎sentiment因子评分。KB洞察在02:07产生了高质量事件信号（电力跌停/机器人催化/退市风险），说明底层公告采集正常，但hot_events聚合层可能静默降级。检查mega_collector.py中hot_events采集→聚合链路。",
+      "action": "【诊断】auto_repair死循环 — fix_log 15条全为parliament_flow/pipeline_retry且result=?",
+      "rationale": "fix_log最近15条entry完全相同（parliament_flow/pipeline_retry交替，timestamp=?, result=?），说明auto_repair.py陷入死循环：反复尝试修复同一问题但每次都静默失败→下次health check再次触发修复→循环。根因可能：(1) _run_script使用$HOME→假路径导致所有subprocess rc=-1，(2) 修复函数无幂等检测→同一问题无限重试，(3) result未正确写入fix_log。修复：添加'dimension+timestamp'去重逻辑，24h内同一维度最多修复1次。",
+      "module": "auto_repair.py → _run_script() / _dedup_fix()"
+    },
+    {
+      "priority": "P0",
+      "action": "修复cron job ea214c0b (exit=1)",
+      "rationale": "system_health_check维度6发现1个cron脚本执行失败(ea214c0b exit=1)。需要：(1) 定位ea214c0b对应的cron脚本，(2) xxd检查首字节是否为#!（行号污染回归），(3) 检查venv绝对路径，手动重跑确认。此脚本已连续失败，可能影响关键定时任务。",
+      "module": "cron_*.sh → system_health_check.py维度6"
+    },
+    {
+      "priority": "P0",
+      "action": "修复hot_events数据质量 — data_hub标记P0",
+      "rationale": "唯一被gap discovery标记P0的数据源缺陷。mega_latest中hot_events连续多窗口count=0，直接影响推荐引擎sentiment因子。检查mega_collector.py中hot_events采集链路：东方财富新闻API→解析→聚合。可能是：(1) API限流静默返回空，(2) 聚合逻辑过滤过严，(3) 周末确实无热点（但周六晚间公告重组49条不应全0）。",
       "module": "mega_collector.py → hot_events采集聚合"
     },
     {
       "priority": "P1",
-      "action": "接入波动率指数（VIX/50ETF波指）→ 行情冷却触发机制，周一前评估优先级",
-      "rationale": "美股周五纳指重挫-2.86%，周一A股科技板块大概率承压。当前系统无恐慌指标，高波动市无法自动触发冷却。50ETF期权隐含波动率(akshare option_50etf_vol)可接入。波指>30→侦察兵/狙击手自动提高资金门槛，>40→暂停新开仓。美股暴跌背景下此P1应升级为紧急事项——周一开盘前至少手动评估是否需要冷却。",
+      "action": "【紧急升级】接入波动率指数 — 美股暴跌背景下P1→紧急",
+      "rationale": "纳指-4.18%暴跌使波动率保护从「锦上添花」变为「生存必需」。50ETF期权隐含波动率(akshare option_50etf_vol)可在一小时内接入。波指>25→侦察兵自动提高资金门槛20%，>30→暂停新开仓，>35→仅平仓不开仓。周一开盘前至少手动评估是否需要冷却。",
       "module": "data_pipeline.py → 新增 get_volatility_index()"
     },
     {
       "priority": "P1",
-      "action": "议会链路恢复 — parliament_log 超27h无新记录",
-      "rationale": "parliament_log最后一条: 06/04 22:24 (bias=中性)。鉴于06/05(周五)盘后有daily_pool生成(含中兴通讯scout_intraday)，议会应在17:00-18:00对pool做review。但无新记录。根因可能是：(1) 研究员研学(02:00)未触发议会轮，(2) parliament脚本路径问题，(3) 议会仅在有新推荐引擎产出时才触发(06/05 pool只有scout盘中标的不触发)。周一需确认链路。",
+      "action": "议会链路恢复 — parliament_log 超60h无新记录",
+      "rationale": "parliament_log最后一条: 06/04 22:24 (bias=中性)。06/05盘后daily_pool含9只标的但无议会review。system_health_check维度3标记'parliament_log.json不存在'(可能路径错误或文件被清空)。周一08:25推荐引擎产出新pool后需确保议会自动触发（researchers.py parliament_round）。若仍失败→检查parliament_log.json写入路径。",
       "module": "researchers.py → parliament_round()"
     },
     {
       "priority": "P1",
-      "action": "接入指数PE分位数 → 弹药库仓位中枢动态调整（低垂果实）",
-      "rationale": "market_snapshot已含index_valuation: 上证50 PE 11.2/分位66.8%、沪深300 PE 14.5/分位96.0%、创业板PE 48.5/分位99.6% →「轻仓/防御」。数据已有但弹药库仓位中枢未消费。打通pipeline: market_snapshot.index_valuation.position_signal → ammo_risk.py仓位建议。估值分位99.6%的创业板在当前美股暴跌环境下尤其脆弱。",
-      "module": "market_snapshot.py → ammo_risk.py"
+      "action": "接入指数PE分位数 → 弹药库仓位中枢动态调整",
+      "rationale": "低垂果实。market_snapshot已含index_valuation(上证50 PE 11.2/分位66.8%、沪深300 14.5/96.0%、中证500 36.7/91.2%)，但未接入弹药库。接入后：(1) 平均分位>85%→仓位上限从70%→50%，(2) 沪深300分位>90%→暂停新开仓，(3) 上证50分位<50%→允许加仓至80%。当前沪深300 PE 14.5×96%分位→接近历史顶部→应触发防御。",
+      "module": "ammo_risk.py → 新增 _index_valuation_position_control()"
     }
   ],
-  "trend": {
-    "vs_last_week": "declining",
-    "vs_yesterday": "declining",
-    "detail": "昨日(06/05)五维均分6.6（data:7/signal:7/exec:8/reco:6/gap:5），今日(06/06 02:10)降至4.6（data:5/signal:5/exec:4/reco:4/gap:5）。三大恶化：(1) push2 API从f62=ok双降级为list|gainers同时DOWN→侦察兵资金流筛选周一可能受影响,(2) Silver/Gold 06/05管线未产出→周五ETL断裂导致因子/ML/压力测试周末无输入,(3) 4个cron job失败+parliament静默27h→执行层裂缝扩大。新增外部风险：美股周五纳指重挫-2.86%(kb_insights 02:07 Flag)，周一A股科技板块承压概率高→波动率缺口(P1升至紧急)和指数估值消费(P1)的优先级需上调。未改善项：sector映射连续两日P0未修、hot_events P0未修、4个缺失数据源未接入。相比上周W22「全链路通+系统稳定」的高水位，本周处于「执行层裂缝扩大+外部风险骤升」的下行拐点。"
+  "kb_insight_summary": {
+    "latest_window": "2026-06-07T02:05",
+    "key_signals": [
+      "制造业扩产信号：寒锐钴业4万吨电积镍+三联锻造高温合金叶片（合同→扩产闭环）",
+      "银企战略合作新模式：ST司特×工行、中际联合×招行（信贷向制造业倾斜）",
+      "美股暴跌风险：纳指-4.18%（06/06 08:05修正），周一开盘强外盘影响",
+      "北向逆势净流入40.5亿（跌市吸筹，T-1滞后需周一验证）",
+      "回购注销洪峰常态化：增持回购390条占75.7%→回落至40%→结构性切换",
+      "重组并购执行落地：70条重组+40条分红，M&A从政策驱动转向批量执行"
+    ],
+    "coverage_quality": "优秀 — 23:05→08:05连续16个窗口覆盖，signal types从碎片化→结构化叙事"
   },
-  "summary": "系统健康度从昨日6.6降至4.6（-2.0），核心恶化：(1)push2双API降级DOWN,(2)Silver/Gold ETL周五断裂,(3)美股-2.86%外部冲击逼近。kb_insights信号质量仍在(北向逆势+40.5亿/机器人催化/电力跌停)，但执行层裂缝扩大——4 cron失败+parliament静默27h+Silver/Gold缺失。P0行动清单暴涨至5项(含连续两日未修的sector+hot_events)。周一开盘前必须：(a)验证push2恢复+竞价采集就绪,(b)排查ETL断裂,(c)评估美股暴跌是否需要触发手动冷却。"
+  "system_health_snapshot": {
+    "checked_at": "2026-06-07T02:10",
+    "overall": "degraded",
+    "issues_count": 10,
+    "critical": [
+      "push2_list/push2_gainers: RemoteDisconnected（周末预期，周一09:15前需恢复）",
+      "cron job ea214c0b: exit=1",
+      "Silver 06-07: 未生成（周六无交易数据）",
+      "Gold panel 06-07: 不存在（周六无交易数据）",
+      "daily_pool: 36h stale, 无parliament结论",
+      "auto_repair: 死循环（15条重复fix）"
+    ],
+    "ok": [
+      "sniperd: 运行中(5天)，等待周一开盘",
+      "sina_realtime: ok",
+      "baostock_klines: ok",
+      "kb_insights: 0.0h fresh, 50 entries",
+      "mega_latest: 0.1h fresh",
+      "north_flow: VERIFIED 5星",
+      "cron脚本完整性: 28/28通过shebang检查"
+    ]
+  },
+  "vs_previous_diagnosis": {
+    "previous_timestamp": "2026-06-06T02:10:00",
+    "p0_resolved": 0,
+    "p0_carried_forward": 5,
+    "p0_new": 2,
+    "p1_resolved": 0,
+    "p1_carried_forward": 2,
+    "p1_new": 1,
+    "note": "06/05识别的5个P0在24h内零落地——sector映射/热点事件/cron修复/Silver-Gold管线/push2确认，全部开放。新增P0：美股暴跌应急+auto_repair死循环。技术债累积速率超过修复速率。"
+  }
 }

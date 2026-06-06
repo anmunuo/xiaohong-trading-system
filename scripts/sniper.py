@@ -16,7 +16,7 @@ v3.0 升级:
   python3 sniper.py [--push] [--auction]
 """
 
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 import sys, os, json
 from pathlib import Path
@@ -32,10 +32,11 @@ from data_pipeline import get_stock_realtime, get_top_flow_stocks, get_market_mo
 
 HOLDINGS_PATH = WORKSPACE / 'data' / 'holdings.json'
 POOL_PATH = SCRIPT_DIR / 'data' / 'daily_pool.json'
-
+TARGET_POOL_PATH = SCRIPT_DIR / 'data' / 'target_pool.json'
 
 # ═══════════════════════════════════════════
 # 1. 数据加载
+# ═══════════════════════════════════════════
 # ═══════════════════════════════════════════
 
 def load_holdings() -> Dict:
@@ -79,6 +80,16 @@ def load_pool_codes() -> set:
         except Exception:
             pass
     return codes
+
+
+def load_target_pool() -> Dict:
+    """🆕 加载目标池 (当日可操作 3 只)"""
+    if not TARGET_POOL_PATH.exists():
+        return {"stocks": []}
+    try:
+        return json.loads(TARGET_POOL_PATH.read_text(encoding='utf-8'))
+    except Exception:
+        return {"stocks": []}
 
 
 # ═══════════════════════════════════════════
@@ -184,62 +195,196 @@ def analyze_position(pos: Dict, quote: Dict, pool_codes: set) -> Dict:
 
 
 # ═══════════════════════════════════════════
-# 3. 入场信号（推荐池标的）
+# 3. 入场信号（目标池标的 → 量比 + 分时K线）
 # ═══════════════════════════════════════════
 
-def analyze_entries(pool_codes: set, holdings_codes: set) -> List[Dict]:
+def analyze_entries(target_pool_stocks: List[Dict], holdings_codes: set) -> List[Dict]:
     """
-    扫描推荐池中未持仓标的，检查是否达到入场条件。
+    🆕 v3.1 从目标池中分析入场信号。
+
+    使用量比 + 分时K线技术面决定开仓:
+      · 量比 > 1.5 → 放量，看方向
+      · 分时K线形态 → V型反转/突破前高/缩量回踩MA
+      · 综合判断 → 建仓/等信号/观望
     """
     entries = []
-    candidates = pool_codes - holdings_codes
-    if not candidates:
+
+    if not target_pool_stocks:
         return entries
 
-    # 获取推荐池标的实时行情
-    codes = list(candidates)[:10]
+    # 过滤已持仓
+    codes = [s["code"] for s in target_pool_stocks if s["code"] not in holdings_codes]
+    if not codes:
+        return entries
+
+    # 获取实时行情
     try:
         quotes = get_stock_realtime(codes)
     except Exception:
         return entries
 
-    for code in codes:
-        q = quotes.get(code, {})
-        if not q or not q.get('close'):
+    # 逐只分析
+    for s in target_pool_stocks:
+        code = s["code"]
+        if code in holdings_codes:
             continue
 
-        close = float(q.get('close', 0))
-        change = float(q.get('change_pct', 0))
-        volume = float(q.get('volume', 0))
-        avg_vol = float(q.get('avg_volume_5', 0))
-        ma20 = float(q.get('ma20', 0))
+        q = quotes.get(code, {})
+        if not q or not q.get("close"):
+            continue
 
+        close = float(q.get("close", 0))
+        change = float(q.get("change_pct", 0))
         if close <= 0:
             continue
 
-        vol_ratio = volume / avg_vol if avg_vol > 0 else 1
-        ma_dev = (close - ma20) / ma20 * 100 if ma20 > 0 else 0
+        # ── 量比分析 ──
+        vol_ratio = _get_volume_ratio(code, q)
 
-        # 入场条件
-        entry_reason = None
-        if vol_ratio > 1.5 and change > 0 and abs(ma_dev) < 5:
-            entry_reason = f'放量 {vol_ratio:.1f}x · MA20附近 · 可建底仓'
-        elif change < -3 and vol_ratio < 1:
-            entry_reason = f'缩量回调 {change:.1f}% · 等止跌信号'
-        elif vol_ratio > 2 and change > 0:
-            entry_reason = f'强放量 {vol_ratio:.1f}x · 等回踩确认'
+        # ── 分时K线分析 ──
+        intraday_signal = _analyze_intraday_kline(code, close)
 
-        if entry_reason:
-            entries.append({
-                'code': code,
-                'name': q.get('name', code),
-                'price': close,
-                'change': change,
-                'reason': entry_reason,
-                'vol_ratio': round(vol_ratio, 1),
-            })
+        # ── 综合入场判断 ──
+        entry_reason, entry_ready = _build_entry_signal(
+            code, q.get("name", code), close, change, vol_ratio, intraday_signal, s
+        )
 
-    return entries[:4]
+        entries.append({
+            "code": code,
+            "name": q.get("name", code),
+            "price": close,
+            "change": round(change, 1),
+            "vol_ratio": round(vol_ratio, 1),
+            "intraday_signal": intraday_signal,
+            "reason": entry_reason,
+            "entry_ready": entry_ready,
+            "target_score": s.get("score", 0),
+            "parliament": s.get("parliament", {}).get("bias", "?"),
+        })
+
+    # 按 entry_ready 排序
+    entries.sort(key=lambda x: (x["entry_ready"], x.get("target_score", 0)), reverse=True)
+    return entries
+
+
+def _get_volume_ratio(code: str, quote: dict) -> float:
+    """获取量比"""
+    vol = float(quote.get("volume", 0))
+    # 从挂载的 K 线数据中获取
+    try:
+        kline_vol = float(quote.get("avg_volume_5", 0))
+    except Exception:
+        kline_vol = 0
+    if kline_vol > 0:
+        return round(vol / kline_vol, 2)
+    # Fallback: 使用 quote 中的成交量比
+    return float(quote.get("volume_ratio", 1.0))
+
+
+def _analyze_intraday_kline(code: str, current_price: float) -> dict:
+    """
+    🆕 分时K线技术面分析。
+
+    拉取 5 分钟分时K线 (48 根 = 4小时)，判断:
+      · 趋势: 均线上行/下行/横盘
+      · 形态: V反/突破/回踩/冲高回落
+      · 量价: 放量涨/缩量跌/放量滞涨
+    """
+    signal = {"pattern": "横盘", "trend": "neutral", "volume_ok": False, "ready": False}
+
+    try:
+        from data_pipeline import get_intraday_minutes
+        bars = get_intraday_minutes(code, scale=5, count=48)
+    except Exception:
+        return signal
+
+    if not bars or len(bars) < 10:
+        return signal
+
+    closes = [b.get("close", 0) for b in bars if b.get("close", 0) > 0]
+    volumes = [b.get("volume", 0) for b in bars if b.get("volume", 0) > 0]
+
+    if len(closes) < 10:
+        return signal
+
+    # 计算短期均线 (前5根/前10根)
+    ma5 = sum(closes[-5:]) / len(closes[-5:])
+    ma10 = sum(closes[-10:]) / len(closes[-10:])
+    last_close = closes[-1]
+
+    # 趋势判断
+    if ma5 > ma10 and last_close > ma5:
+        signal["trend"] = "up"
+    elif ma5 < ma10 and last_close < ma5:
+        signal["trend"] = "down"
+    else:
+        signal["trend"] = "neutral"
+
+    # 形态识别
+    recent_3 = closes[-3:]
+    if len(recent_3) == 3:
+        if recent_3[0] > recent_3[1] and recent_3[1] < recent_3[2]:
+            signal["pattern"] = "V型反转"
+        elif recent_3[0] < recent_3[1] < recent_3[2]:
+            signal["pattern"] = "连续上攻"
+        elif recent_3[0] > recent_3[1] > recent_3[2]:
+            signal["pattern"] = "连续回落"
+
+    # 量价关系
+    if len(volumes) >= 5:
+        recent_vol = sum(volumes[-3:]) / 3
+        avg_vol = sum(volumes) / len(volumes)
+        if recent_vol > avg_vol * 1.3:
+            signal["volume_ok"] = True
+
+    # 综合入场判断
+    if (signal["trend"] == "up" and signal["pattern"] in ("V型反转", "连续上攻")
+            and signal["volume_ok"]):
+        signal["ready"] = True
+
+    return signal
+
+
+def _build_entry_signal(code: str, name: str, close: float, change: float,
+                        vol_ratio: float, kline: dict, target: dict) -> tuple:
+    """
+    综合量比 + 分时K线 + 目标池评分 → 入场建议。
+    返回 (reason, entry_ready)
+    """
+    parliament_bias = target.get("parliament", {}).get("bias", "未知")
+    score = target.get("score", 0)
+
+    reasons = []
+
+    # 量比判断
+    if vol_ratio > 2.0:
+        reasons.append(f"强放量{vol_ratio:.1f}x")
+    elif vol_ratio > 1.5:
+        reasons.append(f"放量{vol_ratio:.1f}x")
+    elif vol_ratio < 0.8:
+        reasons.append(f"缩量{vol_ratio:.1f}x")
+
+    # 分时K线
+    reasons.append(f"分时{kline['trend']}/{kline['pattern']}")
+
+    # 议会信号
+    if "偏多" in parliament_bias:
+        reasons.append("议会偏多")
+    elif parliament_bias == "偏空":
+        reasons.append("⚠️议会偏空")
+
+    reason = " · ".join(reasons) if reasons else "数据不足"
+
+    # 入场决策
+    ready = False
+    if kline.get("ready") and vol_ratio > 1.2 and change > -3:
+        ready = True
+        if vol_ratio > 1.5:
+            reason += f" → 🟢 放量突破 · 可建底仓"
+        else:
+            reason += f" → 🟢 形态确认 · 等回踩入场"
+
+    return reason, ready
 
 
 # ═══════════════════════════════════════════
@@ -309,17 +454,29 @@ def format_report(holdings_data: Dict, results: List[Dict],
 
     # ═══ 入场信号 ═══
     if entries:
+        ready_count = sum(1 for e in entries if e.get("entry_ready"))
         lines.append(f"---")
         lines.append(f"")
-        lines.append(f"### 🎯 入场观察（{len(entries)}只）")
+        lines.append(f"### 🎯 目标池入场（{len(entries)}只，{ready_count}只就绪）")
         lines.append(f"")
-        lines.append(f"> 推荐池中未持仓标的，达到建仓条件")
+        lines.append(f"> 目标池标的 · 量比 + 分时K线 + 议会信号")
         lines.append(f"")
         for e in entries:
-            lines.append(f"**{e['code']} {e['name']}** 现价 {e['price']:.2f} {e['change']:+.1f}%")
-            lines.append(f"> {e['reason']}")
+            status = '🟢' if e.get('entry_ready') else '⏳'
+            code = e.get('code','')
+            name = e.get('name','')
+            price = e.get('price',0)
+            change = e.get('change',0)
+            vol_ratio = e.get('vol_ratio',1.0)
+            parliament = e.get('parliament','?')
+            target_score = e.get('target_score',0)
+            reason = e.get('reason','')
+            lines.append(f"{status} **{code} {name}**  "
+                        f"{price:.2f} {change:+.1f}%  "
+                        f"量比:{vol_ratio:.1f}  "
+                        f"议会:{parliament}  评分:{target_score:.0f}")
+            lines.append(f"> {reason}")
             lines.append(f"")
-
     # ═══ 市场环境 ═══
     try:
         mf = get_market_money_flow()
@@ -336,7 +493,7 @@ def format_report(holdings_data: Dict, results: List[Dict],
 
     lines.append(f"---")
     lines.append(f"")
-    lines.append(f"*狙击手 v3.0 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
+    lines.append(f"*狙击手 v3.1 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
 
     return '\n'.join(lines)
 
@@ -364,9 +521,11 @@ def run_sniper() -> tuple:
             result = analyze_position(pos, quote, pool_codes)
             results.append(result)
 
-    # 入场信号
+    # 🆕 入场信号 — 从目标池分析
     holdings_codes = {p['code'] for p in positions}
-    entries = analyze_entries(pool_codes, holdings_codes)
+    target_pool = load_target_pool()
+    target_stocks = target_pool.get('stocks', [])
+    entries = analyze_entries(target_stocks, holdings_codes)
 
     return holdings_data, results, entries
 
@@ -377,7 +536,7 @@ def run_sniper() -> tuple:
 
 def main():
     import argparse
-    p = argparse.ArgumentParser(description='狙击手 v3.0 · 日内监控')
+    p = argparse.ArgumentParser(description='狙击手 v3.1 · 日内监控')
     p.add_argument('--push', action='store_true', help='推送飞书')
     p.add_argument('--auction', action='store_true', help='叠加竞价信号')
     args = p.parse_args()

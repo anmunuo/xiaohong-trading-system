@@ -347,10 +347,10 @@
         "source": "eastmoney",
         "category": "fund_flow",
         "date": "2026-06-06",
-        "fetched_at": "2026-06-06T04:01:30.796019",
+        "fetched_at": "2026-06-06T23:00:54.169126",
         "item_count": 0,
         "file_path": "fund_flow/2026/06/06/eastmoney.json.gz",
-        "sha256": "aceb90d42f3b735c",
+        "sha256": "8804abfcd0bcc2d6",
         "fields": [
           "code",
           "name",
@@ -365,10 +365,10 @@
         "source": "tushare",
         "category": "fund_flow",
         "date": "2026-06-06",
-        "fetched_at": "2026-06-06T04:01:44.552832",
+        "fetched_at": "2026-06-06T23:01:05.913931",
         "item_count": 8,
         "file_path": "fund_flow/2026/06/06/tushare.json.gz",
-        "sha256": "934e9682f56573c6",
+        "sha256": "77cdd86e67db4fb8",
         "fields": [
           "net_flow",
           "status"
@@ -379,10 +379,10 @@
         "source": "akshare",
         "category": "market_index",
         "date": "2026-06-06",
-        "fetched_at": "2026-06-06T04:01:45.641866",
+        "fetched_at": "2026-06-06T23:01:07.056991",
         "item_count": 4,
         "file_path": "market_index/2026/06/06/akshare.json.gz",
-        "sha256": "bd62ec5a3a8eebbf",
+        "sha256": "8e7d7348c09dc71b",
         "fields": [
           "asia",
           "europe",
@@ -393,6 +393,61 @@
     ],
     "total_items": 12,
     "completeness_pct": 0.0,
-    "generated_at": "2026-06-06T04:01:45.642215"
+    "generated_at": "2026-06-06T23:01:07.057395"
+  },
+  "2026-06-07": {
+    "date": "2026-06-07",
+    "records": [
+      {
+        "source": "eastmoney",
+        "category": "fund_flow",
+        "date": "2026-06-07",
+        "fetched_at": "2026-06-07T04:01:36.542505",
+        "item_count": 0,
+        "file_path": "fund_flow/2026/06/07/eastmoney.json.gz",
+        "sha256": "19d9c850b46c6216",
+        "fields": [
+          "code",
+          "name",
+          "net_flow",
+          "change_pct",
+          "turnover",
+          "volume_ratio"
+        ],
+        "notes": ""
+      },
+      {
+        "source": "tushare",
+        "category": "fund_flow",
+        "date": "2026-06-07",
+        "fetched_at": "2026-06-07T04:01:45.456679",
+        "item_count": 8,
+        "file_path": "fund_flow/2026/06/07/tushare.json.gz",
+        "sha256": "7ba538a0bd2e4694",
+        "fields": [
+          "net_flow",
+          "status"
+        ],
+        "notes": ""
+      },
+      {
+        "source": "akshare",
+        "category": "market_index",
+        "date": "2026-06-07",
+        "fetched_at": "2026-06-07T04:01:46.664287",
+        "item_count": 4,
+        "file_path": "market_index/2026/06/07/akshare.json.gz",
+        "sha256": "99b15a86e5e7bfc5",
+        "fields": [
+          "asia",
+          "europe",
+          "us"
+        ],
+        "notes": ""
+      }
+    ],
+    "total_items": 12,
+    "completeness_pct": 0.0,
+    "generated_at": "2026-06-07T04:01:46.664682"
   }
 }

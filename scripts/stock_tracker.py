@@ -214,7 +214,10 @@ class StockTracker:
             if s["snapshots"] and s["snapshots"][-1].get("date") == today:
                 continue
 
-            vs_entry = round((close - s["entry_close"]) / s["entry_close"] * 100, 2)
+            if s["entry_close"] <= 0:
+                vs_entry = 0  # entry_close 缺失，无法计算相对收益率
+            else:
+                vs_entry = round((close - s["entry_close"]) / s["entry_close"] * 100, 2)
             change_pct = 0
             if len(s["snapshots"]) >= 1:
                 prev_close = s["snapshots"][-1].get("close", close)

@@ -18,7 +18,7 @@ v2.0 新增:
   python3 researchers.py --verify         # 验证过往假设
 """
 
-import json, os, sys, re
+import json, os, sys, re, time
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
@@ -1377,6 +1377,347 @@ def run_study_session():
     return all_reports
 
 
+def run_quick_parliament(code: str, name: str = "") -> Dict:
+    """
+    🆕 v2.3 快速单票议会 — 盘中侦察兵调用。
+
+    2 轮快速研判 (独立研判 → 小红终审)，适合盘中实时决策。
+    与完整议会不同：砍掉交叉辩论轮、不生成独立报告文件。
+
+    返回:
+      {
+        bias: "偏多" | "偏空" | "中性",
+        confidence: 0.0-1.0,
+        bull_signals: int,
+        bear_signals: int,
+        red_flags: [str],
+        passed: bool,          # confidence ≥ 0.5 且 bias != "偏空"
+        duration_s: float      # 耗时 (秒)
+      }
+    """
+    t0 = time.time()
+    state = ResearcherState()
+    state.load()
+    researchers = get_all_researchers(state)
+
+    # 只取核心研究员：多方/空方/技术面/基本面 (跳过数据和板块研究员)
+    core_roles = {"bull", "bear", "technical", "fundamental"}
+    core_researchers = [r for r in researchers if r.role_id in core_roles]
+
+    context = build_stock_context(code, name)
+
+    # ── Round 1: 独立研判 ──
+    reports = {}
+    bull_signals, bear_signals = 0, 0
+    all_flags = []
+
+    for r in core_researchers:
+        try:
+            report = r.analyze(context)
+            reports[r.role_id] = {
+                "author": r.name, "emoji": r.emoji,
+                "perspective": report.perspective,
+                "confidence": report.confidence,
+                "red_flags": report.red_flags[:3] if report.red_flags else [],
+            }
+            if r.role_id in ("bull", "technical"):
+                if report.confidence >= 0.5 and report.key_findings:
+                    bull_signals += 1
+            if r.role_id in ("bear",):
+                if report.red_flags and len(report.red_flags) >= 2:
+                    bear_signals += 1
+            all_flags.extend(report.red_flags[:3] if report.red_flags else [])
+        except Exception as e:
+            reports[r.role_id] = {
+                "author": r.name, "emoji": r.emoji,
+                "perspective": f"分析异常: {e}",
+                "confidence": 0.0,
+                "red_flags": [f"分析失败: {str(e)[:80]}"]
+            }
+
+    # ── Round 2: 小红终审 ──
+    total_votes = len(core_researchers)
+    effective_votes = max(1, total_votes - sum(1 for rp in reports.values() if rp["confidence"] == 0))
+    bias_ratio = bull_signals / max(1, effective_votes)
+
+    if bias_ratio >= 0.67:
+        bias = "偏多"
+        confidence = min(0.9, 0.5 + bias_ratio * 0.3)
+    elif bias_ratio >= 0.5:
+        bias = "中性偏多"
+        confidence = 0.4 + bias_ratio * 0.2
+    elif bull_signals >= bear_signals:
+        bias = "中性"
+        confidence = 0.3
+    else:
+        bias = "偏空"
+        bear_ratio = bear_signals / max(1, effective_votes)
+        confidence = min(0.7, 0.3 + bear_ratio * 0.3)
+
+    unique_flags = list(dict.fromkeys(all_flags))[:5]
+    duration_s = round(time.time() - t0, 1)
+
+    # 通过条件: 非偏空 且 置信度≥0.5
+    passed = bias != "偏空" and confidence >= 0.5
+
+    return {
+        "code": code,
+        "name": name,
+        "bias": bias,
+        "confidence": round(confidence, 2),
+        "bull_signals": bull_signals,
+        "bear_signals": bear_signals,
+        "red_flags": unique_flags,
+        "passed": passed,
+        "duration_s": duration_s,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+def run_winner_study(gainers: List[Dict]) -> str:
+    """
+    🆕 v2.4 涨幅榜学习 — 收盘后研究员对6%+个股做领域专项分析。
+
+    每位研究员从自己的专业领域分析涨幅榜:
+      📊 数据: 涨幅前有哪些数据信号（资金/量价/板块）？
+      🏢 基本面: 涨因是否可追溯到基本面催化剂（财报/合同/政策）？
+      📈 技术面: 涨幅前的技术形态共性（突破/回踩/V反）？
+      🐂 多方: 系统漏掉了哪些看多信号？
+      🐻 空方: 哪些空方信号被市场证伪？
+      💰 资金面: 资金流入模式（主力/北向/游资）？
+
+    返回: Markdown 格式研究报告
+    """
+    if not gainers:
+        return "无涨幅 ≥6% 数据"
+
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    state = ResearcherState()
+    state.load()
+    researchers = get_all_researchers(state)
+
+    # 取 TOP 5 做深度分析（避免分析 50 只耗时过长）
+    top_gainers = gainers[:5]
+
+    lines = [
+        f"# 🏆 涨幅榜深度学习报告",
+        f"> {date_str}  |  涨幅 ≥6%: {len(gainers)}只  |  深度分析: {len(top_gainers)}只",
+        "",
+        "---",
+        "",
+        "## 📋 今日涨幅榜 TOP 5",
+        "",
+    ]
+
+    for i, g in enumerate(top_gainers, 1):
+        code = g.get('code', '?')
+        name = g.get('name', '?')
+        chg = g.get('change_pct', 0)
+        lines.append(f"| {i} | {code} | {name} | {chg:+.1f}% |")
+    lines.append("")
+
+    # ── 逐只深度分析 ──
+    for rank, g in enumerate(top_gainers, 1):
+        code = str(g.get('code', ''))
+        name = str(g.get('name', ''))
+        chg = g.get('change_pct', 0)
+
+        lines.append(f"---")
+        lines.append(f"")
+        lines.append(f"## #{rank} {code} {name}  (+{chg:.1f}%)")
+        lines.append(f"")
+
+        context = build_stock_context(code, name)
+
+        for r in researchers:
+            try:
+                report = r.analyze(context)
+                emoji = r.emoji
+
+                # 提取领域专属学习点
+                lesson = _extract_domain_lesson(r.role_id, report, g)
+                if lesson:
+                    lines.append(f"### {emoji} {r.name}")
+                    lines.append(f"")
+                    lines.append(f"{lesson}")
+                    lines.append(f"")
+            except Exception as e:
+                lines.append(f"### {r.emoji} {r.name}: 分析异常 ({str(e)[:60]})")
+                lines.append(f"")
+
+    # ── 跨标的共性与学习 ──
+    lines.append(f"---")
+    lines.append(f"")
+    lines.append(f"## 🧠 跨标的共性与系统学习")
+    lines.append(f"")
+
+    common_patterns = _extract_common_patterns(top_gainers, researchers)
+    for pattern in common_patterns:
+        lines.append(f"- {pattern}")
+    lines.append(f"")
+
+    lines.append(f"---")
+    lines.append(f"*研究员涨幅榜学习 v2.4 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
+
+    report = "\n".join(lines)
+
+    # 保存报告
+    report_path = REPORTS_DIR / f"涨幅榜学习-{date_str}.md"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(report)
+
+    return report
+
+
+def _extract_domain_lesson(role_id: str, report, gainer: Dict) -> str:
+    """从研究员的报告提取该领域的专属学习洞察"""
+    chg = gainer.get('change_pct', 0)
+    name = gainer.get('name', '')
+
+    if role_id == "data":
+        # 数据研究员：关注数据信号
+        key = []
+        if report.key_findings:
+            key.append(f"数据发现: {report.key_findings[0][:120]}")
+        if report.data_evidence:
+            key.append(f"证据: {report.data_evidence[0][:120]}")
+        if not key:
+            key.append(f"数据层面: {report.perspective[:200]}")
+        return "\n".join(f"> {k}" for k in key)
+
+    elif role_id == "fundamental":
+        # 基本面：寻找催化剂
+        key = []
+        if report.key_findings:
+            key.append(f"基本面驱动力: {report.key_findings[0][:150]}")
+        if report.data_evidence:
+            key.append(f"财报/公告依据: {report.data_evidence[0][:150]}")
+        if not key:
+            key.append(f"基本面视角: {report.perspective[:200]}")
+        if report.red_flags:
+            key.append(f"⚠️ 但仍需关注: {report.red_flags[0][:100]}")
+        return "\n".join(f"> {k}" for k in key)
+
+    elif role_id == "technical":
+        # 技术面：形态特征
+        key = []
+        if report.key_findings:
+            key.append(f"技术形态: {report.key_findings[0][:150]}")
+        if report.data_evidence:
+            key.append(f"量价数据: {report.data_evidence[0][:150]}")
+        if not key:
+            key.append(f"技术视角: {report.perspective[:200]}")
+        # 提取学习点
+        key.append(f"💡 学习: {name} +{chg:.1f}% — 研究其涨幅前的技术setup，识别可复现形态")
+        return "\n".join(f"> {k}" for k in key)
+
+    elif role_id == "bull":
+        # 多方：检查是否漏掉信号
+        key = []
+        if report.key_findings:
+            key.append(f"多方信号: {report.key_findings[0][:150]}")
+        key.append(f"💡 反思: 系统是否在涨幅前识别到了这些看多信号？如果漏掉了，为什么？")
+        if report.red_flags and len(report.red_flags) > 0:
+            key.append(f"⚠️ 残余风险: {report.red_flags[0][:100]}")
+        return "\n".join(f"> {k}" for k in key)
+
+    elif role_id == "bear":
+        # 空方：哪些担忧被证伪
+        key = []
+        if report.red_flags:
+            key.append(f"空方曾担忧: {report.red_flags[0][:150]}")
+            key.append(f"💡 教训: 这些空方信号今天被市场证伪（涨幅{chg:+.1f}%），权重是否需要下调？")
+        else:
+            key.append(f"空方未发现显著红旗 — {name} 的涨幅没有明显基本面/技术面隐患")
+        return "\n".join(f"> {k}" for k in key)
+
+    elif role_id == "capital_flow":
+        # 资金面：资金流模式
+        key = []
+        if report.key_findings:
+            key.append(f"资金特征: {report.key_findings[0][:150]}")
+        if report.data_evidence:
+            key.append(f"资金数据: {report.data_evidence[0][:150]}")
+        if not key:
+            key.append(f"资金视角: {report.perspective[:200]}")
+        return "\n".join(f"> {k}" for k in key)
+
+    else:
+        findings = report.key_findings[0][:200] if report.key_findings else report.perspective[:200]
+        return f"> {findings}"
+
+
+def _extract_common_patterns(gainers: List[Dict], researchers) -> List[str]:
+    """从多只涨幅股中提取跨标的共性"""
+    patterns = []
+    n = len(gainers)
+
+    if n < 2:
+        patterns.append("样本不足，无法提取共性")
+        return patterns
+
+    # 统计行业分布
+    sectors = {}
+    for g in gainers:
+        sec = g.get('sector', '未知')
+        sectors[sec] = sectors.get(sec, 0) + 1
+
+    top_sectors = sorted(sectors.items(), key=lambda x: x[1], reverse=True)[:3]
+    sector_str = ", ".join(f"{s}({c}只)" for s, c in top_sectors if c >= 2)
+    if sector_str:
+        patterns.append(f"📊 行业集中: {sector_str} — 关注是否有板块级催化剂")
+
+    # 涨幅分布
+    avg_chg = sum(g.get('change_pct', 0) for g in gainers) / n
+    patterns.append(f"📈 平均涨幅: {avg_chg:.1f}% — {'强趋势日' if avg_chg > 8 else '温和上涨日'}")
+
+    # 系统覆盖反思
+    patterns.append(f"💡 系统反思: 对今日 {n} 只涨幅≥6%个股做回溯检查——"
+                   f"推荐池覆盖了几只？侦察兵发现了几只？漏掉的个股有什么共同特征？")
+    patterns.append(f"🔧 行动建议: 如系统覆盖率<30%，需调整筛选参数或扩展候选源")
+
+    return patterns
+
+
+def _fetch_gainers_for_study() -> List[Dict]:
+    """自动获取今日涨幅榜（复用 review.py 的 get_top_gainers）"""
+    try:
+        sys.path.insert(0, str(SCRIPT_DIR))
+        from review import get_top_gainers
+        return get_top_gainers(6.0, 50)
+    except ImportError:
+        pass
+    except Exception as e:
+        print(f"  [涨幅榜] review.py 导入失败: {e}")
+
+    # Fallback: 东方财富 push2 直拉
+    try:
+        import urllib.request
+        url = ('https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=50&po=0&np=1'
+               '&fltt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23'
+               '&fields=f12,f14,f2,f3,f20&ut=bd1d9ddb04089700cf9c27f6f7426281')
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0',
+            'Referer': 'https://data.eastmoney.com/'
+        })
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read())
+        items = data.get('data', {}).get('diff', [])
+        return [
+            {
+                'code': str(i.get('f12', '')),
+                'name': str(i.get('f14', '')),
+                'price': float(i.get('f2', 0)),
+                'change_pct': float(i.get('f3', 0)),
+            }
+            for i in items if float(i.get('f3', 0)) >= 6.0
+        ]
+    except Exception as e:
+        print(f"  [涨幅榜] push2 直拉失败: {e}")
+
+    return []
+
+
 def run_parliament():
     """议会模式"""
     parliament = Parliament()
@@ -1451,6 +1792,8 @@ def main():
     ap.add_argument('--reset', action='store_true', help='重置研究员状态')
     ap.add_argument('--query', type=str, help='查询单只股票深度分析 (code, 例如 600519)')
     ap.add_argument('--name', type=str, default='', help='--query时指定股票名称')
+    ap.add_argument('--winners', nargs='?', const='auto',
+                    help='🆕 涨幅榜学习模式 (默认: auto 自动拉取)')
     args = ap.parse_args()
 
     if args.query:
@@ -1465,6 +1808,20 @@ def main():
 
     if args.verify:
         run_verify_only()
+    elif args.winners:
+        # 🆕 涨幅榜学习模式
+        gainers_path = args.winners if args.winners != "auto" else None
+        if gainers_path and Path(gainers_path).exists():
+            import json
+            gainers = json.loads(Path(gainers_path).read_text())
+        else:
+            # 自动从 review 获取今日涨幅榜
+            gainers = _fetch_gainers_for_study()
+        if gainers:
+            report = run_winner_study(gainers)
+            print(report)
+        else:
+            print("无涨幅 ≥6% 数据或非交易日")
     elif args.parliament:
         run_parliament()
     elif args.report:

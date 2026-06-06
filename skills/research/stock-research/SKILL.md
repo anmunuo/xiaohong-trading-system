@@ -14,8 +14,8 @@ triggers:
   - "交易系统|策略分析"
   - "资源池|事件驱动"
   - "瞭望塔|晨报|瞭望塔晨报|盘前报告"
-  - "侦察兵|开盘确认|竞价分析|集合竞价|auction|自主学习.*优化|盘中.*更新|盘中.*扫描|推荐池.*更新"
-  - "狙击手|日内监控|止损.*监控|入场信号"
+  - "侦察兵|开盘确认|竞价分析|集合竞价|auction|自主学习.*优化|盘中.*更新|盘中.*扫描|推荐池.*更新|三级认证|盘中.*决策|目标池|target_pool|盘中入池|日内.*入场"
+  - "狙击手|日内监控|止损.*监控|入场信号|开仓.*动作|量比.*入场|分时K线.*入场"
   - "弹药库|仓位.*上限|行业集中度|回撤.*追踪|风控.*检查"
   - "文工团|每日复盘|选股复盘|涨幅.*6%|纪律.*清单|错误.*归类"
   - "交叉验证|多维选股"
@@ -39,6 +39,8 @@ triggers:
   - 自主修复|auto_repair|auto_heal|健康检查.*修复|health_check.*fix|系统自愈
   - ETF.*分析|分析.*ETF|指数.*基金|创新药.*ETF|行业.*ETF
   - gold.*ETL|Gold.*层|因子面板.*构建|factor.*panel|分层数据.*Gold|数据血缘|gold.*pipeline
+  - 目标池|target_pool|盘中决策|三级认证|intraday_gate|快速议会|quick_parliament|盘中.*目标池|当日可操作
+  - 涨幅榜.*学习|winner.*study|6%.*个股.*研究|涨幅.*关联性|winners
 ---
 
 # 小红 · 股票投研工作流
@@ -350,7 +352,13 @@ PB 分布 (N=3961):
 | 🆕 Gold ETL cron 路径双写 (v8.11) | **症状**：`can't open file '/home/pc/.../xiaohong/home/.hermes/.../gold_pipeline.py'` — 路径中出现双重 `home/.hermes/profiles/xiaohong`。**根因**：非 cron_gold.sh 自身问题（脚本使用相对路径正常），疑为 hermes cron 调度层将工作目录前缀重复拼接。**影响**：Gold 因子面板+ML 数据集+Pool 归档未产出。详见 `references/llm-review-pitfalls.md`。 |
 | 🆕 三链路断裂：推荐池→侦察兵→狙击手→下单 (v8.11) | LLM 复盘应检查此四环节是否全部在线。任一断裂→系统处于「有信号无行动」状态，需在 diagnosis 首句标注。6/4 现状：推荐池✅ 侦察兵⚠️ 狙击手🔴 下单🔴。详见 `references/llm-review-pitfalls.md`。 |
 | ⭐ Cron 裸 python3 导致 26 脚本静默失败 (v8.7) | **根因**：cron 环境的 PATH 仅为 `/usr/bin:/bin`，不包含 venv。`cron_*.sh` 中写 `python3` 或 `exec python3` → cron 找不到解释器 → `exit 127`。影响 26 个脚本，4 个 job 标记 error（选股推荐 08:25、竞价采集 09:15、侦察兵盘中 11:00、健康检查 08:15）。**修复**：全量替换为 `/home/pc/.hermes/hermes-agent/venv/bin/python3`。新 cron 脚本**必须**使用绝对路径。验证：`grep -l 'venv/bin/python3' cron_*.sh | wc -l` → 应为 26。 |
-| ⭐ Cron 脚本行号污染 (v8.10) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀的内容（如 `     1|#!/bin/bash`）。bash 无法解析 shebang 报 `未找到命令`。22/26 脚本受影响。stdout 仍有产出（pipeline 后半段 `exec python3` 仍能执行）→ 健康检查只看输出文件永远发现不了。**修复**：`sed -i 's/^[[:space:]]*[0-9]\+|//'` 批量去行号；`system_health_check.py` v1.2.0 新增维度12（Cron脚本完整性 - shebang 检测）+ 维度6重构（Cron执行退出码 - 扫描所有 output 目录的 `script failed` / `exited with code` 标记）。**教训**：监控产出物≠监控管道。写 cron 脚本时务必验证文件以 `#!` 开头。 |
+| ⭐ Cron 脚本行号污染 (v8.10) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀的内容（如 `     1|#!/bin/bash`）。bash 无法解析 shebang 报 `未找到命令`。22/26 脚本受影响。stdout 仍有产出（pipeline 后半段 `exec python3` 仍能执行）→ 健康检查只看输出文件永远发现不了。**修复**：`sed -i 's/^[[:space:]]*[0-9]\\+|//'` 批量去行号；`system_health_check.py` v1.2.0 新增维度12（Cron脚本完整性 - shebang 检测）+ 维度6重构（Cron执行退出码 - 扫描所有 output 目录的 `script failed` / `exited with code` 标记）。**教训**：监控产出物≠监控管道。写 cron 脚本时务必验证文件以 `#!` 开头。 |
+| ⭐ **🆕 Cron `script` 参数不支持命令行参数** | **根因**：cron 调度器的 `script` 字段把整串当文件名。`system_health_check.py --fix` → 找名为 `system_health_check.py --fix` 的文件 → 不存在 → 永远 `Script not found`。**修复**：创建 wrapper shell 脚本（`cron_health_fix.sh`）包装参数：`exec python3 system_health_check.py --fix --push`，cron 指向 wrapper。本次修复前健康检查+自主修复连续 3 天静默失败，4 个 cron job 问题积压形成恶性循环。 |
+| ⭐ **🆕 Cron 脚本默认 timeout 仅 120s** | **根因**：`config.yaml` 中 `cron.script_timeout_seconds` 默认 120s。推荐引擎 run ~120s、竞价采集器 >120s → 每天 `Script timed out`。**修复**：`config.yaml` → `cron: script_timeout_seconds: 300`，所有 no_agent 脚本全局受益。检测：`grep script_timeout ~/.hermes/config.yaml`。 |
+| ⭐ **🆕 Stock Tracker ZeroDivisionError** | **根因**：`stock_tracker.py:217` 无快照时 `entry_close`=0，直接除 → 崩溃连续 4 天。**修复**：加 `if s["entry_close"] <= 0: vs_entry = 0` 防护。 |
+| ⭐ **🆕 sed 修改 f-string 导致语法错误** | **根因**：`sed` 将 f-string 内的 `e["code"]` 转义为 `e[\"code\"]` → Python 无法解析。**修复**：f-string 内用变量提取：`code = e.get('code',''); f"{code}"`。**教训**：不要用 sed 修改含 f-string 的 Python 代码，用 Python 脚本做替换。 |
+| ⭐ **🆕 sed 修改 Python f-string 导致 SyntaxError** | **根因**：用 `sed` 替换 Python f-string 时，双引号 `\"` 被转义成文字反斜杠+引号。f-string 内部 `.get("key")` 与外层引号冲突。**修复**：用 Python 脚本替代 sed 做多行复杂替换——`python3 -c "content = open('f.py').read(); content.replace(...); open('f.py','w').write(content)"`。或在 f-string 中将字典访问提取为独立变量。 |
+| ⭐ **🆕 f-string 嵌套 .get() 引号冲突** | **根因**：`f\"{e.get(\"vol_ratio\",1.0)}\"` 中 `.get()` 的双引号与外层 f-string 分界符冲突→SyntaxError。**修复**：先提取变量 `vol_ratio = e.get('vol_ratio', 1.0)` 再用 `f\"{vol_ratio:.1f}\"`。**防御**：所有含 dict 访问的 f-string 都先提取变量。
 | ⭐ 北向资金实时通道永久关闭 (v8.10) | **根因**：2024年5月起交易所不再实时披露北向资金。AKShare `stock_hsgt_fund_flow_summary_em()` 的 `成交净买额` 永久返回 0。`get_north_flow()` 择优逻辑 `if date>=yesterday or net_flow!=0` → 日期新鲜命中 → 永远用 AKShare 的 0。tushare 回退只查 7 天但最新数据 8 天前。**修复**：(1) `if net_flow != 0` 才信 AKShare，否则回退 tushare，(2) tushare 回退窗口 7→30天，(3) 新增 `_quality: T-N` 标记滞后天数。**教训**：API 永久归零与间歇性归零需要不同策略——不是 fallback，是彻底改变择优逻辑。 |
 | ⭐⭐ **P0** 盘前推荐引擎全停牌误判 + 超时三重根因 (v8.12) | **根因链**：(1) `$HOME` 被 profile 覆盖→`Path.home()` 返回假路径→venv 找不着→所有 subprocess rc=-1，(2) `data fetch` CLI 是完整 hermes agent（每只启动 10s+），176只 subprocess 补漏=洪水，(3) 盘前 Sina 全返回 close=0→`close==0 AND change_pct==0` 误判全市场停牌。**修复**：subprocess 补漏全砍、`get_stock_realtime` 慢路径全砍、盘前 Baostock 昨收复 Sina 0 值、移除 close==0 停牌判断、`--fast` 跳过 tushare PE/研究员/议会。详见 `references/recommender-engine-timeout-fix.md` + `references/data-pipeline-resilience.md`。|
 | ⭐⭐ **P0** `$HOME` profile 覆盖导致路径解析错误 | **根因**：hermes profile 系统将 `$HOME` 设为 `/home/pc/.hermes/profiles/xiaohong/home`（非真实 `/home/pc`）。`Path.home()` 依赖 `$HOME`→返回假路径；shell `$HOME` 同样被覆盖→`cd "$HOME/..."` 失败。**影响链**：`auto_repair.py` VENV_PYTHON 指向假路径→所有 `_run_script` rc=-1；`cron_gold.sh` cd 失败→Gold ETL 不执行。**修复**：(1) 所有 py 脚本用 `/home/pc/.hermes/hermes-agent/venv/bin/python3` 绝对路径，(2) 所有 `.sh` 脚本用 `/home/pc/...` 绝对路径，(3) 禁止 `Path.home()` 和 `$HOME` 在 cron/auto_repair 上下文中使用。**验证**：`grep -rn '\$HOME' scripts/*.sh` 应为空。|
@@ -550,7 +558,7 @@ URL: https://so.eastmoney.com/news/s?keyword=公司名+关键词&page=1
 | 15:35 | 📊 股票跟踪器 (60日跟踪/止损检测/胜率统计) | 飞书 |
 | 15:40 | 🗄️ Bronze 全量采集 | local |
 | 15:45 | 🥈 Silver ETL (Bronze→清洗) | local |
-| 🆕 15:50 | 🏆 Gold ETL (Silver→因子面板+ML+Pool) | local |
+| 🆕 15:50 | 🏆 涨幅榜学习 (研究员逐只分析6%+个股) + 🏅 Gold ETL | local |
 | 16:00 | 🧠 竞价学习器 v1.1 | 飞书 |
 | 17:00 | 🏥 文工团 v3.0 + 🆕📊 因子IC评估 | 飞书 |
 | 17:10 | 🆕 🤖 ML模型增量训练 | 飞书 |
@@ -727,10 +735,12 @@ idx = get_index_data(); nf = get_north_flow()
 - `scripts/resource_pool.py` — 基本面事件智能池（公告/合同/合作/政策/研报采集，供 mega_collector 和 recommender 调用）
 - `scripts/knowledge_base.py` — 基本面知识库（增量采集+去重+倒排索引+检索）
 - `scripts/auction_collector.py` — 🆕 竞价采集器 v1.2（三通道降级：东方财富→腾讯→Sina，09:15-09:25每3秒轮询，API预热+异常隔离+降级标的+通道统计）
+- `scripts/researchers.py` — 🔬 研究员系统 v2.3（`run_quick_parliament(code,name)` 盘中快速议会4核心研究员2轮~10s；`run_parliament()` 完整3轮；`run_study_session()` 自主研学；`analyze_stock()` 全维分析6研究员）
+- `scripts/target_pool.py` — 🆕 v1.0 目标池管理（`select_target_pool()` 09:30初始选池3只 + `update_target_pool()` 盘中动态替换 + `get_target_pool_summary()` 狙击手消费接口）
 - `scripts/auction_features.py` — 🆕 竞价五维特征提取（价格斜率+量能+不平衡+溢价+板块偏离）
 - `scripts/auction_learner.py` — 🆕 Bayesian学习器 v1.1.1（盘后验证→α/β更新→权重自适应，`_get_latest_date_in_db()` 自动找最近交易日，--diagnose诊断空数据）
-- `scripts/scout.py` — 🔍 侦察兵 v4.1（开盘确认 + 盘中池更新 + 🆕 个股K线技术分析：MA20偏离/量比/PE。`_enrich_with_kline_analysis()` 批量拉 Baostock K线 ~2s for ≤15 codes，三张表格全部附加 MA20/量比/PE 列。--intraday 模式：资金异动扫描→多因子综合评分(资金40%+技术30%+情绪20%+板块10%)→基本面快筛→动态写入 daily_pool。无板块/数量硬上限，评分竞争9席，高分替低分。权重为可进化参数(intra_*_weight)）\n- `scripts/strategy_templates.py` — 🆕 v1.0 策略模板参数化引擎（三模板：balanced/aggressive/defensive，JSON配置+因子权重条形图+CLI。`stock_recommender._load_factor_weights()` 自动读取 `data/active_template.json`，模板权重 × IC动态微调 → 最终权重。借鉴 VibetradingLabs 模板思路）\n- `scripts/backtest_chart.py` — 🆕 v1.0 回测曲线可视化引擎（生成权益曲线+回撤曲线 PNG，matplotlib+Noto CJK。`review.py` v3.1 复盘末尾自动嵌入 MEDIA: 路径 → 飞书渲染为图片。颜色方案：安幕诺绿 `#2f9e44`）
-- `scripts/sniper.py` — 🎯 狙击手 v3.0（手动备用，P0-P3分级止损+入场信号）
+- `scripts/scout.py` — 🔍 侦察兵 v4.2（开盘确认 + 🆕 三级认证门 `_intraday_gate()`：快速议会→多因子→基本面，全过才入池。综合评分 0.5×侦察兵+0.5×五因子。目标池同步推送 `update_target_pool()`。09:30 初始化 `select_target_pool(force=True)`。`TARGET_POOL_ENABLED` 开关控制）\n- `scripts/strategy_templates.py` — 🆕 v1.0 策略模板参数化引擎（三模板：balanced/aggressive/defensive，JSON配置+因子权重条形图+CLI。`stock_recommender._load_factor_weights()` 自动读取 `data/active_template.json`，模板权重 × IC动态微调 → 最终权重。借鉴 VibetradingLabs 模板思路）\n- `scripts/backtest_chart.py` — 🆕 v1.0 回测曲线可视化引擎（生成权益曲线+回撤曲线 PNG，matplotlib+Noto CJK。`review.py` v3.1 复盘末尾自动嵌入 MEDIA: 路径 → 飞书渲染为图片。颜色方案：安幕诺绿 `#2f9e44`）
+- `scripts/sniper.py` — 🎯 狙击手 v3.1（🆕 v4.2: 目标池驱动入场，量比分析 `_get_volume_ratio()` + 分时K线形态 `_analyze_intraday_kline()`，V反/连续上攻/放量判断，综合 `_build_entry_signal()` 决定开仓时机）\n- `scripts/target_pool.py` — 🆕 v1.0 目标池管理模块（select/update/load/mark_entry，CLI: `--select` `--show`，狙击手从 target_pool.json 读取入场标的）
 - `scripts/sniperd.py` — 🎯 狙击手 v4.0 实时守护进程 🆕（systemd 服务，3s轮询+状态机去重+秒级止损响应，11 可进化参数。`--once` 单次扫描，`--dry-run` 不写日志）
 - `scripts/sniper_healthcheck.sh` — 💓 狙击手存活检测 🆕（交易日每5分钟 cron，自动检测+恢复 sniperd.service）
 - `scripts/system_health_check.py` — 🩺 系统健康自检 v1.3（12维扫描 → 自动触发7维修复 → --fix 模式。`auto_repair.py` 独立修复引擎，幂等可追溯。cron 08:15/15:15/22:15 自动扫描+修复+飞书）
@@ -769,6 +779,7 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/watchtower-v6-model.md` — 瞭望塔 v6.0 多维交叉验证模型
 - `references/watchtower-v5-model.md` — （已废弃）瞭望塔 v5.0 涨停驱动模型
 - `references/scout-v4-design.md` — 🆕 侦察兵 v4.0 升级设计（独立侦察+板块排名+基本面快筛+反哺推荐池）
+- `references/intraday-decision-chain.md` — 🆕 v1.0 盘中实时决策链（三级认证门+目标池+狙击手入场，完整数据流和模块文档）
 - `references/sniper-v4-design.md` — 🆕 狙击手 v4.0 实时守护进程设计（cron→事件驱动+状态机+systemd部署+11进化参数）
 - `references/auction-system-design.md` — 🆕 竞价分析系统（采集+五维特征+Bayesian学习+侦察兵集成）
 - `references/auction-diagnosis-workflow.md` — 🆕 竞价诊断工作流（16:05 LLM cron 标准流程+数据Schema+维度分析指南+采集器健康判定）
@@ -803,7 +814,8 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/workspace-layout-discovery.md` — 🆕 工作区路径发现与 v1.0/v2.0 版本映射（LLM 复盘 cron 必读）
 - `references/auto-repair-system.md` — 🆕 v1.3 自主修复系统（12维扫描→诊断→7维修复闭环，幂等可追溯，cron --fix 模式）
 - `references/researcher-v2.1-pervasive.md` — 🆕 研究员全链路渗透 v2.1（analyze_stock / query_stock / 推荐引擎+侦察兵集成 / daily_pool schema）
-- `references/data-quality-framework.md` — 🆕 v1.0 数据真实性管理框架（五道质检门/QualityStamp/字段陷阱/消费者接入模式/北向bug案例）
+- `references/data-quality-framework.md` — 🆕 v1.0 数据真实性管理框架（五道质检门/QualityStamp/字段陷阱/消费者接入模式/北向bug案例）\n- `references/intraday-decision-chain.md` — 🆕 v1.0 盘中实时决策链（侦察兵→三级认证门→目标池→狙击手开仓，完整数据流+模块版本+参数表）
+- `~/wiki/交易系统/数据平台与管道需求说明文档.md` — 🆕 v1.0 数据平台SRS（10章完整需求：设计原则→平台→管道→数据源→质量→资产→消费者→存储→运维→路线图）
 
 ## 数据流向架构 (v8.7)
 
