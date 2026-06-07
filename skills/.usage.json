@@ -4,38 +4,51 @@
     "created_at": "2026-05-24T04:42:03.915882+00:00",
     "created_by": "agent",
     "last_patched_at": "2026-05-27T13:07:02.747078+00:00",
-    "last_used_at": "2026-06-06T01:59:46.559663+00:00",
-    "last_viewed_at": "2026-06-06T01:59:46.558252+00:00",
+    "last_used_at": "2026-06-07T06:30:08.288191+00:00",
+    "last_viewed_at": "2026-06-07T06:30:08.284875+00:00",
     "patch_count": 3,
     "pinned": false,
     "state": "active",
-    "use_count": 6,
-    "view_count": 6
+    "use_count": 7,
+    "view_count": 7
+  },
+  "otc-options-trading": {
+    "archived_at": null,
+    "created_at": "2026-06-07T09:21:32.988845+00:00",
+    "created_by": "agent",
+    "last_patched_at": "2026-06-07T09:21:46.242934+00:00",
+    "last_used_at": null,
+    "last_viewed_at": null,
+    "patch_count": 1,
+    "pinned": false,
+    "state": "active",
+    "use_count": 0,
+    "view_count": 0
   },
   "stock-research": {
     "archived_at": null,
     "created_at": "2026-05-24T05:27:22.369295+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-06-06T11:46:13.143748+00:00",
-    "last_used_at": "2026-06-06T19:05:04.235087+00:00",
-    "last_viewed_at": "2026-06-06T17:05:54.405992+00:00",
-    "patch_count": 479,
+    "last_patched_at": "2026-06-07T10:12:32.049444+00:00",
+    "last_used_at": "2026-06-07T19:05:19.678094+00:00",
+    "last_viewed_at": "2026-06-07T08:36:52.923443+00:00",
+    "patch_count": 481,
     "pinned": false,
     "state": "active",
-    "use_count": 419,
-    "view_count": 235
+    "use_count": 451,
+    "view_count": 242
   },
   "strategy-trading": {
     "archived_at": null,
     "created_at": "2026-05-27T13:08:35.623721+00:00",
     "created_by": null,
-    "last_patched_at": "2026-06-05T11:54:07.079701+00:00",
-    "last_used_at": "2026-06-06T01:00:58.699885+00:00",
-    "last_viewed_at": "2026-06-05T11:54:09.648633+00:00",
-    "patch_count": 50,
+    "last_patched_at": "2026-06-07T10:12:00.902999+00:00",
+    "last_used_at": "2026-06-07T10:10:47.322161+00:00",
+    "last_viewed_at": "2026-06-07T10:10:47.317488+00:00",
+    "patch_count": 55,
     "pinned": false,
     "state": "active",
-    "use_count": 58,
-    "view_count": 45
+    "use_count": 61,
+    "view_count": 48
   }
 }

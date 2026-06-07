@@ -179,6 +179,17 @@ q.get_event_summary('600519')                     # 事件画像
 | 经济日历 | `ak.news_economic_baidu(date='YYYYMMDD')` | ✅ 宏观数据发布 |
 | 东方财富新闻 | `ak.stock_news_em()` | ✅ 个股市场新闻 |
 
+### ⚠️ 期权函数（场内 ETF 期权专用）
+
+> 🚨 场外个股期权无公开 API，不走这些函数。仅场内 ETF 期权可用。
+
+| 功能 | 函数 | 状态 |
+|------|------|:--:|
+| 期权链 | `ak.option_sse_list_sina()` / `option_sse_codes_sina()` | ✅ |
+| 实时行情 | `ak.option_current_em()` | ✅ |
+| Greeks | `ak.option_sse_greeks_sina()` | ✅ Delta/Gamma/Theta/Vega/Rho+IV |
+| QVIX | `ak.index_option_50etf_qvix()` / `_300etf_qvix()` | ✅ |
+
 ### tushare 直调（全市场筛选主力）
 
 通过 `python3 -c "import tushare as ts; pro = ts.pro_api(); ..."` 直接调用。
@@ -316,7 +327,7 @@ PB 分布 (N=3961):
 | ⭐ Gold 层 Bronze kline 格式不匹配 | `bronze_ingest.py` v8.7+ 写 `{code: row_dict}`（dict），`gold_pipeline.py` `_load_bronze_kline` 读 `[{code: row}]`（list）。遍历 dict 时 `r` 是字符串 → `r.get()` → AttributeError。**修复**：`isinstance(data, dict)` 检测直接返回，`isinstance(data, list)` 走旧逻辑。 |
 | ⭐ **反复回归** `_em_api_get` 导入路径断裂 (v8.10→v8.12) | **根因**：v8.5 `data_pipeline` 拆分子模块后，`_em_api_get` 在 `data_pipeline/_core.py` 定义但**未从 `__init__.py` 重导出**。`review.py` 中 `from data_pipeline import _em_api_get` → ImportError。**此问题会反复回归** — 系统升级、重新部署、批量找替换时可能再次引入旧的 import 语法。**修复**：改为 `from data_pipeline._core import _em_api_get`（单独一行，不要合并到 `from data_pipeline import ...` 行）。**防御**：Cron 健康检查发现 `script failed + exit=1 + review.py` 时第一位排查此 import。**永久防御**：`grep -rn "from data_pipeline import _em_api_get" scripts/*.py` 扫描所有引用。
 | 进化引擎沙箱 KeyError: 'old_metric' | `sandbox_test()` 返回 dict 不含 `old_metric`，打印语句硬编码了不存在的键。改为 `test_result.get('details', 'ok')`。 |
-| ⭐ 宏观资金面数据全部缺失（三路同时） | **系统性根因，不是单点故障**。诊断流程：(1) `python3 -c "from data_pipeline import get_xxx; print(get_xxx())"` 逐路测试返回值，(2) 检查 `market_snapshot.json` 中各字段的 `data_source` 和 `date`，(3) 绕过缓存直接调原始 API（AKShare/tushare/东方财富），(4) 对比缓存时间戳确认是拉取失败还是缓存过期。常见根因组合：北向=tushare moneyflow_hsgt 返回 7 天前过期数据（函数不检查日期新鲜度）→ AKShare 优先；市场资金=ak.stock_market_fund_flow() 东方财富断连被静默吞掉→ tushare moneyflow 全市场汇总回退；板块流=_em_api_get 无重试+UA不完整→ 3次重试+退避+完整 Chrome UA + tushare ths_daily 回退。修复文件 data_pipeline.py，验证用 `python3 market_snapshot.py`。 |
+| 宏观资金面数据全部缺失（三路同时） | **系统性根因，不是单点故障**。诊断流程：(1) `python3 -c "from data_pipeline import get_xxx; print(get_xxx())"` 逐路测试返回值，(2) 检查 `market_snapshot.json` 中各字段的 `data_source` 和 `date`，(3) 绕过缓存直接调原始 API（AKShare/tushare/东方财富），(4) 对比缓存时间戳确认是拉取失败还是缓存过期。常见根因组合：北向=tushare moneyflow_hsgt 返回 7 天前过期数据（函数不检查日期新鲜度）→ AKShare 优先；市场资金=ak.stock_market_fund_flow() 东方财富断连被静默吞掉→ tushare moneyflow 全市场汇总回退；板块流=_em_api_get 无重试+UA不完整→ 3次重试+退避+完整 Chrome UA + tushare ths_daily 回退。修复文件 data_pipeline.py，验证用 `python3 market_snapshot.py`。 |
 | ⭐ 分时数据获取方案 | tushare Pro **不是分时引擎**。分时K线用 Sina `quotes.sina.cn` KLineData API (免费无限制)。详见 `references/intraday-data-integration.md` |
 | ⭐ 停牌股漏入推荐池 | **根因**：停牌检测只在 enrichment 层标记（`_gen_operation_v2`），此时股票已入池。**修复**：在 `_apply_filters()` 加第四重「停牌」过滤——`_get_suspended_codes()` 双路检测：KB洞察含「停牌」+ 行情 change_pct==0 && close==0。嘉美包装/徐工机械等停牌股在过滤阶段即被踢出。 |
 | ⭐ 市值过滤器形同虚设（大市值漏网） | **根因**：`get_stock_realtime`（Sina API）不含 `market_cap` 字段，`_get_market_cap()` 对全部股票返回 None，`if mkt_cap is not None` 条件永不触发。招商银行 9634亿 轻松入池。**修复**：tushare `daily_basic` 逐只查询 `total_mv`（万元→亿元），注入 `_indicators[code]['total_mv']`，`_get_market_cap` 优先读此字段。修复后 `excluded.large_cap=14`。 |

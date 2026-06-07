@@ -1,0 +1,367 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "hermes-agent",
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "bg-data",
+      "x": 40, "y": 40, "width": 520, "height": 280,
+      "backgroundColor": "#f8f9fa", "fillStyle": "solid",
+      "strokeColor": "#dee2e6", "strokeWidth": 1, "roughness": 0
+    },
+    {
+      "type": "text",
+      "id": "t-bg-data",
+      "x": 220, "y": 50, "width": 160, "height": 25,
+      "text": "数据层 (新增)",
+      "fontSize": 18, "fontFamily": 1, "strokeColor": "#495057",
+      "textAlign": "center", "autoResize": true, "originalText": "数据层 (新增)"
+    },
+    {
+      "type": "rectangle",
+      "id": "r-chain",
+      "x": 60, "y": 90, "width": 140, "height": 70,
+      "roundness": {"type": 3}, "backgroundColor": "#a5d8ff", "fillStyle": "solid",
+      "boundElements": [{"id": "t-chain", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-chain",
+      "x": 65, "y": 100, "width": 130, "height": 50,
+      "text": "期权链\nchain.py",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-chain", "originalText": "期权链\nchain.py", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-greeks",
+      "x": 230, "y": 90, "width": 140, "height": 70,
+      "roundness": {"type": 3}, "backgroundColor": "#b2f2bb", "fillStyle": "solid",
+      "boundElements": [{"id": "t-greeks", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-greeks",
+      "x": 235, "y": 100, "width": 130, "height": 50,
+      "text": "Greeks\ngreeks.py",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-greeks", "originalText": "Greeks\ngreeks.py", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-iv",
+      "x": 400, "y": 90, "width": 140, "height": 70,
+      "roundness": {"type": 3}, "backgroundColor": "#d0bfff", "fillStyle": "solid",
+      "boundElements": [{"id": "t-iv", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-iv",
+      "x": 405, "y": 100, "width": 130, "height": 50,
+      "text": "IV分析\niv_analysis.py",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-iv", "originalText": "IV分析\niv_analysis.py", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-optdata",
+      "x": 150, "y": 190, "width": 260, "height": 50,
+      "roundness": {"type": 3}, "backgroundColor": "#fff3bf", "fillStyle": "solid",
+      "boundElements": [{"id": "t-optdata", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-optdata",
+      "x": 155, "y": 197, "width": 250, "height": 36,
+      "text": "options_data.py\n缓存 + Fallback + 健康检查",
+      "fontSize": 14, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-optdata", "originalText": "options_data.py\n缓存 + Fallback + 健康检查", "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a-1",
+      "x": 205, "y": 160, "width": 0, "height": 25,
+      "points": [[0,0],[0,25]], "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow",
+      "id": "a-2",
+      "x": 300, "y": 160, "width": 0, "height": 25,
+      "points": [[0,0],[0,25]], "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow",
+      "id": "a-3",
+      "x": 470, "y": 160, "width": 0, "height": 25,
+      "points": [[0,0],[0,25]], "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "bg-strat",
+      "x": 40, "y": 350, "width": 520, "height": 200,
+      "backgroundColor": "#f8f9fa", "fillStyle": "solid",
+      "strokeColor": "#dee2e6", "strokeWidth": 1, "roughness": 0
+    },
+    {
+      "type": "text",
+      "id": "t-bg-strat",
+      "x": 190, "y": 360, "width": 220, "height": 25,
+      "text": "策略与风控层 (新增)",
+      "fontSize": 18, "fontFamily": 1, "strokeColor": "#495057",
+      "textAlign": "center", "autoResize": true, "originalText": "策略与风控层 (新增)"
+    },
+    {
+      "type": "rectangle",
+      "id": "r-strat",
+      "x": 60, "y": 400, "width": 160, "height": 70,
+      "roundness": {"type": 3}, "backgroundColor": "#b2f2bb", "fillStyle": "solid",
+      "boundElements": [{"id": "t-strat", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-strat",
+      "x": 65, "y": 410, "width": 150, "height": 50,
+      "text": "策略模板\nstrategies.py\n5大期权策略",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-strat", "originalText": "策略模板\nstrategies.py\n5大期权策略", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-pnl",
+      "x": 250, "y": 400, "width": 140, "height": 70,
+      "roundness": {"type": 3}, "backgroundColor": "#ffd8a8", "fillStyle": "solid",
+      "boundElements": [{"id": "t-pnl", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-pnl",
+      "x": 255, "y": 410, "width": 130, "height": 50,
+      "text": "P&L模拟\npnl_sim.py\n损益图",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-pnl", "originalText": "P&L模拟\npnl_sim.py\n损益图", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-risk",
+      "x": 420, "y": 400, "width": 120, "height": 70,
+      "roundness": {"type": 3}, "backgroundColor": "#ffc9c9", "fillStyle": "solid",
+      "boundElements": [{"id": "t-risk", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-risk",
+      "x": 425, "y": 410, "width": 110, "height": 50,
+      "text": "期权风控\nrisk_manager.py\nGreeks敞口",
+      "fontSize": 14, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-risk", "originalText": "期权风控\nrisk_manager.py\nGreeks敞口", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-bridge",
+      "x": 160, "y": 500, "width": 260, "height": 40,
+      "roundness": {"type": 3}, "backgroundColor": "#c3fae8", "fillStyle": "solid",
+      "boundElements": [{"id": "t-bridge", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-bridge",
+      "x": 165, "y": 507, "width": 250, "height": 26,
+      "text": "options_bridge.py · CLI桥接器",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-bridge", "originalText": "options_bridge.py · CLI桥接器", "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a-4",
+      "x": 140, "y": 470, "width": 0, "height": 25,
+      "points": [[0,0],[0,25]], "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow",
+      "id": "a-5",
+      "x": 320, "y": 470, "width": 0, "height": 25,
+      "points": [[0,0],[0,25]], "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow",
+      "id": "a-6",
+      "x": 480, "y": 470, "width": 0, "height": 25,
+      "points": [[0,0],[0,25]], "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "bg-existing",
+      "x": 600, "y": 40, "width": 400, "height": 500,
+      "backgroundColor": "#f8f9fa", "fillStyle": "solid",
+      "strokeColor": "#dee2e6", "strokeWidth": 1, "roughness": 0
+    },
+    {
+      "type": "text",
+      "id": "t-bg-existing",
+      "x": 720, "y": 50, "width": 160, "height": 25,
+      "text": "现有系统",
+      "fontSize": 18, "fontFamily": 1, "strokeColor": "#495057",
+      "textAlign": "center", "autoResize": true, "originalText": "现有系统"
+    },
+    {
+      "type": "rectangle",
+      "id": "r-dp",
+      "x": 620, "y": 90, "width": 120, "height": 60,
+      "roundness": {"type": 3}, "backgroundColor": "#a5d8ff", "fillStyle": "solid",
+      "boundElements": [{"id": "t-dp", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-dp",
+      "x": 625, "y": 105, "width": 110, "height": 30,
+      "text": "data_pipeline",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-dp", "originalText": "data_pipeline", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-rec",
+      "x": 760, "y": 90, "width": 220, "height": 60,
+      "roundness": {"type": 3}, "backgroundColor": "#b2f2bb", "fillStyle": "solid",
+      "boundElements": [{"id": "t-rec", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-rec",
+      "x": 765, "y": 105, "width": 210, "height": 30,
+      "text": "推荐引擎 + 研究员",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-rec", "originalText": "推荐引擎 + 研究员", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-scout",
+      "x": 620, "y": 180, "width": 140, "height": 60,
+      "roundness": {"type": 3}, "backgroundColor": "#d0bfff", "fillStyle": "solid",
+      "boundElements": [{"id": "t-scout", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-scout",
+      "x": 625, "y": 195, "width": 130, "height": 30,
+      "text": "侦察兵 + 狙击手",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-scout", "originalText": "侦察兵 + 狙击手", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-ammo",
+      "x": 780, "y": 180, "width": 140, "height": 60,
+      "roundness": {"type": 3}, "backgroundColor": "#ffc9c9", "fillStyle": "solid",
+      "boundElements": [{"id": "t-ammo", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-ammo",
+      "x": 785, "y": 195, "width": 130, "height": 30,
+      "text": "弹药库风控",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-ammo", "originalText": "弹药库风控", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-cron",
+      "x": 620, "y": 270, "width": 360, "height": 60,
+      "roundness": {"type": 3}, "backgroundColor": "#fff3bf", "fillStyle": "solid",
+      "boundElements": [{"id": "t-cron", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-cron",
+      "x": 625, "y": 285, "width": 350, "height": 30,
+      "text": "瞭望塔/决策官/文工团 (LLM认知层)",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-cron", "originalText": "瞭望塔/决策官/文工团 (LLM认知层)", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-evo",
+      "x": 700, "y": 360, "width": 180, "height": 50,
+      "roundness": {"type": 3}, "backgroundColor": "#ffd8a8", "fillStyle": "solid",
+      "boundElements": [{"id": "t-evo", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-evo",
+      "x": 705, "y": 372, "width": 170, "height": 26,
+      "text": "进化引擎 (62参数)",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-evo", "originalText": "进化引擎 (62参数)", "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "r-broker",
+      "x": 700, "y": 430, "width": 180, "height": 50,
+      "roundness": {"type": 3}, "backgroundColor": "#c3fae8", "fillStyle": "solid",
+      "boundElements": [{"id": "t-broker", "type": "text"}]
+    },
+    {
+      "type": "text",
+      "id": "t-broker",
+      "x": 705, "y": 442, "width": 170, "height": 26,
+      "text": "券商网关 broker_gateway",
+      "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e",
+      "textAlign": "center", "verticalAlign": "middle",
+      "containerId": "r-broker", "originalText": "券商网关 broker_gateway", "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a-connect1",
+      "x": 560, "y": 120, "width": 55, "height": 0,
+      "points": [[0,0],[55,0]], "endArrowhead": "arrow",
+      "strokeStyle": "dashed", "strokeColor": "#868e96"
+    },
+    {
+      "type": "arrow",
+      "id": "a-connect2",
+      "x": 560, "y": 435, "width": 55, "height": 0,
+      "points": [[0,0],[55,0]], "endArrowhead": "arrow",
+      "strokeStyle": "dashed", "strokeColor": "#868e96"
+    },
+    {
+      "type": "arrow",
+      "id": "a-connect3",
+      "x": 560, "y": 410, "width": 55, "height": 0,
+      "points": [[0,0],[55,0]], "endArrowhead": "arrow",
+      "strokeStyle": "dashed", "strokeColor": "#868e96"
+    },
+    {
+      "type": "arrow",
+      "id": "a-connect4",
+      "x": 560, "y": 210, "width": 55, "height": 0,
+      "points": [[0,0],[55,0]], "endArrowhead": "arrow",
+      "strokeStyle": "dashed", "strokeColor": "#868e96"
+    },
+    {
+      "type": "text",
+      "id": "t-akshare",
+      "x": 100, "y": 270, "width": 380, "height": 50,
+      "text": "AKShare 40+ 期权函数\noption_sse_* / option_current_em / QVIX波动率指数",
+      "fontSize": 14, "fontFamily": 1, "strokeColor": "#868e96",
+      "textAlign": "center", "autoResize": true, "originalText": "AKShare 40+ 期权函数\noption_sse_* / option_current_em / QVIX波动率指数"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  }
+}

@@ -3,6 +3,7 @@ name: strategy-trading
 description: 小红策略交易引擎 —— 策略执行、风控分析、交易信号生成
 triggers:
   - "策略.*分析"
+  - "期权.*交易|场外.*期权|期权.*模块|保证金.*追踪|option.*trade"
   - "交易.*信号"
   - "止损.*检查"
   - "风控.*评估"
@@ -24,11 +25,47 @@ category: research
 
 # 策略交易引擎
 
-## 桥接器入口
+## 场外个股期权交易 🆕
 
+独立模块，与现货共用推荐池/目标池，但仓位/止损/盈亏计算全部独立。
+
+| 要素 | 值 | 说明 |
+|:--|:--|:--|
+| 保证金 | ¥100,000 / 手 | 风险资金，亏损先扣 |
+| 期权费 | ¥8,000 / 手 | 固定通道成本（开仓即扣） |
+| 名义本金 | ¥1,000,000 / 手 | 对应股票市值敞口 |
+| 收益分成 | 个人 70% : 券商 30% | 仅上涨时 |
+| 强平线 | 保证金 ≤ 20% | 亏损 ≥ ¥80,000 强制平仓 |
+
+```bash
+# CLI 桥接器（6 命令）
+python3 scripts/options/options_bridge.py list|open|close|check|signal|portfolio
+# Cron: 盘中每 5 分钟 + 收盘 15:00 保证金扫描 → 独立 Feishu 群
+```
+
+| 模块文件 | 职责 |
+|:--|:--|
+| `options/otc_call.py` | 盈亏计算引擎（含 70/30 分成） |
+| `options/margin_tracker.py` | 保证金追踪 + 分红告警 |
+| `options/options_bridge.py` | CLI 桥接器 |
+
+> 完整产品结构和盈亏逻辑 → `references/otc-call-options.md`
+
+## 桥接器入口（现货）
+
+**现货桥接器**：
 ```
 python3 ~/.hermes/profiles/xiaohong/scripts/strategy_bridge.py <command> [args]
 ```
+
+**期权桥接器** 🆕：
+```
+python3 ~/.hermes/profiles/xiaohong/scripts/options/options_bridge.py <command> [args]
+```
+
+> 场外个股期权交易模块完整文档 → `otc-options-trading` skill
+> 6 命令：`list | open | close | check | signal | portfolio`
+> 推荐池/目标池与现货共用，止损/仓位/盈亏计算独立设计
 
 所有输出为 JSON。
 
@@ -391,7 +428,8 @@ python3 scripts/ammo_risk.py --update
 - **Bronze layer auto-records**: `_core.py` has `_bronze_write()` hooks on 5 key functions (index/north/flow/stocks/realtime). Set `XIAOHONG_BRONZE=0` to disable.
 - **ML predictor sklearn fallback**: `ml_predictor.py` auto-degrades to sklearn RandomForest when lightgbm unavailable. Install: `pip install lightgbm --no-build-isolation`.
 - **New factor computation**: Must use already-prefetched `_indicators[code]['close_history']` — do NOT re-call `get_historical_k_with_ma()` (ProcessPool deadlock + 80s waste).
-- **MACD dea 对齐 bug**：见下方完整记录
+- **efinance 与东方财富 push2 同源**：efinance 底层走 `push2.eastmoney.com`，和现有 `_em_api_get` 是同一管道。非交易时段同样断连。不引入新数据源价值。
+- **场外期权 ≠ 场内 ETF 期权**：场外是 OTC 柜台交易、无连续行情、无公开期权链 API。数据靠手工录入和券商报价，不能调用 AKShare `option_sse_*`（那是场内 ETF 期权）。Greeks 需自算（BS 模型），IV 需从历史波动率估算。——2026-06-07 用户明确纠正
 - **Docker TA-Lib 编译**：Raspberry Pi ARM 架构编译慢，建议用预编译 wheel 或 `--build-arg` 跳过；x86 机器正常
 - **auto_executor 只在策略桥接返回信号时才执行**，空仓无信号时静默。若需强制测试，用 `process_signal()` 直接注入 Signal 对象
 - **`get_stock_realtime()` now has Sina bulk fast-path**

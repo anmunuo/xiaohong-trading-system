@@ -1,6 +1,6 @@
 {
   "version": "2.2.0",
-  "updated_at": "2026-06-07T02:01:12.856177",
+  "updated_at": "2026-06-08T02:01:31.528254",
   "hypotheses": {
     "data_20260604220204_001": {
       "id": "data_20260604220204_001",
@@ -270,18 +270,19 @@
       "id": "data_20260605020200_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-05 02:02",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
-      "status": "active",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
+      "status": "rejected",
       "related_symbols": [],
       "source": "data"
     },
@@ -289,18 +290,19 @@
       "id": "technical_20260605020204_002",
       "statement": "中兴通讯(000063) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "000063 MA20偏离+0.0%",
         "000063 MA20偏离+0.0%",
         "000063 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-05 02:02",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
-      "status": "active",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
+      "status": "rejected",
       "related_symbols": [
         "000063"
       ],
@@ -400,18 +402,19 @@
       "id": "technical_20260605020204_008",
       "statement": "白云电器(603861) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "603861 MA20偏离+0.0%",
         "603861 MA20偏离+0.0%",
         "603861 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-05 02:02",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
-      "status": "active",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
+      "status": "rejected",
       "related_symbols": [
         "603861"
       ],
@@ -511,18 +514,19 @@
       "id": "flow_20260605020204_014",
       "statement": "北向单日流入37亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "上证-0.74%",
         "上证-0.74%",
         "上证-0.74%"
       ],
       "created_at": "2026-06-05 02:02",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
-      "status": "active",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
+      "status": "rejected",
       "related_symbols": [],
       "source": "flow"
     },
@@ -530,16 +534,17 @@
       "id": "data_20260606020119_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "data"
@@ -548,16 +553,17 @@
       "id": "technical_20260606020123_002",
       "statement": "中兴通讯(000063) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "000063 MA20偏离+0.0%",
         "000063 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "000063"
@@ -568,16 +574,17 @@
       "id": "technical_20260606020123_003",
       "statement": "德明利(001309) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "001309 MA20偏离+0.0%",
         "001309 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "001309"
@@ -588,16 +595,17 @@
       "id": "technical_20260606020123_004",
       "statement": "立讯精密(002475) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "002475 MA20偏离+0.0%",
         "002475 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "002475"
@@ -608,16 +616,17 @@
       "id": "technical_20260606020123_005",
       "statement": "锡装股份(001332) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "001332 MA20偏离+0.0%",
         "001332 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "001332"
@@ -628,16 +637,17 @@
       "id": "technical_20260606020123_006",
       "statement": "汇川技术(300124) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "300124 MA20偏离+0.0%",
         "300124 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "300124"
@@ -648,16 +658,17 @@
       "id": "technical_20260606020123_007",
       "statement": "蓝科高新(601798) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "601798 MA20偏离+0.0%",
         "601798 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "601798"
@@ -668,16 +679,17 @@
       "id": "technical_20260606020123_008",
       "statement": "白云电器(603861) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "603861 MA20偏离+0.0%",
         "603861 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "603861"
@@ -688,16 +700,17 @@
       "id": "technical_20260606020123_009",
       "statement": "美的集团(000333) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "000333 MA20偏离+0.0%",
         "000333 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "000333"
@@ -708,16 +721,17 @@
       "id": "technical_20260606020123_010",
       "statement": "永泰能源(600157) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "600157 MA20偏离+0.0%",
         "600157 MA20偏离+0.0%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "600157"
@@ -728,16 +742,17 @@
       "id": "flow_20260606020123_011",
       "statement": "北向单日流入40亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "上证-0.74%",
         "上证-0.74%"
       ],
       "created_at": "2026-06-06 02:01",
-      "updated_at": "2026-06-07 02:01",
-      "verified_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -746,14 +761,16 @@
       "id": "data_20260607020109_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.55,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "当前过期数据源: 2个"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "data"
@@ -762,14 +779,16 @@
       "id": "technical_20260607020112_002",
       "statement": "中兴通讯(000063) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "000063 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "000063"
@@ -780,14 +799,16 @@
       "id": "technical_20260607020112_003",
       "statement": "德明利(001309) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "001309 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "001309"
@@ -798,14 +819,16 @@
       "id": "technical_20260607020112_004",
       "statement": "立讯精密(002475) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "002475 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "002475"
@@ -816,14 +839,16 @@
       "id": "technical_20260607020112_005",
       "statement": "锡装股份(001332) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "001332 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "001332"
@@ -834,14 +859,16 @@
       "id": "technical_20260607020112_006",
       "statement": "汇川技术(300124) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "300124 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "300124"
@@ -852,14 +879,16 @@
       "id": "technical_20260607020112_007",
       "statement": "蓝科高新(601798) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "601798 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "601798"
@@ -870,14 +899,16 @@
       "id": "technical_20260607020112_008",
       "statement": "白云电器(603861) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "603861 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "603861"
@@ -888,14 +919,16 @@
       "id": "technical_20260607020112_009",
       "statement": "美的集团(000333) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "000333 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "000333"
@@ -906,14 +939,16 @@
       "id": "technical_20260607020112_010",
       "statement": "永泰能源(600157) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "600157 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
       "status": "active",
       "related_symbols": [
         "600157"
@@ -924,12 +959,208 @@
       "id": "flow_20260607020112_011",
       "statement": "北向单日流入36亿，次日上证上涨概率>60%",
       "category": "market",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "上证-0.74%"
+      ],
+      "created_at": "2026-06-07 02:01",
+      "updated_at": "2026-06-08 02:01",
+      "verified_at": "2026-06-08 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260608020128_001": {
+      "id": "data_20260608020128_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
       "confidence": 0.55,
       "alpha": 1,
       "beta": 1,
       "evidence_for": [],
       "evidence_against": [],
-      "created_at": "2026-06-07 02:01",
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260608020131_002": {
+      "id": "technical_20260608020131_002",
+      "statement": "中兴通讯(000063) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "000063"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_003": {
+      "id": "technical_20260608020131_003",
+      "statement": "德明利(001309) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "001309"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_004": {
+      "id": "technical_20260608020131_004",
+      "statement": "立讯精密(002475) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002475"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_005": {
+      "id": "technical_20260608020131_005",
+      "statement": "锡装股份(001332) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "001332"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_006": {
+      "id": "technical_20260608020131_006",
+      "statement": "汇川技术(300124) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "300124"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_007": {
+      "id": "technical_20260608020131_007",
+      "statement": "蓝科高新(601798) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "601798"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_008": {
+      "id": "technical_20260608020131_008",
+      "statement": "白云电器(603861) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603861"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_009": {
+      "id": "technical_20260608020131_009",
+      "statement": "美的集团(000333) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "000333"
+      ],
+      "source": "technical"
+    },
+    "technical_20260608020131_010": {
+      "id": "technical_20260608020131_010",
+      "statement": "永泰能源(600157) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600157"
+      ],
+      "source": "technical"
+    },
+    "flow_20260608020131_011": {
+      "id": "flow_20260608020131_011",
+      "statement": "北向单日流入42亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.55,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-08 02:01",
       "updated_at": "",
       "verified_at": "",
       "status": "active",
@@ -940,10 +1171,10 @@
   "agenda": [],
   "gaps": [],
   "stats": {
-    "total_hypotheses": 49,
+    "total_hypotheses": 60,
     "confirmed": 0,
-    "rejected": 3,
-    "total_verifications": 38,
+    "rejected": 7,
+    "total_verifications": 64,
     "accuracy": 0.0
   }
 }

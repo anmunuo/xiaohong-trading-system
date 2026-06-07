@@ -1,0 +1,375 @@
+{
+  "date": "20260605",
+  "generated_at": "2026-06-05T09:26:48.156045",
+  "version": "v2.3",
+  "recommendations": [
+    {
+      "code": "000063",
+      "name": "中兴通讯",
+      "net_flow": 72883.93,
+      "change_pct": 4.0,
+      "sector": "综合",
+      "operation": "盘中侦察兵发现 · 综合评分80.0",
+      "risk_level": "中",
+      "stop_loss": {
+        "ratio": -5.0,
+        "method": "fixed"
+      },
+      "total_score": 80.0,
+      "source": "scout_intraday",
+      "added_at": "10:01",
+      "_quality": "ok",
+      "researcher_analysis": {
+        "timestamp": "2026-06-05T10:01:33.296849",
+        "version": "v2.1",
+        "reports": {
+          "data": {
+            "author": "数据研究员",
+            "emoji": "📊",
+            "perspective": "数据源 0个 / KB文件 2个",
+            "key_findings": [
+              "全部 0 个数据源正常",
+              "⚠️ 2个数据源时效下降，已创建追踪假设"
+            ],
+            "data_evidence": [],
+            "confidence": 0.7,
+            "recommendations": [
+              "当前数据源覆盖完整"
+            ],
+            "red_flags": [
+              "review_diagnosis.json 严重过期 (16.8h)",
+              "auction_diagnosis.json 严重过期 (17.8h)"
+            ]
+          },
+          "fundamental": {
+            "author": "基本面研究员",
+            "emoji": "🏢",
+            "perspective": "公告0条 / 板块0个",
+            "key_findings": [
+              "基本面信号中性"
+            ],
+            "data_evidence": [
+              "池内财务均分: 39/100"
+            ],
+            "confidence": 0.6,
+            "recommendations": [
+              "维持现有持仓基本面评估"
+            ],
+            "red_flags": [
+              "中兴通讯: 财务堪忧(评分39)"
+            ]
+          },
+          "technical": {
+            "author": "技术面研究员",
+            "emoji": "📈",
+            "perspective": "池内1只标的形态评估",
+            "key_findings": [
+              "池整体技术面中性(均分50)"
+            ],
+            "data_evidence": [],
+            "confidence": 0.7,
+            "recommendations": [
+              "观望为主，等待明确信号"
+            ],
+            "red_flags": []
+          },
+          "bull": {
+            "author": "多方研究员",
+            "emoji": "🐂",
+            "perspective": "池内1只标的看多因素",
+            "key_findings": [
+              "当前池内标的无明显看多信号"
+            ],
+            "data_evidence": [],
+            "confidence": 0.5,
+            "recommendations": [
+              "观望——多方信号不足"
+            ],
+            "red_flags": []
+          },
+          "bear": {
+            "author": "空方研究员",
+            "emoji": "🐻",
+            "perspective": "池内1只标的风险因素",
+            "key_findings": [
+              "当前池内标的无明显看空信号"
+            ],
+            "data_evidence": [],
+            "confidence": 0.7,
+            "recommendations": [
+              "高风偏标的控制仓位 ≤ 11.1%，严格执行止损"
+            ],
+            "red_flags": []
+          },
+          "flow": {
+            "author": "资金面研究员",
+            "emoji": "💰",
+            "perspective": "北向37亿 / 主力-0亿 / 量价1只",
+            "key_findings": [
+              "北向资金: 36.5亿净流入 (来源:tushare_pro)",
+              "主力资金: -0亿流出",
+              "板块资金TOP3: 综合(87万)"
+            ],
+            "data_evidence": [],
+            "confidence": 0.7,
+            "recommendations": [
+              "北向大幅流入，关注外资偏好板块",
+              "关注异常放量标的: 中兴通讯"
+            ],
+            "red_flags": [
+              "主力出货散户接盘——危险信号"
+            ]
+          }
+        },
+        "cross_analysis": {
+          "bias": "偏多",
+          "bull_votes": 1,
+          "bear_votes": 0,
+          "aggregated_flags": [
+            "review_diagnosis.json 严重过期 (16.8h)",
+            "auction_diagnosis.json 严重过期 (17.8h)",
+            "中兴通讯: 财务堪忧(评分39)",
+            "主力出货散户接盘——危险信号"
+          ],
+          "consensus_findings": [],
+          "data_errors": []
+        }
+      }
+    },
+    {
+      "code": "001309",
+      "name": "德明利",
+      "event_weight": 3.3000000000000003,
+      "source": "announcement+limit_up",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 59.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 622.77,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离-1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "002475",
+      "name": "立讯精密",
+      "event_weight": 1.1,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 56.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 69.35,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离-1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "001332",
+      "name": "锡装股份",
+      "event_weight": 1.3,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 56.8,
+      "stop_loss": {
+        "method": "default",
+        "price": 45.42,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离+1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "300124",
+      "name": "汇川技术",
+      "event_weight": 3.3000000000000003,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "total_score": 56.0,
+      "stop_loss": {
+        "method": "default",
+        "price": 69.27,
+        "ratio": -7.0
+      },
+      "sector": "金融",
+      "operation": "创业板MA20下方-2%，超跌等放量止跌信号后轻仓博弈，止损-7%",
+      "risk_level": "高"
+    },
+    {
+      "code": "601798",
+      "name": "蓝科高新",
+      "event_weight": 15.000000000000002,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "total_score": 56.0,
+      "stop_loss": {
+        "method": "default",
+        "price": 8.02,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离-1%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "603861",
+      "name": "白云电器",
+      "event_weight": 5.5,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "total_score": 55.3,
+      "stop_loss": {
+        "method": "default",
+        "price": 16.15,
+        "ratio": -5.0
+      },
+      "sector": "电气设备",
+      "operation": "MA20附近(偏离+3%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "000333",
+      "name": "美的集团",
+      "event_weight": 2.2,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 60,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "total_score": 55.3,
+      "stop_loss": {
+        "method": "default",
+        "price": 78.18,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离+2%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    },
+    {
+      "code": "600157",
+      "name": "永泰能源",
+      "event_weight": 1.1,
+      "source": "announcement",
+      "market_cap": 0,
+      "factor_scores": {
+        "event": 55,
+        "fund": 30,
+        "sentiment": 50,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "total_score": 55.3,
+      "stop_loss": {
+        "method": "default",
+        "price": 1.74,
+        "ratio": -5.0
+      },
+      "sector": "金融",
+      "operation": "MA20附近(偏离+2%)整理，侦察兵⭐确认后建底仓11.1%，止损-5%",
+      "risk_level": "中"
+    }
+  ],
+  "excluded": {
+    "st": 9,
+    "lianban": 1,
+    "suspended": 1,
+    "large_cap": 0,
+    "small_cap": 0,
+    "no_data": 0
+  },
+  "scout_additions": [
+    {
+      "code": "000063",
+      "name": "中兴通讯",
+      "score": 80.0,
+      "added_at": "10:01"
+    }
+  ],
+  "scout_last_update": "14:01",
+  "parliament": {},
+  "methodology": {
+    "factors": {
+      "event": 0.3,
+      "fund": 0.25,
+      "sentiment": 0.2,
+      "technical": 0.15,
+      "research": 0.1
+    },
+    "data_sources": [
+      "Sina批量行情",
+      "tushare PE/ROE",
+      "历史日线MA20/均量",
+      "KB LLM洞察",
+      "mega_collector公告/龙虎榜"
+    ],
+    "filters": [
+      "ST/*ST",
+      "连板(≥2板)",
+      "停牌",
+      "市值<30亿",
+      "市值>2000亿"
+    ],
+    "max_picks": 9,
+    "reset": "daily"
+  }
+}
