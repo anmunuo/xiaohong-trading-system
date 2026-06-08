@@ -695,10 +695,10 @@ class StockRecommender:
 
             # 五因子 + 新因子加权融合 (新因子权重~15%)
             base_score = (
-                scores['event'] * 0.30 +
-                scores['fund'] * 0.25 +
+                scores['event'] * 0.350 +
+                scores['fund'] * 0.3 +
                 scores['sentiment'] * 0.18 +
-                scores['technical'] * 0.15 +
+                scores['technical'] * 0.18 +
                 scores['research'] * 0.07
             )
             # 新因子加成：最高 +15 分
@@ -1237,11 +1237,11 @@ class StockRecommender:
             'parliament': parliament_field,
             'methodology': {
                 'factors': {
-                    'event': 0.30,
-                    'fund': 0.25,
-                    'sentiment': 0.20,
-                    'technical': 0.15,
-                    'research': 0.10
+                    'event': 0.35,
+                    'fund': 0.30,
+                    'sentiment': 0.18,
+                    'technical': 0.18,
+                    'research': 0.07
                 },
                 'data_sources': [
                     'Sina批量行情', 'tushare PE/ROE', '历史日线MA20/均量',

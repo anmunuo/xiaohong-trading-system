@@ -2,43 +2,68 @@
 
 > 从 2026-06-04 LLM 复盘 session 中提炼的跨模块陷阱和操作模式。
 
-## 陷阱 1: 议会静默停摆无人感知
+## 陷阱 1: 议会静默停摆 + 僵尸条目 (v8.12 升级)
 
-**症状**: parliament_log.json 停在 6/2，6/3 和 6/4 完全无产出。daily_pool.json 的 parliament section 引用 2 天前旧裁决（bias=偏空, bull=1, bear=8）。认知层在陈旧数据上运行。
+**症状 (v8.12 发现)**: parliament_log.json 有40条记录，时间戳新鲜（今天 08:15/15:16），但**零条有真实裁决**。所有条目要么 rounds=0（健康检查空壳），要么 Round 3 的 `decision.bias` 和 `decision.confidence` 全为空/null。
 
-**根因**: 议会 cron 未运行或静默失败。KB 数据持续采集但无人消费。无监控机制检测 parliament 数据新鲜度。
+**关键诊断发现 (2026-06-08)**:
+1. **Round 3 key 命名**: 实际使用 `decision` 而非 `verdict` ——旧代码查 `verdict.bias` 永远返回 null
+2. **bias/confidence 为空**: `decision` 对象存在但 `bias` 和 `confidence` 字段值全为空字符串/None
+3. **rounds=0 条目**: 后38条由 health_check 或系统进程创建的空壳，非真实议会产物
+4. **前2条有结构无内容**: 6/2 01:32-01:33 的条目有 3 轮结构（data/fundamental/technical/bull/bear → debate → decision），但 decision 内无实质裁决
 
-**检测方法**:
+**检测方法 (v8.12 升级 — 不只查时间戳，必须查内容)**:
 ```bash
-# 检查 parliament_log.json 最新时间戳
 python3 -c "
 import json
 log = json.load(open('scripts/data/research/parliament_log.json'))
-latest = max(entry['timestamp'] for entry in log)
-print(f'最新议会: {latest}')
+# 不只查最新时间，查是否有真实裁决
+real = []
+for e in log:
+    rounds = e.get('rounds',[])
+    if len(rounds) >= 3:
+        rd3 = rounds[2].get('data',{})
+        # ⚠️ key 是 'decision' 不是 'verdict'
+        d = rd3.get('decision',{}) or rd3.get('verdict',{})
+        if d.get('bias') and d.get('bias') != '?':
+            real.append(e)
+print(f'总条目: {len(log)}, 有真实裁决: {len(real)}')
+if real:
+    last = real[-1]
+    d = last['rounds'][2]['data'].get('decision',{})
+    print(f'最新真实议会: {last[\"timestamp\"][:19]} bias={d.get(\"bias\")} conf={d.get(\"confidence\")}')
+else:
+    print('🔴 零真实裁决 — 议会从未产出过有效多空判断！')
 "
-# 预期: 日期应为今天或昨天。超过 24h = 议会停摆。
 ```
+**预期**: 总条目>0 且 有真实裁决>0。若后者=0 → 议会是僵尸——可能从未工作过。
 
-**修复方向**: system_health_check 增加第13维「议会数据新鲜度」—检测 parliament_log.json 最新记录是否在 24h 内。
+**根因层次**:
+- L1: crontab 中只有 `researchers.py --study` 和 `--winners`，无 `--parliament` 模式调度
+- L2: 即使手动运行，`decision` 对象写入时 bias/confidence 字段为空
+- L3: health_check 每次运行写入空条目（rounds=0）污染日志
+
+**修复方向**: 
+1. crontab 添加 `researchers.py --parliament` 调度（建议每日 01:00 和 13:00）
+2. 修复 parliament 模式中 `decision` 对象的 bias/confidence 写入逻辑
+3. health_check 写入 parliament_log 时区分「系统条目」和「议会条目」（加 `source: health_check` 标记）
 
 ---
 
-## 陷阱 2: 进化引擎 ±20% 安全边界拒绝大跨步变更
+## 陷阱 2: 进化引擎 ±20% + 基线追踪 (v8.12 升级)
 
-**症状**: 建议「市值下限 50→30 亿」(变更幅度 40%)被进化引擎 --dry-run 拒绝。同样「市值上限 2000→1000 亿」(67%)被拒。
+**症状**: 建议「市值上限 2400→2000 亿」(变更幅度 16.7%，在 20% 内)被进化引擎拒绝，报「变更幅度 33% 超出上限 20%」。
 
-**根因**: 进化引擎铁律「单次参数调整 ≤±20%」自动拦截。40% 和 67% 远超上限。
+**根因 (v8.12 发现)**: 进化引擎使用**原始基线**（参数首次定义值）计算变更幅度，而非**当前值**。市值上限原始值 3000→6/4 v5 落地 2400→6/8 建议 2000。引擎计算 (3000-2000)/3000 = 33% 而非 (2400-2000)/2400 = 16.7%。
 
-**后果**: 0/2 项通过验证。参数变更需要手动分步执行或分多天递进。
+**影响**: 多步递进的参数变更会在中间步被误拒。即使每一步 ≤20%，引擎仍以原始基线判断——这导致分步计划无法自动执行。
 
 **正确做法**:
-- 单次建议的变更幅度必须 ≤20%
-- 50→30 需分步: 50→40→32→30 (3天完成)
-- 在 review_diagnosis.json 的 `change` 字段中写分步目标:
-  ```json
-  {"rule": "市值下限", "change": "市值下限从50亿降低到40亿（第一步：50→40→...→30）", "confidence": "high"}
-  ```
+- 分步计划中，每步的目标值需确保**从原始基线算**也在 20% 内
+- 市值上限: 3000→2400 (20% ✅) → 1920 (从原始算 36% ❌) → 需改为 3000→2400→2000→1000，但要接受中间步可能被拒
+- **或**: 在 review_diagnosis.json 的 `change` 字段中不写「从X到Y」，只写「目标新值: Y」——让引擎自己读当前源码值计算
+
+**工作区 (v8.12 验证)**: 如果源码中市值已经是 30-2000 亿（6/4 已落地），则无需再建议——直接标记 `no_change: true` 并注明「源码已是目标值」。
 
 ---
 
@@ -108,3 +133,70 @@ grep -rn '\$HOME\|Path\.home()' scripts/*.sh scripts/auto_repair.py  # 扫描残
 | 运行 | ✅ 9只 | ⚠️ 日志缺失 | 🔴 守护进程未启 | 🔴 无执行 |
 
 **检测**: LLM 复盘应检查这三者是否全部在线。任一环节断裂 → 系统处于「有信号无行动」状态，需在 diagnosis 首句标注。
+
+---
+
+## 陷阱 5: 市场快照三重静默降级 (v8.12 发现)
+
+**症状 (2026-06-08 实例)**: market_snapshot.json 08:28 生成，但三个核心字段同时失效：
+- `north_flow._quality = "T-28"` — 北向数据是 28 天前的
+- `market_money_flow.main_net = "?"` — 全市场主力资金流空
+- `sector_flow` — 板块排名列表为空
+
+**根因**: 三条数据管线独立断连但都被静默吞掉。北向=AKShare `stock_hsgt_fund_flow_summary_em()` 永久返回 0→tushare 回退但最新数据 28 天前。资金流=东方财富 `_em_api_get` RemoteDisconnected→无重试→空。板块流=同样 `_em_api_get` 断连→空。
+
+**为什么危险**: 瞭望塔/决策官 LLM 读取 market_snapshot.json 时只看字段有值（北向 42.4 亿），不看 `_quality` 标记。基于 T-28 假数据做出「资金面偏多」的错误宏观判断。
+
+**检测方法**:
+```bash
+python3 -c "
+import json
+m = json.load(open('scripts/data/market_snapshot.json'))
+nf = m.get('north_flow',{})
+mf = m.get('market_money_flow',{})
+sf = m.get('sector_flow',[])
+issues = []
+if nf.get('_quality','').startswith('T-') and int(nf.get('_quality','T-1')[2:]) > 3:
+    issues.append(f'北向{nf[\"_quality\"]}天前')
+if not mf.get('main_net') or mf.get('main_net') == '?':
+    issues.append('资金流空')
+if len(sf) == 0:
+    issues.append('板块流空')
+if issues:
+    print(f'🔴 快照降级: {\" + \".join(issues)}')
+else:
+    print('✅ 快照正常')
+"
+```
+
+**修复方向**:
+1. 瞭望塔/决策官 LLM prompt 增加「数据质量前置检查」— 北向 T-N>3 天时禁止引用具体数字
+2. 降级时市场快照字段不写假值，写 `null` 而非 28 天前的 42.4 亿
+3. 三路 API 增加独立重试 + 退避 + 完整 UA
+
+---
+
+## 陷阱 6: 进化引擎基线追踪 (v8.12 发现)
+
+**症状 (2026-06-08)**: 建议「市值上限 2400→2000 亿」被进化引擎拒绝，报「变更幅度 33% 超出上限 20%」。但从当前值 2400 算，2000 是 -16.7%（在 20% 内）。引擎实际计算的是 (3000-2000)/3000 = 33%——用了原始基线而非当前值。
+
+**根因**: 进化引擎使用**参数首次定义值**（原始基线）计算变更幅度。市值上限原始值=3000→6/4 v5 落地 2400→6/8 建议 2000。引擎不看 v5 已落地的中间值。
+
+**应对**:
+1. 如果在分步递进中（如 3000→2400→2000→1000），中间步可能被引擎误拒
+2. **正确做法**: 提交建议前先 `grep` 源码确认**当前实际值**，计算 (当前值-目标值)/当前值 确保 ≤20%
+3. 如果源码已是目标值（如 30-2000 亿已硬编码），直接标记 `no_change: true`
+4. 在 review_diagnosis.json 的 `change` 字段中**只写目标新值**不写「从X到Y」，以减少歧义
+
+---
+
+## 参考: 关键文件路径确认 (v8.12)
+
+LLM 复盘写入和读取的核心路径：
+- `review_diagnosis.json`: **`scripts/data/kb/review_diagnosis.json`** (不是 `scripts/kb/`)
+- `parliament_log.json`: `scripts/data/research/parliament_log.json`
+- `daily_pool.json`: `scripts/data/daily_pool.json`
+- `holdings.json`: `<workspace>/data/holdings.json` (不是 `scripts/data/`)
+- `market_snapshot.json`: `scripts/data/market_snapshot.json`
+- `evolution_action_items.json`: `scripts/data/evolution_action_items.json`
+- `evolution_log.json`: `scripts/data/evolution/evolution_log.json`

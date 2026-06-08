@@ -249,6 +249,9 @@ def main():
 
     if args.alerts_only:
         result['alerts'] = [a for a in result['alerts'] if a['level'] >= 1]
+        # ── 无告警时静默：cron no_agent 模式下 stdout 空 = 不发消息 ──
+        if not result['alerts']:
+            return  # 静默退出，零输出
 
     if args.json:
         print(tracker.to_json(result))

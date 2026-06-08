@@ -57,7 +57,7 @@ class Config:
     ALERT_COOLDOWN_MARKET = 600   # 大盘异动
 
     # 触发阈值
-    STOP_PROXIMITY_PCT = 3.0      # P1 止损逼近距离 (%)
+    STOP_PROXIMITY_PCT = 2.5      # P1 止损逼近距离 (%)
     P2_CHANGE_THRESHOLD = 5.0     # P2 涨跌幅度 (%)
     P2_VOL_RATIO = 3.0            # P2 量比阈值
     ENTRY_VOL_RATIO = 1.5         # 入场量比门槛

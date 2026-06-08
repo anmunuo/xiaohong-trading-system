@@ -343,6 +343,7 @@ PB 分布 (N=3961):
 | ⭐ 数据目录嵌套（data/data/） | 实际数据路径为 `<workspace>/data/data/`（双层嵌套），内含 `evolution/`、`stock_pool.json`、`trading_log.json` 等。skill 中 `scripts/data/` 路径指向 `<workspace>/scripts/data/`（仅含 push_history.json + watchlist.json）。复盘时优先读 `data/data/` 下的实际运行数据。 |
 | ⭐ 盘后持仓估值未同步 | `holdings.json` 中 `lastPrice=None` 且 `pnlPct=None`。盘后估值同步脚本（对标 `ammo_risk.py --update`）未运行或不存在于 v1.0 系统。弹药库报告显示现价 ¥0.00。在估值同步修复前，LLM 复盘应标记此状态而非假装存在实时价格。 |
 | ⭐ 研究员研学报告为空壳 | `researchers.py` v1.0 `run_study_session()` 保存报告时只写 `_自主学习完成_` 模板文本，未捕获 `r.analyze()` 结果。修复 v2.0：重新调用 `r.analyze()`，写 `key_findings`/`data_evidence`/`red_flags`，输出计数。system_health_check 第7维检测「研学报告是否有实质内容」。 |
+| ⭐⭐ **P0** 涨幅榜学习全是空壳 (v3.0) | **三重根因**：(1) `build_stock_context` 不填充 `data_sources` → DataResearcher 报告「全部 0 个数据源正常」，(2) 逐只串行 `build_stock_context` → ProcessPool 每次重建 → 50 只 12 分钟,(3) `_extract_domain_lesson` 收到的是扁平 `quick_context` 但代码写 `ctx.get('pool_stocks',[{}])[0]` 读嵌套结构→读不到数据。**修复 v3.0**：(1) 每步拉取后 `_ds["step"]={"ok":True,...}`，(2) `run_winner_study` 批量预拉取 `get_stock_realtime(all_codes)` + `get_historical_k_with_ma(all_codes)` + `get_financial_summary` 一次性→复用，(3) `_extract_domain_lesson_v3` 直接从 `ctx.get('ma5')`/`ctx.get('roe')` 读。新增覆盖率分级(🔴<30% 🟡30-60% 🟢>60%)+北交所(920)识别。详见 `references/winners-study-v3.md`。 |
 | ⭐ hermes cron 全部缺 --task 参数导致空转 | **根因**：crontab 中 hermes 管理的 xiaohong cron（08:45 watchtower_hermes / 16:00 close_risk）调用 `family_hermes_manager.py --role xiaohong --task watchtower_hermes` 但 `family_hermes_manager.py` **要求 `--task` 参数指定任务ID**。当前 cron 只传 `--role` 和 `--task`，但脚本仍然报「请指定任务ID (--task)」→ 说明参数名不匹配或传参格式错误。**影响**：两个 LLM cron 完全空转——瞭望塔 hermes 版未产出、收盘风控 hermes 版未产出。**修复**：检查 `family_hermes_manager.py` 实际接受的参数名（可能是 `--task-id` 或 `--task_name` 而非 `--task`），修正 crontab。验证：手动跑一次 `python3 family_hermes_manager.py --role xiaohong --task watchtower_hermes --api http://localhost:8234` 确认不再报错。 |
 | ⭐ self_evolution.py v1.0 不消费 review_diagnosis.json | **致命断层**：LLM复盘→review_diagnosis.json→进化引擎自动patch 的闭环在 v1.0 系统中**断裂**。`self_evolution.py` 使用 `SelfEvolution` 类 + 角色分离 decisions JSON（`ammo_decisions.json`/`scout_decisions.json`/`watchtower_decisions.json`/`review_decisions.json`），**不读取** `review_diagnosis.json` 中的 `rule_changes_suggested`。所有 LLM 复盘建议的参数变更**永不自动落地**。**现状**：decisions 文件停在 2026-03-20（最后一条 `review_20260320174707_5`「每日复盘完成」），80 天无新决策。**临时方案**：LLM 复盘仍需写 review_diagnosis.json（作为审计记录），但 rule_changes 需要手动执行或等待 v2.0 进化引擎部署。**不要在诊断中假设 rule_changes 会被自动应用。** |
 | ⭐ LLM复盘 review_diagnosis.json 写入路径 | skill 文档引用 `~/scripts/kb/review_diagnosis.json`，但实际 v1.0 系统的写入路径是 `<workspace>/data/data/kb/review_diagnosis.json`（双层 data 嵌套）。写入前先用 `find` 定位实际 kb 目录。同理，`holdings.json` 在 `<workspace>/` 根目录而非 `data/` 下。LLM 复盘 cron 启动时第一步永远是定位真实工作区路径。 |
@@ -359,6 +360,9 @@ PB 分布 (N=3961):
 | ⭐ Gold 因子覆盖率低 (启动期 ~24%) | 正常现象。仅有 Silver 当日数据的因子可用（资金+质量）。动量/波动/筹码/滚动需要 6-61 天回溯 → 随 Silver 日积累自动提升。不要为此告警或试图绕过 Silver 调 API。详见 `references/gold-layer-design.md` |
 | ⭐ Gold PE/PB 全为 None | Silver 仅 100 只样本且 PE/PB 为 0（Bronze 样本缺基本面数据）。需 tushare `fina_indicator` 或 `daily_basic` 数据注入 Silver 后才能激活估值因子。PE/PB 为 0 时因子填 None。 |
 | 🆕 议会静默停摆无人感知 (v8.11) | **根因**：parliament_log.json 超过 24h 无新记录，daily_pool.parliament 引用陈旧数据，认知层链路断裂但无监控。**检测**：`python3 -c "import json; log=json.load(open('scripts/data/research/parliament_log.json')); print(max(e['timestamp'] for e in log))"` 应与今天日期相差≤24h。**修复**：system_health_check 计划增加第13维「议会数据新鲜度」。详见 `references/llm-review-pitfalls.md`。 |
+| 🆕 **v8.12** 议会僵尸条目——40条记录零真实裁决 | **根因**：(1) Round 3 key 是 `decision` 非 `verdict`→旧查询永远 null；(2) decision.bias/confidence 字段存在但值全空；(3) 后38条 rounds=0（健康检查空壳污染）。**检测**：不只查时间戳——必须验证 `decision.bias` 非空且 ≠ `?`。**修复**：crontab 添加 `researchers.py --parliament` 调度 + 修复裁决写入逻辑。详见 `references/llm-review-pitfalls.md` 陷阱1升级版。 |
+| 🆕 **v8.12** 市场快照三重静默降级 | **症状**：北向 T-28 + 资金流全空 + 板块流全空同时发生。**根因**：三路 API 独立断连均被静默吞掉，瞭望塔/决策官 LLM 只看有值不看 `_quality` 标记→基于 28 天前假数据做判断。**检测**：`_quality` 前缀检查 + `main_net`/`sector_flow` 非空验证。详见 `references/llm-review-pitfalls.md` 陷阱5。 |
+| 🆕 **v8.12** 进化引擎基线追踪——用原始值非当前值算变更幅度 | **症状**：2400→2000(16.7%) 被报 33% 拒绝。**根因**：引擎用参数首次定义值(3000)计算而非当前值(2400)，导致分步递进中间步被误拒。**应对**：建议前先 grep 源码确认当前值，计算 (当前-目标)/当前≤20%。详见 `references/llm-review-pitfalls.md` 陷阱6。 |
 | 🆕 进化引擎 ±20% 边界拒绝大跨步变更 (v8.11) | **根因**：`review_diagnosis.json` 中建议「50→30」(40%) 被 --dry-run 拒绝。单次调整≤20% 是硬约束。**正确做法**：分步递进——50→40→32→30 (3天完成)，每步在 change 字段写明分步目标。详见 `references/llm-review-pitfalls.md`。 |
 | 🆕 Gold ETL cron 路径双写 (v8.11) | **症状**：`can't open file '/home/pc/.../xiaohong/home/.hermes/.../gold_pipeline.py'` — 路径中出现双重 `home/.hermes/profiles/xiaohong`。**根因**：非 cron_gold.sh 自身问题（脚本使用相对路径正常），疑为 hermes cron 调度层将工作目录前缀重复拼接。**影响**：Gold 因子面板+ML 数据集+Pool 归档未产出。详见 `references/llm-review-pitfalls.md`。 |
 | 🆕 三链路断裂：推荐池→侦察兵→狙击手→下单 (v8.11) | LLM 复盘应检查此四环节是否全部在线。任一断裂→系统处于「有信号无行动」状态，需在 diagnosis 首句标注。6/4 现状：推荐池✅ 侦察兵⚠️ 狙击手🔴 下单🔴。详见 `references/llm-review-pitfalls.md`。 |
@@ -746,7 +750,7 @@ idx = get_index_data(); nf = get_north_flow()
 - `scripts/resource_pool.py` — 基本面事件智能池（公告/合同/合作/政策/研报采集，供 mega_collector 和 recommender 调用）
 - `scripts/knowledge_base.py` — 基本面知识库（增量采集+去重+倒排索引+检索）
 - `scripts/auction_collector.py` — 🆕 竞价采集器 v1.2（三通道降级：东方财富→腾讯→Sina，09:15-09:25每3秒轮询，API预热+异常隔离+降级标的+通道统计）
-- `scripts/researchers.py` — 🔬 研究员系统 v2.3（`run_quick_parliament(code,name)` 盘中快速议会4核心研究员2轮~10s；`run_parliament()` 完整3轮；`run_study_session()` 自主研学；`analyze_stock()` 全维分析6研究员）
+- `scripts/researchers.py` — 🔬 研究员系统 v3.0（`run_quick_parliament(code,name)` 盘中快速议会4核心研究员2轮~10s；`run_parliament()` 完整3轮；`run_study_session()` 自主研学；`analyze_stock()` 全维分析6研究员；🆕 v3.0 `run_winner_study()` 批量预拉取+全量涨幅股分析+真实数据+覆盖率计算，见 `references/winners-study-v3.md`）
 - `scripts/target_pool.py` — 🆕 v1.0 目标池管理（`select_target_pool()` 09:30初始选池3只 + `update_target_pool()` 盘中动态替换 + `get_target_pool_summary()` 狙击手消费接口）
 - `scripts/auction_features.py` — 🆕 竞价五维特征提取（价格斜率+量能+不平衡+溢价+板块偏离）
 - `scripts/auction_learner.py` — 🆕 Bayesian学习器 v1.1.1（盘后验证→α/β更新→权重自适应，`_get_latest_date_in_db()` 自动找最近交易日，--diagnose诊断空数据）
@@ -805,7 +809,8 @@ idx = get_index_data(); nf = get_north_flow()
 - `~/diagrams/架构图-小红交易系统-v8.1.excalidraw` — 备选手绘版本
 - `references/evolution-engine-design.md` — 进化引擎 v1.0 设计（LLM诊断→沙箱验证→自动落地闭环）
 - `references/evolution-v2-params.md` — 🆕 进化引擎 v2.0 全域参数映射（7模块49参数 + review_diagnosis.json 规范）
-- `references/maturity-assessment.md` — 🆕 六维成熟度评估框架（月度审计用：市场数据/清洗/特征/模型/风控/执行）
+- `references/maturity-assessment.md`
+- `references/winners-study-v3.md` — 🆕 涨幅榜学习 v3.0 架构与陷阱 — 🆕 六维成熟度评估框架（月度审计用：市场数据/清洗/特征/模型/风控/执行）
 - `references/health-check-system.md` — 🆕 系统健康自检 v1.0（进化后自动触发，7维扫描+6种自修复）
 - `references/layered-data-architecture.md` — 🆕 v8.6 分层数据架构 v1.0 (Bronze/Silver/Gold三层，可复现性保证，70MB/天×17GB/年)
 - `references/gold-layer-design.md` — 🆕 v8.7 Gold 层设计 (26维因子注册表+启动期陷阱+因子覆盖率时间线+可复现性验证)

@@ -15,8 +15,9 @@ triggers:
   - "交易.*执行|自动.*下单|执行器"
   - "Docker.*部署|docker-compose|容器化"
   - "硬件.*盒子|树莓派|Raspberry"
-  - 狙击手|弹药库|文工团|交易规则|规则体系|R值|凯利
+  - 狙击手|弹药库|文工团|交易规则|规则体系|R值|凯利|业务逻辑
   - 进化引擎|自我进化|自动调参|参数优化|broker|券商|xtquant|实盘下单
+  - 策略.*管理|策略.*系统|策略.*需求|策略.*文档|策略注册表
   - 账户.*重置|清空.*持仓|重置.*净值
   - 商业化|产品化|对外.*销售|PRD|可复制|量化.*产品|SaaS.*交易
   - 券商.*接口.*标准|BrokerDriver|券商.*抽象|券商.*统一
@@ -64,8 +65,39 @@ python3 ~/.hermes/profiles/xiaohong/scripts/options/options_bridge.py <command> 
 ```
 
 > 场外个股期权交易模块完整文档 → `otc-options-trading` skill
-> 6 命令：`list | open | close | check | signal | portfolio`
-> 推荐池/目标池与现货共用，止损/仓位/盈亏计算独立设计
+
+## 凯利值与 R 值计算
+
+### 全链路公式
+
+```
+R值 = 净值 × 单股持仓上限(33.3%) × 1/8(R_DENOMINATOR) × 凯利值(0.2)
+```
+
+当前系统使用**硬编码保守值 `kellyValue = 0.2`**（分数凯利，全凯利的 20%），存储于 `holdings.json` → `rules.riskManagement.kellyValue`。
+
+两处消费点：
+- `ammo_risk.py` → `calc_r_value()` — 盘后同步写入
+- `POS-002` (RValueRiskStrategy) → `calculate_r_value()` — 策略引擎
+
+**1/8 含义**：风险分散到 8 笔独立交易，与总持仓上限 9 只一致（留 1 只空间）。
+
+### R值 → 仓位反推
+
+```
+仓位金额 = R值 ÷ 止损距离
+```
+
+止损越近 → 仓位越大（风险固定，距离小则头寸大）。
+
+### 冷启动陷阱
+
+动态凯利 `f* = (p×(b+1)−1)/b` 需要近 20 笔胜率。新系统无历史 → `p=0` → `f*` 负数 → 永远无法建仓。
+引导期需使用 `bootstrap_kelly = 0.15`，至少 `min_trades_for_kelly = 10` 笔后才启用动态凯利。
+
+### 进化引擎参数
+
+`ammo_kelly_coefficient` — 默认 0.2，范围 0.05-0.5，±20% 单次调整。
 
 所有输出为 JSON。
 
@@ -429,6 +461,7 @@ python3 scripts/ammo_risk.py --update
 - **ML predictor sklearn fallback**: `ml_predictor.py` auto-degrades to sklearn RandomForest when lightgbm unavailable. Install: `pip install lightgbm --no-build-isolation`.
 - **New factor computation**: Must use already-prefetched `_indicators[code]['close_history']` — do NOT re-call `get_historical_k_with_ma()` (ProcessPool deadlock + 80s waste).
 - **efinance 与东方财富 push2 同源**：efinance 底层走 `push2.eastmoney.com`，和现有 `_em_api_get` 是同一管道。非交易时段同样断连。不引入新数据源价值。
+- ⭐ **期权保证金追踪 `--alerts-only` 静默机制**：`margin_tracker.py --alerts-only` 在 `no_agent: true` cron 中使用时，**无告警必须 stdout 为空才能不发消息**。v1.0 即使在 --alerts-only 过滤后 alerts 为空仍输出完整报告（标题/表头/「暂无持仓」），导致每 5 分钟刷一条无意义消息。修复：`if not result['alerts']: return` 在 print 之前静默退出。**模式**：任何 `no_agent` 脚本在「仅告警」模式下都必须在无告警时早期 return 且不调用任何 print。
 - **场外期权 ≠ 场内 ETF 期权**：场外是 OTC 柜台交易、无连续行情、无公开期权链 API。数据靠手工录入和券商报价，不能调用 AKShare `option_sse_*`（那是场内 ETF 期权）。Greeks 需自算（BS 模型），IV 需从历史波动率估算。——2026-06-07 用户明确纠正
 - **Docker TA-Lib 编译**：Raspberry Pi ARM 架构编译慢，建议用预编译 wheel 或 `--build-arg` 跳过；x86 机器正常
 - **auto_executor 只在策略桥接返回信号时才执行**，空仓无信号时静默。若需强制测试，用 `process_signal()` 直接注入 Signal 对象
@@ -439,6 +472,12 @@ python3 scripts/ammo_risk.py --update
 - **进化引擎沙箱 KeyError: 'old_metric'**：`sandbox_test()` 返回 dict 不含 `old_metric`/`new_metric`/`improvement`。v2.0 沙箱有 4 种策略，仅 `reflection_log` 策略返回这些键。打印语句已改为 `test_result.get('details', 'ok')`。
 - **竞价采集器 09:15 cron error**：(1) 东方财富 `push2.eastmoney.com/api/qt/stock/get` 在非交易时段拒绝连接，(2) `f43`/`f2`/`f46`/`f60` 字段单位是**分**需 ÷100，(3) `exec` 在 cron 脚本中可能使进程跟踪丢失。修复：6轮指数退避预热 + 批量拉取兜底 + 干净退出 + 去 exec。详见 `stock-research` → `references/candidate-pool-p0-fix.md`。
 - **竞价采集器多通道降级**：v1.2 新增三通道（东方财富→腾讯→Sina），单通道故障时自动降级，采集结束输出通道分布统计。腾讯行情 (qt.gtimg.cn) 解析：`split('"')[1]` → `split('~')`，量单位手(×100)、额单位万(×10000)。详见 `stock-research` → `references/multi-channel-data-pattern.md`。
+
+## 狙击手 & 弹药库 详细业务文档 🆕
+
+完整业务逻辑（四级信号/入场信号/8项同步/行业集中度/流动性风控）→ `~/wiki/交易系统/狙击手与弹药库-业务逻辑详解.md` 及仓库 `docs/狙击手与弹药库-业务逻辑详解.md`。
+
+策略管理系统需求（20策略注册表/6大类/生命周期/执行链路/缺口清单）→ `~/wiki/交易系统/策略管理系统-需求文档.md` 及仓库 `docs/策略管理系统-需求文档.md`。
 
 ## 狙击手 v4.0 实时守护进程 🆕
 

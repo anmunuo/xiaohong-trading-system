@@ -264,5 +264,142 @@
         "P2: 竞价诊断2天未更新"
       ]
     }
+  },
+  {
+    "date": "2026-06-08 17:18:49",
+    "version": "#8",
+    "dry_run": true,
+    "changes_attempted": 13,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-08 17:19:44",
+    "version": "#9",
+    "dry_run": false,
+    "changes_attempted": 13,
+    "changes_applied": 8,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "description": "竞价价格斜率权重",
+        "old_value": 0.25,
+        "new_value": 0.2,
+        "reason": "竞价学习器v2.0处于冷启动阶段。8个total_samples全部因做多导向目标函数在下跌市中落入skip/penalty分支，五维权重仍为均匀先验(0.20/0.30/0.20/0.15/0.15)。核心问题：(1) volume_accel权重0.30在风险off环境中偏高——放量多为恐慌抛售而非吸筹，易产生假多头信号；(2) sector_dev权重0.15偏低——弱势市场中板块相对强弱是最可靠的选股维度；(3) 学习器缺少最低激活样本数阈值，导致权重可能长期冻结在均匀先验。建议适度降低volume_accel、提升sector_dev，待市场企稳、hits数据积累后再由Bayesian更新接管。",
+        "test_result": {
+          "param": "auction_weight_price_slope",
+          "old_value": 0.25,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.25,
+        "reason": "竞价学习器v2.0处于冷启动阶段。8个total_samples全部因做多导向目标函数在下跌市中落入skip/penalty分支，五维权重仍为均匀先验(0.20/0.30/0.20/0.15/0.15)。核心问题：(1) volume_accel权重0.30在风险off环境中偏高——放量多为恐慌抛售而非吸筹，易产生假多头信号；(2) sector_dev权重0.15偏低——弱势市场中板块相对强弱是最可靠的选股维度；(3) 学习器缺少最低激活样本数阈值，导致权重可能长期冻结在均匀先验。建议适度降低volume_accel、提升sector_dev，待市场企稳、hits数据积累后再由Bayesian更新接管。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.25,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_imbalance",
+        "description": "竞价委托不平衡权重",
+        "old_value": 0.2,
+        "new_value": 0.2,
+        "reason": "竞价学习器v2.0处于冷启动阶段。8个total_samples全部因做多导向目标函数在下跌市中落入skip/penalty分支，五维权重仍为均匀先验(0.20/0.30/0.20/0.15/0.15)。核心问题：(1) volume_accel权重0.30在风险off环境中偏高——放量多为恐慌抛售而非吸筹，易产生假多头信号；(2) sector_dev权重0.15偏低——弱势市场中板块相对强弱是最可靠的选股维度；(3) 学习器缺少最低激活样本数阈值，导致权重可能长期冻结在均匀先验。建议适度降低volume_accel、提升sector_dev，待市场企稳、hits数据积累后再由Bayesian更新接管。",
+        "test_result": {
+          "param": "auction_weight_imbalance",
+          "old_value": 0.2,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_premium",
+        "description": "竞价开盘溢价权重",
+        "old_value": 0.15,
+        "new_value": 0.15,
+        "reason": "竞价学习器v2.0处于冷启动阶段。8个total_samples全部因做多导向目标函数在下跌市中落入skip/penalty分支，五维权重仍为均匀先验(0.20/0.30/0.20/0.15/0.15)。核心问题：(1) volume_accel权重0.30在风险off环境中偏高——放量多为恐慌抛售而非吸筹，易产生假多头信号；(2) sector_dev权重0.15偏低——弱势市场中板块相对强弱是最可靠的选股维度；(3) 学习器缺少最低激活样本数阈值，导致权重可能长期冻结在均匀先验。建议适度降低volume_accel、提升sector_dev，待市场企稳、hits数据积累后再由Bayesian更新接管。",
+        "test_result": {
+          "param": "auction_weight_premium",
+          "old_value": 0.15,
+          "new_value": 0.15,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "recommender_weight_event",
+        "description": "事件因子权重",
+        "old_value": 0.3,
+        "new_value": 0.35,
+        "reason": "研究员: 公告信号密度变化: 基于本周公告回购/减持比变化，调整event因子中公告权重",
+        "test_result": {
+          "param": "recommender_weight_event",
+          "old_value": 0.3,
+          "new_value": 0.35,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "sniper_stop_approach_pct",
+        "description": "P1止损逼近阈值（%）",
+        "old_value": 3.0,
+        "new_value": 2.5,
+        "reason": "研究员: 止损失效率分析: 本周1条止损失效记录，建议复盘止损价设置",
+        "test_result": {
+          "param": "sniper_stop_approach_pct",
+          "old_value": 3.0,
+          "new_value": 2.5,
+          "strategy": "lightweight_sim",
+          "passed": true,
+          "details": "📉 放宽狙击手参数 sniper_stop_approach_pct: 3.0→2.5 | 更敏感"
+        }
+      },
+      {
+        "param": "recommender_weight_technical",
+        "description": "技术因子权重",
+        "old_value": 0.15,
+        "new_value": 0.18,
+        "reason": "研究员: MA20偏离分布: 基于本周跟踪池标的MA20偏离分布，调整打分参数",
+        "test_result": {
+          "param": "recommender_weight_technical",
+          "old_value": 0.15,
+          "new_value": 0.18,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "recommender_weight_fundamental",
+        "description": "基本面因子权重",
+        "old_value": 0.25,
+        "new_value": 0.3,
+        "reason": "研究员: 北向资金持续性: 如果北向持续流入，建议提升fund因子中北向权重",
+        "test_result": {
+          "param": "recommender_weight_fundamental",
+          "old_value": 0.25,
+          "new_value": 0.3,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      }
+    ]
   }
 ]

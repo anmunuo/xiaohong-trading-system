@@ -28,8 +28,8 @@ DB_PATH = Path(__file__).resolve().parent / 'data' / 'auction.db'
 DEFAULT_WEIGHTS = {
     'price_slope': 0.2,
     'volume_accel': 0.3,
-    'imbalance':      0.20,
-    'premium':        0.15,
+    'imbalance': 0.20,
+    'premium': 0.15,
     'sector_dev': 0.15,
 }
 

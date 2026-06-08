@@ -1,12 +1,12 @@
 {
   "version": "2.0.0",
-  "updated_at": "2026-06-05T16:01:42.690902",
-  "total_samples": 4,
+  "updated_at": "2026-06-08T16:01:34.317778",
+  "total_samples": 8,
   "dimensions": {
     "price_slope": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.25,
+      "weight": 0.2,
       "hits": 0,
       "misses": 0,
       "accuracy": 0.5
@@ -14,7 +14,7 @@
     "volume_accel": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.25,
+      "weight": 0.3,
       "hits": 0,
       "misses": 0,
       "accuracy": 0.5

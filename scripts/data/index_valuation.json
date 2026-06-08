@@ -1,40 +1,11 @@
 {
-  "generated_at": "2026-06-05T08:29:05.061829",
-  "indices": {
-    "000016.SH": {
-      "name": "上证50",
-      "pe_ttm": 11.2,
-      "percentile": 66.8,
-      "signal": "🟠 合理偏高",
-      "history_points": 725
-    },
-    "000300.SH": {
-      "name": "沪深300",
-      "pe_ttm": 14.5,
-      "percentile": 96.0,
-      "signal": "🔴 偏贵",
-      "history_points": 725
-    },
-    "000905.SH": {
-      "name": "中证500",
-      "pe_ttm": 36.7,
-      "percentile": 91.2,
-      "signal": "🔴 偏贵",
-      "history_points": 725
-    },
-    "399006.SZ": {
-      "name": "创业板指",
-      "pe_ttm": 48.5,
-      "percentile": 99.6,
-      "signal": "🔴 偏贵",
-      "history_points": 725
-    }
-  },
+  "generated_at": "2026-06-08T08:28:31.070925",
+  "indices": {},
   "summary": {
-    "avg_pe_ttm": 27.7,
-    "avg_percentile": 88.4,
+    "avg_pe_ttm": 0,
+    "avg_percentile": 0.0,
     "undervalued_count": 0,
-    "overvalued_count": 3,
-    "position_signal": "轻仓/防御（整体偏贵）"
+    "overvalued_count": 0,
+    "position_signal": "中性仓位"
   }
 }

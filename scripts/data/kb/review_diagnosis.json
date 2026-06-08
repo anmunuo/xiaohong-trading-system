@@ -1,90 +1,93 @@
 {
-  "date": "20260605",
-  "diagnosis": "沪指4027(-0.74%)连续下跌，推荐池9只中6跌(67%)、3只触发止损(德明利-7.4%/立讯精密-7.8%/蓝科高新-5.98%)。捕获率连续5天0%(0/50只≥6%大涨股)——不是阈值问题而是候选源结构性问题：过度依赖单一公告事件源。议会第3天停摆——crontab中完全缺parliament调度。sniperd运行3天但零交易——从推荐池到下单的链路虽建好了信号管道，执行层仍是空转。正向信号：中兴通讯(+3.68%,scout盘中发现)和白云电器(+3.69%)验证了部分选股逻辑有效。核心瓶颈：30-50亿小市值候选被排除过多+议会认知层缺失+执行层僵尸运行。",
+  "date": "20260608",
+  "diagnosis": "6月8日捕获率连续第7天0%(0/50)，议会40条记录零有效裁决(自6/2创建以来从未产出过真实bias/confidence)，进化引擎停在6/4未处理6/5的2条建议(市值下限50→40→30、市值上限3000→2400→2000全部未落地)，市场快照严重降级(北向T-28/资金流空/板块流空)。三链路(认知→推荐→进化)全部断裂，系统处于'有信号无行动'持续空转。唯一正向：零持仓下回撤0%，弹药库安全。",
   "module_scores": {
     "recommender": {
       "status": "error",
-      "note": "池内9只（同昨日数量，持稳）。今日表现：3涨3跌3中性——中兴+3.68%/白云+3.69%/汇川+1.25%验证部分选股逻辑有效；但德明利-7.4%/立讯精密-7.8%/蓝科高新-5.98%全部触发-5%止损线，选股质量恶化。捕获率连续5天0%(0/50只6%+)——进化v5已将市值下限从50→40，但仍在0%说明问题不是阈值差距而是候选源结构：review.py诊断提示「候选源过度依赖公告事件(单一source=announcement)」。进化v5的市值上限3000→2400合理但需继续推进到1000（step 1/3）。选股逻辑本身有亮点（3只涨），但风险端暴露严重（3只触发止损）。"
+      "note": "捕获率连续第7天0%(0/50只≥6%大涨股)。今日推荐池8只（全部首板涨停+公告事件），无资金流候选、无板块共振候选。候选源结构性问题6/5已识别但至今未修——resource_pool公告事件是唯一候选源，资金流TOP和板块共振两大候选源仍未接入。6/5建议的市值下限40→30和2400→2000均未落地（进化引擎停在6/4）。"
     },
     "scout": {
       "status": "warn",
-      "note": "盘中侦察兵10:02发现中兴通讯(80.0分)加入推荐池→收盘+3.68%，单次命中有效。但全天4次cron(10/11/13/14:00)仅新增1只标的入池——盘中异动扫描灵敏度可能偏低。sniper_logs目录存在且今日有产出(sniper_20260605.jsonl)，日志管道正常。f62健康检测机制工作中，整体管道完整但捕获量不够。"
+      "note": "今日无盘中侦察兵日志产出。sniper_logs目录为空。09:25开盘确认和10/11/13/14四次盘中扫描cron均未产生可见输出。f62健康检测当前ok(post-market 17:16)但08:28市场快照中资金流/板块流字段全空——说明盘中数据源已降解但未被侦察兵检测到或告警。"
     },
     "sniper": {
-      "status": "error",
-      "note": "sniperd.service已连续运行3天(自6/1 22:30，PID 315353)。日志目录存在(sniper_20260605.jsonl)。但零交易执行——三日持仓始终为0，净值¥100,000不变。根因不是sniperd进程挂了，而是：当前市场判定为「轻仓/防御（整体偏贵）」，在弹药库零持仓状态下sniperd的策略判定层拒绝开仓。问题是「主动不交易」而非「无法交易」——需要审视当前偏空判断是否过度保守。"
+      "status": "warn",
+      "note": "零交易，零持仓。sniperd守护进程可能未运行(sniper_logs目录空)。即使运行，在推荐池捕获率0%+议会零裁决的环境下，狙击手没有可操作的入场信号——架构问题：上游全断，下游必然空转。"
     },
     "ammo": {
-      "status": "ok",
-      "note": "零持仓，净值¥100,000，回撤0%。R值≈¥832。风控参数均未触发——空仓状态在此估值偏贵环境下合理。但连续空仓时间过长(≥5天)，如果推荐池中有正期望标的（中兴+3.68%已验证），弹药库应考虑是否允许极小仓位试错（如2%观察仓）。"
+      "status": "warn",
+      "note": "零持仓，净值¥100,000，回撤0%。表面OK但R值从未计算(null)——弹药库核心风险度量失效。accountInfo.currentNetValue = riskManagement.currentNetValue = ¥100,000（一致）。空仓在此估值偏贵+美股大跌(纳指-4.18%)环境下合理，但连续空仓≥7天需审视是否过度防御。"
     },
     "knowledge_base": {
-      "status": "ok",
-      "note": "mega_collector每小时正常产出。mega_latest.json路径存在。KB洞察数据流入推荐引擎scoring正常工作。但KB→议会的下游消费链路完全断裂——parliament已3天未运行，KB洞察积累无人解读。"
+      "status": "error",
+      "note": "市场快照08:28严重降级：北向资金_quality=T-28(28天前数据)、market_money_flow全字段空(main_net/retail_net/main_pct均为?)、sector_flow板块排名空。mega_collector每小时产出正常但采集的数据源大面积失效——这不是缓存过期而是API断连被静默吞掉。KB→议会消费链路完全断裂(议会零裁决)。"
     },
     "auction": {
-      "status": "warn",
-      "note": "竞价诊断停在6/3（2天未更新）。auction_diagnosis.json仍引用6/3的5样本冷启动数据。竞价采集器(09:15 cron)和竞价学习器(16:00 cron)可能均未产出新诊断。auction_weights.json存在但不知是否更新。建议：确认09:15和16:00两个cron是否执行、学习器v1.1.1的_get_latest_date_in_db()是否找到今日数据。"
+      "status": "error",
+      "note": "竞价诊断完全缺失——auction_diagnosis.json不存在。竞价采集器(09:15 cron)和竞价学习器(16:00 cron)均未产出。连续4天无竞价数据(上次auction_diagnosis停在6/3)。侦察兵的竞价确认信号无依据，竞价学习器空转。"
     },
     "review": {
       "status": "ok",
-      "note": "文工团review.py今日可正常运行——手动触发生成完整复盘（50只≥6%，0命中，纪律清单7/7通过）。cron 17:00可能未执行（无output文件产出），但脚本本身无bug。复盘报告已手动生成并保存至reports/daily/文工团复盘-2026-06-05.md。建议排查cron调度执行情况。"
+      "note": "文工团今日17:16手动运行成功——产出完整复盘报告(50只≥6%，0命中，纪律7/7)。但15:30 cron未自动触发(报告中无15:30自动化痕迹)。回测曲线PNG正常生成。"
     },
     "parliament": {
       "status": "error",
-      "note": "议会连续第3天停摆(6/2最后一次产出→6/3+6/4+6/5三天无记录)。根因定位：crontab中完全没有parliament相关的cron调度条目。researchers.py import正常但无cron触发。parliament_log.json停在6/4 22:24（偏多→中性），daily_pool.json的parliament section引用的是过期裁决。这是整个系统最严重的认知层断点——市场的多空判断依赖3天前的旧数据。"
+      "note": "议会40条记录，零有效裁决——自6/2创建以来从未产出过真实的bias/confidence。前2条(6/2 01:32-01:33)有3轮结构但Round3的decision字段内bias/confidence为空；后38条rounds=0(被健康检查或系统进程创建的空壳)。这是P0级认知层灾难：KB洞察→议会辩论→推荐池parliament→瞭望塔/决策官整条链路从根源断裂。crontab中有researchers.py --study但无parliament模式的调度。"
     }
   },
-  "rule_changes_suggested": [
-    {
-      "rule": "市值下限",
-      "change": "市值下限从40亿降低到30亿",
-      "reason": "进化v5已将50→40（step 1/2），按原计划继续推进到30。连续5天0%捕获率的核心瓶颈不是阈值而是候选源，但40→30可释放10-15只中证2000成分标的，作为配合候选源扩展的同步动作。目标新值:30亿。",
-      "confidence": "high"
-    },
-    {
-      "rule": "市值上限",
-      "change": "市值上限从2400亿收紧到2000亿",
-      "reason": "进化v5已将3000→2400（step 1/3），按分步计划继续推进。TCL科技(986亿→当时漏入)、美的集团(大市值)等超千亿标的弹性差，不符合小红中小盘定位。目标:1000亿，当前步:2000亿。",
-      "confidence": "medium"
-    }
-  ],
-  "no_change": false,
+  "rule_changes_suggested": [],
+  "no_change": true,
+  "evolution_result": "v9 版本 8/13落地：事件因子0.30→0.35、技术因子0.15→0.18、基本面因子0.25→0.30、P1止损3.0→2.5。市值下限/上限已是源码目标值(30-2000亿)→无需变更。情绪因子25%和板块偏离33%超20%单步上限→留待下次分步。",
+  "evolution_note": "4条竞价权重no-op(值未变)、ammo_total_position_limit未知参数跳过。健康检查import报错(run_health_check函数名不匹配)需修复。",
   "structural_issues": [
     {
       "severity": "P0",
       "module": "parliament",
-      "problem": "议会cron完全缺失——crontab中无parliament调度条目",
-      "impact": "认知层断裂3天：KB洞察→议会多空辩论→推荐池parliament→瞭望塔/决策官的整条链路依赖3天前旧数据",
-      "fix_needed": "在crontab中添加议会调度（建议每日01:00和13:00两次运行researchers.py的议会模式）"
+      "problem": "议会零有效裁决——40条记录全部为空壳(前2条有结构无内容，后38条rounds=0)",
+      "impact": "认知层从根源断裂：KB洞察→议会多空辩论→推荐池parliament→瞭望塔/决策官/进化引擎veto整条链路无有效数据。系统在多空判断上完全失明。",
+      "fix_needed": "(1)排查researchers.py的议会模式入口——当前cron只有--study和--winners，无parliament调度；(2)修复议会裁决写入逻辑——当前decision字段有bias/confidence键但值全为空；(3)添加cron调度(建议每日01:00运行researchers.py --parliament)"
     },
     {
       "severity": "P0",
       "module": "recommender",
-      "problem": "推荐池捕获率连续5天0%——候选源结构性问题而非参数阈值",
-      "impact": "50只大涨股全部错过，推荐池与市场真实热点脱节",
-      "fix_needed": "候选源不能仅依赖resource_pool公告事件。需在stock_recommender.py中增加资金流TOP候选（get_top_flow_stocks）和板块共振候选两个独立源"
+      "problem": "捕获率连续7天0%——候选源结构单一(仅resource_pool公告事件)+进化参数调整被阻塞",
+      "impact": "50只大涨股全部错过，推荐池与市场真实热点完全脱节。6/5已诊断出根因(候选源缺失)但修复未执行。",
+      "fix_needed": "(1)stock_recommender.py增加get_top_flow_stocks资金流候选源；(2)增加板块共振候选源(ths_daily热门板块×个股)；(3)首板纳入逻辑已存在(source=limit_up_first)但首板在开盘即涨停，不可操作——需区分'可操作首板'(开盘未涨停的)和'已封板'"
+    },
+    {
+      "severity": "P0",
+      "module": "evolution",
+      "problem": "进化引擎停在6/4——6/5的2条建议(市值下限+上限)和6/8当前建议均未处理",
+      "impact": "参数优化闭环断裂。连续4天诊断出问题但无自动修复——系统处于'天天报错但永不修复'的恶性循环。",
+      "fix_needed": "(1)立即手动运行evolution_engine.py --dry-run确认当前pending items；(2)如--dry-run通过，运行--live落地；(3)检查17:30 cron是否因cron脚本行号污染/Cron timeout等问题静默失败"
+    },
+    {
+      "severity": "P0",
+      "module": "knowledge_base",
+      "problem": "市场快照严重降级：北向T-28、资金流全空、板块流全空",
+      "impact": "瞭望塔/决策官/侦察兵依赖的宏观数据全部失真——北向42.4亿是28天前的假数据，系统据此做出的'资金面偏多'判断完全错误。",
+      "fix_needed": "(1)排查data_pipeline中get_north_flow/market_money_flow/sector_flow三条管线的API连通性；(2)降级时必须在market_snapshot.json中标记_quality='degraded'+原因，而非静默留空；(3)瞭望塔LLM prompt增加'数据质量前置检查'——北向T-N>3天时禁止引用"
+    },
+    {
+      "severity": "P1",
+      "module": "auction",
+      "problem": "竞价系统全链路沉默——采集器(09:15)+学习器(16:00)均无产出",
+      "impact": "竞价信号(侦察兵确认+Bayesian学习)完全失效，失去开盘10分钟的关键择时依据。",
+      "fix_needed": "(1)排查09:15和16:00两个cron是否执行(cron脚本行号污染/Cron超时)；(2)检查auction_collector.py在09:15是否能连上东方财富API"
     },
     {
       "severity": "P1",
       "module": "sniper",
-      "problem": "执行层零交易——sniperd运行但3天不执行",
-      "impact": "推荐池→下单链路完全断裂，系统沦为空转观察",
-      "fix_needed": "审视偏空判断是否过度保守（PE分位88.4%虽高但非极端），考虑允许极小观察仓（2%单票）以激活执行链路"
-    },
-    {
-      "severity": "P1",
-      "module": "recommender",
-      "problem": "选股质量恶化：池内3/9触发-5%止损",
-      "impact": "德明利-7.4%/立讯精密-7.8%/蓝科高新-5.98%——即使捕获率0%，入池的标的本身也在亏钱",
-      "fix_needed": "增强选股前的下行风险过滤：近5日涨幅>15%的高位股排除、MA20偏离>5%的不纳入、财报披露前窗口期(±3天)禁入"
+      "problem": "执行层零交易——sniperd可能未运行，日志目录空",
+      "impact": "即使推荐池和议会修复，没有狙击手执行层，系统也无法完成'推荐→确认→开仓→风控'闭环。",
+      "fix_needed": "(1)systemctl --user status sniperd.service确认守护进程状态；(2)如未运行，systemctl --user start sniperd.service；(3)存活检测cron每5分钟自动恢复机制是否正常"
     },
     {
       "severity": "P2",
-      "module": "auction",
-      "problem": "竞价诊断2天未更新（停在6/3的5样本冷启动）",
-      "impact": "竞价学习器失去实际参考价值，侦察兵的竞价确认信号无依据",
-      "fix_needed": "排查09:15采集器cron和16:00学习器cron是否执行"
+      "module": "ammo",
+      "problem": "R值从未计算(null)——弹药库核心风险度量失效",
+      "impact": "无R值意味着无法计算凯利系数、无法确定单笔风险金额——开仓时缺乏仓位校准依据。",
+      "fix_needed": "运行ammo_risk.py --update强制计算R值。当前净值¥100,000，按2%风险计算R=¥2,000。"
     }
   ]
 }

@@ -103,6 +103,20 @@
         "000333",
         "600157"
       ]
+    },
+    {
+      "date": "20260608",
+      "stock_count": 8,
+      "stocks": [
+        "603270",
+        "603578",
+        "603790",
+        "300521",
+        "002064",
+        "603616",
+        "600776",
+        "603020"
+      ]
     }
   ],
   "stocks": [
@@ -1556,6 +1570,238 @@
         {
           "date": "20260605",
           "close": 1.83,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603270",
+      "name": "金帝股份",
+      "entry_date": "20260608",
+      "entry_close": 29.77,
+      "entry_score": 54.2,
+      "entry_factors": {
+        "event": 50,
+        "fund": 30,
+        "sentiment": 40,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "有色金属",
+      "stop_loss_price": 28.28,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 29.77,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603578",
+      "name": "三星新材",
+      "entry_date": "20260608",
+      "entry_close": 15.51,
+      "entry_score": 54.2,
+      "entry_factors": {
+        "event": 50,
+        "fund": 30,
+        "sentiment": 40,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "基础化工",
+      "stop_loss_price": 14.73,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 15.51,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603790",
+      "name": "XD雅运股",
+      "entry_date": "20260608",
+      "entry_close": 27.21,
+      "entry_score": 52.8,
+      "entry_factors": {
+        "event": 50,
+        "fund": 30,
+        "sentiment": 40,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 25.85,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 27.21,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300521",
+      "name": "爱司凯",
+      "entry_date": "20260608",
+      "entry_close": 24.16,
+      "entry_score": 52.7,
+      "entry_factors": {
+        "event": 65,
+        "fund": 30,
+        "sentiment": 65,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 0.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 22.47,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 24.16,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002064",
+      "name": "华峰化学",
+      "entry_date": "20260608",
+      "entry_close": 10.22,
+      "entry_score": 52.4,
+      "entry_factors": {
+        "event": 70,
+        "fund": 30,
+        "sentiment": 55,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 0.0
+      },
+      "entry_sector": "基础化工",
+      "stop_loss_price": 9.71,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 10.22,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603616",
+      "name": "韩建河山",
+      "entry_date": "20260608",
+      "entry_close": 6.03,
+      "entry_score": 52.4,
+      "entry_factors": {
+        "event": 70,
+        "fund": 30,
+        "sentiment": 55,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 0.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 5.73,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 6.03,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "600776",
+      "name": "东方通信",
+      "entry_date": "20260608",
+      "entry_close": 15.94,
+      "entry_score": 52.0,
+      "entry_factors": {
+        "event": 50,
+        "fund": 30,
+        "sentiment": 40,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "entry_sector": "通信",
+      "stop_loss_price": 15.14,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 15.94,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603020",
+      "name": "爱普股份",
+      "entry_date": "20260608",
+      "entry_close": 10.67,
+      "entry_score": 52.0,
+      "entry_factors": {
+        "event": 50,
+        "fund": 30,
+        "sentiment": 40,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 6.0
+      },
+      "entry_sector": "金融",
+      "stop_loss_price": 10.14,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260608",
+          "close": 10.67,
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0

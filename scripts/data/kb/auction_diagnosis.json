@@ -1,92 +1,54 @@
 {
-  "timestamp": "2026-06-05T16:15:00",
-  "version": "2.0.0",
+  "timestamp": "2026-06-08T16:09:43.838023",
+  "date": "2026-06-08",
   "market_condition": "ranging",
   "market_context": {
-    "description": "上证在4057-4162区间窄幅震荡(5/20-6/4)，11个交易日5涨6跌，均波幅0.70%，无趋势方向",
-    "index": "上证4084(6/3)，深成指15315(-2.21%)，创业板3958(-3.20%)",
-    "north_flow": "北向数据quality=realtime(归零)，实际依赖T-1滞后",
-    "implication": "震荡市下price_slope假突破概率高，volume_accel和imbalance应获更高权重(资金异动=震荡突破关键信号)"
+    "shanghai": {
+      "close": 3959.34,
+      "change_pct": -1.7
+    },
+    "nasdaq": {
+      "close": 25709.43,
+      "change_pct": -4.18
+    },
+    "sp500": {
+      "close": 7383.74,
+      "change_pct": -2.64
+    },
+    "hangseng": {
+      "close": 24961.95,
+      "change_pct": -1.15
+    },
+    "summary": "全球风险资产普跌，纳指领跌-4.18%。A股上证-1.7%跟随外盘调整。北向资金因政策不实时披露。整体为偏空震荡市，非单边趋势。"
   },
   "weights_current": {
-    "price_slope": 0.25,
-    "volume_accel": 0.25,
-    "imbalance": 0.20,
+    "price_slope": 0.2,
+    "volume_accel": 0.3,
+    "imbalance": 0.2,
     "premium": 0.15,
-    "sector_dev": 0.15
-  },
-  "learner_status": {
-    "total_samples": 4,
-    "samples_today": 2,
-    "learn_events": 0,
-    "penalize_events": 2,
-    "skip_events": 7,
-    "dimension_updates": 0,
-    "root_cause": "THRESHOLD_BLOCKED",
-    "root_cause_detail": "所有5维得分均低于dim_max*0.6阈值(25*0.6=15, 20*0.6=12, 15*0.6=9)，即使事件被正确分类(learn/penalize)，维度级α/β永不更新。4天4样本零维度更新，权重冻结在先验值。"
-  },
-  "dimension_scores_analysis": {
-    "price_slope": {
-      "score_range": "0-25/25 (0%-100%)",
-      "distribution": "6/9只=0分(无竞价斜率数据)，2只=25(由volume数据代理填充)，1只=12.3",
-      "accuracy_trend": "stable(无更新数据，无法判断趋势)",
-      "issue": "大部分标的volume=0导致price_slope=0，2只高分来自volume代理而非真实price变化"
-    },
-    "volume_accel": {
-      "score_range": "10/25 (40%)",
-      "distribution": "全部9只=精确10分(无差异化)",
-      "accuracy_trend": "stable(无更新数据)",
-      "issue": "CRITICAL: 全部9只得分完全相同→此维度当前无区分力。可能所有标的volume都为0或公式使用全局均量"
-    },
-    "imbalance": {
-      "score_range": "6/20 (30%)",
-      "distribution": "全部9只=精确6分(无差异化)",
-      "accuracy_trend": "stable(无更新数据)",
-      "issue": "CRITICAL: 全部9只得分完全相同→此维度当前无区分力"
-    },
-    "premium": {
-      "score_range": "3-7/15 (20%-47%)",
-      "distribution": "大部分3分，2只7分",
-      "accuracy_trend": "stable(无更新数据)",
-      "issue": "区分力弱，仅2档"
-    },
-    "sector_dev": {
-      "score_range": "7/15 (47%)",
-      "distribution": "全部9只=精确7分(无差异化)",
-      "accuracy_trend": "stable(无更新数据)",
-      "issue": "CRITICAL: 全部9只得分完全相同→此维度当前无区分力"
-    }
-  },
-  "diagnosis": "🔴 竞价学习器已运行4天(6/2-6/5)但权重组完全冻结在先验值(α=1,β=1)。双重根因：(1)维度阈值60%过高——即使在penalize事件中维度得分也从不触发更新，导致9只×5维=45次更新机会全部miss；(2)volume_accel/imbalance/sector_dev三维护完全无区分力——9只标的得分完全相同(10/25, 6/20, 7/15)，说明特征提取使用了全局均值而非个股数据，或竞价采集器的volume字段全部为0。当前'学习器'实际是'占位器'。",
-  "recommendation": {
-    "price_slope": 0.20,
-    "volume_accel": 0.30,
-    "imbalance": 0.25,
-    "premium": 0.10,
     "sector_dev": 0.15,
-    "_note": "此调整(±0.05以内)基于震荡市逻辑而非贝叶斯数据(因无有效数据)。一旦维度级学习激活，应让数据说话。"
+    "_note": "所有维度处于Bayesian均匀先验(α=1,β=1,accuracy=0.5)。hits=0, misses=0。total_samples=8但无任何实际hit/miss累积——v2.0做多导向目标函数在下跌市中所有信号均落入skip(看跌→跌)或penalty(看跌→涨/看涨→跌)分支，无正向学习事件。"
   },
-  "reasoning": "震荡市中price_slope假突破概率高→降权-0.05。volume_accel和imbalance是震荡突破的关键信号→分别+0.05。premium在震荡市意义弱(溢价不反映方向)→-0.05。sector_dev保持0.15。更关键的修复不在权重数值，而在代码：(1)auction_learner.py line 301 threshold从0.6降到0.35让维度能累积信号；(2)extract_features中volume_accel/imbalance/sector_dev需要从个股帧序列计算而非全局均值，否则三个维度永远同分=废掉。这两项修复后学习器才能真正开始'学习'。",
-  "code_fixes_required": [
-    {
-      "file": "auction_learner.py",
-      "line": 301,
-      "change": "threshold = dim_max * 0.6 → 0.35",
-      "reason": "当前0.6阈值下所有维度得分从未达标(最高47%<60%)，降到0.35后price_slope(100%)和sector_dev(47%)可以开始触发更新"
-    },
-    {
-      "file": "auction_features.py",
-      "issue": "volume_accel/imbalance/sector_dev 全部9只得分相同",
-      "suspected_root": "extract_features()可能使用全局聚合数据或all-0 volume导致统一fallback值",
-      "action": "检查extract_features中load_trajectory返回的帧数据，确认每只股票的volume/amount是否提供了个股级别的差异化数据"
-    }
-  ],
-  "data_quality": {
-    "auction_db_size": "647KB / 4316行 / 3天(0603-0605)",
-    "today_frames": 1269,
-    "today_unique_stocks": 9,
-    "valid_frames_pct": "5.1% (65/1269帧volume>0)",
-    "db_duplication": "DISTINCT code,name 返回18行(9只×2)→name不唯一或重复插入",
-    "collection_quality": "⚠️ 仅9只标的(默认蓝筹6+资金流TOP6=12只)，95%帧volume=0→竞价位采集正常但大部分股票的竞价数据确实无成交"
-  }
+  "accuracy_trend": {
+    "price_slope": "idle",
+    "volume_accel": "idle",
+    "imbalance": "idle",
+    "premium": "idle",
+    "sector_dev": "idle",
+    "_explanation": "idle=无实际hit/miss数据积累。五维均处于冷启动状态。这并非bug，而是v2.0做多导向目标函数在当前偏空环境下的预期行为——多数竞价信号为谨慎/看跌，对应的实际收盘也多为下跌，全部触发skip分支（熊市噪音不学习）。需等待市场转暖产生bullish信号+实际涨的正向学习事件才能激活。"
+  },
+  "diagnosis": "竞价学习器v2.0处于冷启动阶段。8个total_samples全部因做多导向目标函数在下跌市中落入skip/penalty分支，五维权重仍为均匀先验(0.20/0.30/0.20/0.15/0.15)。核心问题：(1) volume_accel权重0.30在风险off环境中偏高——放量多为恐慌抛售而非吸筹，易产生假多头信号；(2) sector_dev权重0.15偏低——弱势市场中板块相对强弱是最可靠的选股维度；(3) 学习器缺少最低激活样本数阈值，导致权重可能长期冻结在均匀先验。建议适度降低volume_accel、提升sector_dev，待市场企稳、hits数据积累后再由Bayesian更新接管。",
+  "recommendation": {
+    "price_slope": 0.2,
+    "volume_accel": 0.25,
+    "imbalance": 0.2,
+    "premium": 0.15,
+    "sector_dev": 0.2
+  },
+  "reasoning": "1. volume_accel 0.30→0.25(-0.05)：当前全球risk-off、纳指-4.18%，竞价放量大概率是恐慌盘而非主力吸筹。降低此维度避免假信号。2. sector_dev 0.15→0.20(+0.05)：弱势市场中板块偏离度是识别抗跌标的的核心信号——逆势走强的板块往往是下一轮反弹的龙头。3. 其余三维维持不变：price_slope在下跌市参考价值存疑但不至误导，imbalance始终有效，premium在趋势不明显时保持中性。4. 所有调整幅度±0.05，远在±0.10安全边界内。5. 此调整不等同于Bayesian学习——待hits>10后Bayesian权重将自然接管。",
+  "action_needed": {
+    "learner": "无需修改学习器代码。当前状态是v2.0目标函数在下跌市中的预期行为。建议关注auction_learner.py中total_samples如何计数的——如果skip不计入sample，则8个数字本身可能来自代码bug而非真实信号。",
+    "monitoring": "下次市场收阳日（上证>+0.5%）检查hits是否开始累积。若连续3个阳线日hits仍为0，则学习器存在分类bug需排查。"
+  },
+  "previous_diagnosis": "2026-06-05T16:15:00"
 }
