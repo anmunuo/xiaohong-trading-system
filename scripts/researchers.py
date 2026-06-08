@@ -1666,14 +1666,16 @@ def run_winner_study(gainers: List[Dict], all_pool_codes: set = None) -> str:
     lines.append("---")
     lines.append("")
 
-    # ═══ TOP 5 深度分析 ═══
-    lines.append("## 🔬 TOP 5 深度分析")
+    # ═══ 全量深度分析 ═══
+    lines.append(f"## 🔬 全量深度分析（{len(quick_contexts)}只）")
     lines.append("")
 
     researchers_list = get_all_researchers(state)
 
-    for rank, c in enumerate(quick_contexts[:5], 1):
+    for rank, c in enumerate(quick_contexts, 1):
         code, name, chg = c['code'], c['name'], c['change_pct']
+        if rank % 10 == 0 or rank == 1:
+            print(f"[winner_study] 深度分析 {rank}/{len(quick_contexts)}: {code} {name}")
         lines.append(f"### #{rank} {code} {name}  (+{chg:.1f}%)")
         lines.append("")
 
@@ -1721,28 +1723,6 @@ def run_winner_study(gainers: List[Dict], all_pool_codes: set = None) -> str:
                 lines.append(f"**{r.emoji} {r.name}**: 分析异常 ({str(e)[:60]})")
                 lines.append(f"")
 
-        lines.append("")
-
-    # ═══ 其余涨幅股快速分析 ═══
-    if len(quick_contexts) > 5:
-        lines.append("---")
-        lines.append("")
-        lines.append(f"## ⚡ 其余 {len(quick_contexts)-5} 只快速扫描")
-        lines.append("")
-        lines.append("| 代码 | 名称 | 涨幅 | 现价 | MA20偏离 | 池内 |")
-        lines.append("|:--|:--|:--|:--|:--|:--:|")
-        for c in quick_contexts[5:]:
-            # 计算MA20偏离
-            ma20_dev = "—"
-            if c['close_history'] and len(c['close_history']) >= 20:
-                ma20 = sum(c['close_history'][-20:]) / 20
-                if ma20 > 0:
-                    ma20_dev = f"{(c['close'] - ma20) / ma20 * 100:+.1f}%"
-            pool_mark = "⭐" if c['in_pool'] else ""
-            lines.append(
-                f"| {c['code']} | {c['name'][:8]} | {c['change_pct']:+.1f}% | "
-                f"{c['close']:.2f} | {ma20_dev} | {pool_mark} |"
-            )
         lines.append("")
 
     # ═══ 跨标的共性与系统学习 ═══
