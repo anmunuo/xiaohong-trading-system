@@ -1017,6 +1017,9 @@ def build_stock_context(code: str, name: str = "") -> Dict:
             get_north_flow, get_market_money_flow, get_index_data
         )
 
+        # 数据源追踪 — 每步拉取都标记状态
+        _ds = ctx["data_sources"]
+
         # 1. 实时行情
         try:
             rt = get_stock_realtime([code])
@@ -1035,9 +1038,11 @@ def build_stock_context(code: str, name: str = "") -> Dict:
                     "amount": stock.get("amount", 0),
                 }
                 ctx["pool_stocks"] = [stock_info]
+                _ds["realtime"] = {"ok": True, "source": rt[code].get("data_source", "sina")}
         except Exception as e:
             ctx["_errors"].append(f"行情: {e}")
             ctx["pool_stocks"] = [{"code": code, "name": name}]
+            _ds["realtime"] = {"ok": False, "error": str(e)[:80]}
 
         # 2. 财务数据
         try:
@@ -1049,8 +1054,12 @@ def build_stock_context(code: str, name: str = "") -> Dict:
                 ctx["pool_stocks"][0]["roe"] = fin.get("roe")
                 ctx["pool_stocks"][0]["debt_ratio"] = fin.get("debt_ratio")
                 ctx["pool_stocks"][0]["profit_growth"] = fin.get("profit_growth")
+                _ds["financial"] = {"ok": True, "score": fin.get("score")}
+            else:
+                _ds["financial"] = {"ok": False, "error": "无数据"}
         except Exception as e:
             ctx["_errors"].append(f"财务: {e}")
+            _ds["financial"] = {"ok": False, "error": str(e)[:80]}
 
         # 3. K线+MA (用于技术面分析)
         #    get_historical_k_with_ma 返回: {code: [{date,close,volume,ma5,ma10,peTTM,pbMRQ,turn},...]}
@@ -1072,8 +1081,12 @@ def build_stock_context(code: str, name: str = "") -> Dict:
                 ctx["pool_stocks"][0]["pe_ttm"] = last.get("peTTM")
                 ctx["pool_stocks"][0]["pb_mrq"] = last.get("pbMRQ")
                 ctx["pool_stocks"][0]["turnover"] = last.get("turn")
+                _ds["kline"] = {"ok": True, "bars": len(bars), "source": "baostock"}
+            else:
+                _ds["kline"] = {"ok": False, "error": "无K线数据"}
         except Exception as e:
             ctx["_errors"].append(f"K线: {e}")
+            _ds["kline"] = {"ok": False, "error": str(e)[:80]}
 
         # 4. 资金流向 (从TOP股票中筛出此code)
         try:
@@ -1084,17 +1097,22 @@ def build_stock_context(code: str, name: str = "") -> Dict:
                     ctx["pool_stocks"][0]["net_flow"] = s.get("net_flow", 0)
                     ctx["pool_stocks"][0]["volume_ratio"] = s.get("volume_ratio", 1.0)
                     ctx["pool_stocks"][0]["main_net"] = s.get("main_net", 0)
+                    _ds["fund_flow"] = {"ok": True, "source": "push2"}
                     break
+            else:
+                _ds["fund_flow"] = {"ok": True, "note": "不在TOP20"}
         except Exception as e:
             ctx["_errors"].append(f"资金流向: {e}")
+            _ds["fund_flow"] = {"ok": False, "error": str(e)[:80]}
 
         # 5. 宏观资金面
         try:
             ctx["north_flow"] = get_north_flow()
             ctx["market_flow"] = get_market_money_flow()
             ctx["index_data"] = get_index_data()
+            _ds["macro"] = {"ok": True, "source": "tushare+akshare"}
         except Exception:
-            pass
+            _ds["macro"] = {"ok": False, "error": "宏观数据拉取失败"}
 
         # 6. KB洞察 (与code相关)
         try:
@@ -1474,17 +1492,15 @@ def run_quick_parliament(code: str, name: str = "") -> Dict:
     }
 
 
-def run_winner_study(gainers: List[Dict]) -> str:
+def run_winner_study(gainers: List[Dict], all_pool_codes: set = None) -> str:
     """
-    🆕 v2.4 涨幅榜学习 — 收盘后研究员对6%+个股做领域专项分析。
+    🆕 v3.0 涨幅榜学习 — 批量预拉取 + 全量分析。
 
-    每位研究员从自己的专业领域分析涨幅榜:
-      📊 数据: 涨幅前有哪些数据信号（资金/量价/板块）？
-      🏢 基本面: 涨因是否可追溯到基本面催化剂（财报/合同/政策）？
-      📈 技术面: 涨幅前的技术形态共性（突破/回踩/V反）？
-      🐂 多方: 系统漏掉了哪些看多信号？
-      🐻 空方: 哪些空方信号被市场证伪？
-      💰 资金面: 资金流入模式（主力/北向/游资）？
+    改进:
+      · 不再限5只 — 全量分析，TOP 5 深度 + 其余快速
+      · 批量拉取 — 一次 get_stock_realtime + get_historical_k_with_ma 覆盖全部
+      · 真实数据 — 每位研究员基于实际数据而非空壳模板
+      · 覆盖计算 — 推荐池覆盖率 / 侦察兵发现率 / 遗漏特征
 
     返回: Markdown 格式研究报告
     """
@@ -1494,74 +1510,293 @@ def run_winner_study(gainers: List[Dict]) -> str:
     date_str = datetime.now().strftime('%Y-%m-%d')
     state = ResearcherState()
     state.load()
-    researchers = get_all_researchers(state)
 
-    # 取 TOP 5 做深度分析（避免分析 50 只耗时过长）
-    top_gainers = gainers[:5]
+    all_codes = [str(g.get('code', '')) for g in gainers if str(g.get('code', ''))]
+    if not all_codes:
+        return "涨幅数据无有效股票代码"
 
-    lines = [
-        f"# 🏆 涨幅榜深度学习报告",
-        f"> {date_str}  |  涨幅 ≥6%: {len(gainers)}只  |  深度分析: {len(top_gainers)}只",
-        "",
-        "---",
-        "",
-        "## 📋 今日涨幅榜 TOP 5",
-        "",
-    ]
+    # ── 导入数据管线 ──
+    from data_pipeline import (
+        get_stock_realtime, get_historical_k_with_ma,
+        get_north_flow, get_market_money_flow, get_index_data
+    )
 
-    for i, g in enumerate(top_gainers, 1):
-        code = g.get('code', '?')
-        name = g.get('name', '?')
-        chg = g.get('change_pct', 0)
-        lines.append(f"| {i} | {code} | {name} | {chg:+.1f}% |")
-    lines.append("")
+    # ── 批量预拉取 ──
+    print(f"[winner_study] 批量拉取 {len(all_codes)} 只股票数据...")
 
-    # ── 逐只深度分析 ──
-    for rank, g in enumerate(top_gainers, 1):
+    # 1. 批量实时行情
+    try:
+        all_quotes = get_stock_realtime(all_codes)
+    except Exception as e:
+        all_quotes = {}
+        print(f"[winner_study] 行情批量拉取失败: {e}")
+
+    # 2. 批量历史K线 (processpool, ~5s for 50 stocks)
+    try:
+        all_kline = get_historical_k_with_ma(all_codes, days=60)
+    except Exception as e:
+        all_kline = {}
+        print(f"[winner_study] K线批量拉取失败: {e}")
+
+    # 3. 宏观数据 (共用)
+    try:
+        north = get_north_flow()
+        market = get_market_money_flow()
+        idx = get_index_data()
+    except Exception:
+        north, market, idx = {}, {}, {}
+
+    # 3.5 财务数据 (批量，逐个尝试)
+    financials = {}
+    try:
+        from data_pipeline import get_financial_summary
+        for code in all_codes:
+            try:
+                fin = get_financial_summary(code)
+                if fin and fin.get('data_source') != 'no_data':
+                    financials[code] = fin
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    # 4. 推荐池代码 (用于计算覆盖率)
+    pool_codes = all_pool_codes or set()
+    if not pool_codes:
+        try:
+            with open(SCRIPT_DIR / "data" / "daily_pool.json") as f:
+                dp = json.load(f)
+            pool_codes = {str(r['code']) for r in dp.get('recommendations', [])}
+        except Exception:
+            pool_codes = set()
+
+    # ── 为每只涨幅股构建快速上下文 ──
+    quick_contexts = []
+    for g in gainers:
         code = str(g.get('code', ''))
         name = str(g.get('name', ''))
         chg = g.get('change_pct', 0)
 
-        lines.append(f"---")
-        lines.append(f"")
-        lines.append(f"## #{rank} {code} {name}  (+{chg:.1f}%)")
-        lines.append(f"")
+        q = all_quotes.get(code, {})
+        # 补名称
+        if not name and q.get('name'):
+            name = q['name']
 
-        context = build_stock_context(code, name)
+        kl_bars = all_kline.get(code, [])
+        closes = [b.get('close', 0) for b in kl_bars] if isinstance(kl_bars, list) else []
 
-        for r in researchers:
+        quick_contexts.append({
+            'code': code, 'name': name, 'change_pct': chg,
+            'close': q.get('close', 0),
+            'volume': q.get('volume', 0),
+            'amount': q.get('amount', 0),
+            'turnover': q.get('turnover', 0),
+            'close_history': closes,
+            'bars_count': len(closes),
+            'ma5': kl_bars[-1].get('ma5') if kl_bars else None,
+            'ma10': kl_bars[-1].get('ma10') if kl_bars else None,
+            'pe_ttm': kl_bars[-1].get('peTTM') if kl_bars else None,
+            'pb_mrq': kl_bars[-1].get('pbMRQ') if kl_bars else None,
+            'in_pool': code in pool_codes,
+            'data_error': not bool(q.get('close')),
+            # 财务数据
+            'roe': financials.get(code, {}).get('roe'),
+            'debt_ratio': financials.get(code, {}).get('debt_ratio'),
+            'profit_growth': financials.get(code, {}).get('profit_growth'),
+            'fin_score': financials.get(code, {}).get('score'),
+        })
+
+    # ── 统计覆盖情况 ──
+    in_pool_count = sum(1 for c in quick_contexts if c['in_pool'])
+    has_data_count = sum(1 for c in quick_contexts if not c['data_error'])
+
+    # ── 生成报告 ──
+    lines = [
+        f"# 🏆 涨幅榜深度学习报告",
+        f"> {date_str}  |  涨幅 ≥6%: {len(gainers)}只  |  有行情数据: {has_data_count}只  |  池内覆盖: {in_pool_count}只",
+        "",
+        "---",
+        "",
+    ]
+
+    # ═══ 宏观环境 ═══
+    lines.append("## 🌍 今日市场环境")
+    lines.append("")
+    if idx:
+        sh = idx.get('上证指数', idx.get('sh_index', {}))
+        if isinstance(sh, dict):
+            lines.append(f"- 上证: {sh.get('close','?')}  {sh.get('change_pct',0):+.2f}%")
+    if north:
+        lines.append(f"- 北向: {north.get('net_flow',0):+.1f}亿 (来源:{north.get('data_source','?')})")
+    if market:
+        lines.append(f"- 主力: {market.get('main_net',0):+.0f}亿")
+    lines.append("")
+
+    # ═══ 涨幅榜概览 ═══
+    lines.append("## 📋 涨幅榜概览")
+    lines.append("")
+    lines.append("| # | 代码 | 名称 | 涨幅 | 现价 | PE(TTM) | 池内 |")
+    lines.append("|:--|:--|:--|:--|:--|:--|:--:|")
+    for i, c in enumerate(quick_contexts, 1):
+        pe_str = f"{c['pe_ttm']:.1f}" if c['pe_ttm'] else "—"
+        pool_mark = "⭐" if c['in_pool'] else ""
+        lines.append(
+            f"| {i} | {c['code']} | {c['name'][:8]} | {c['change_pct']:+.1f}% | "
+            f"{c['close']:.2f} | {pe_str} | {pool_mark} |"
+        )
+    lines.append("")
+
+    # ═══ 覆盖率分析 ═══
+    lines.append("## 📊 系统覆盖率")
+    lines.append("")
+    pool_rate = in_pool_count / len(gainers) * 100 if gainers else 0
+    lines.append(f"- 推荐池覆盖: **{in_pool_count}/{len(gainers)}** ({pool_rate:.0f}%)")
+    lines.append(f"- 数据可分析: **{has_data_count}/{len(gainers)}** 只")
+    not_covered = [c for c in quick_contexts if not c['in_pool']]
+    if not_covered:
+        # 分析遗漏特征
+        missing_codes = [c['code'] for c in not_covered[:10]]
+        lines.append(f"- 遗漏标的 (前10): {', '.join(missing_codes)}")
+        # 检查是否是北交所/新股
+        bj_count = sum(1 for c in not_covered if c['code'].startswith('920'))
+        if bj_count:
+            lines.append(f"- 其中北交所(920): {bj_count}只 — 北交所标的不在沪深推荐池覆盖范围")
+
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    # ═══ TOP 5 深度分析 ═══
+    lines.append("## 🔬 TOP 5 深度分析")
+    lines.append("")
+
+    researchers_list = get_all_researchers(state)
+
+    for rank, c in enumerate(quick_contexts[:5], 1):
+        code, name, chg = c['code'], c['name'], c['change_pct']
+        lines.append(f"### #{rank} {code} {name}  (+{chg:.1f}%)")
+        lines.append("")
+
+        if c['data_error']:
+            lines.append(f"> ⚠️ 无法获取该股票实时数据，跳过深度分析")
+            lines.append("")
+            continue
+
+        # 为每只构建完整 context（复用预拉取数据）
+        ctx = {
+            "topic": f"涨幅榜深度分析: {name or code}",
+            "pool_stocks": [{
+                "code": code, "name": name,
+                "close": c['close'], "change_pct": chg,
+                "volume": c['volume'], "amount": c['amount'],
+                "close_history": c['close_history'],
+                "ma5": c['ma5'], "ma10": c['ma10'],
+                "pe_ttm": c['pe_ttm'], "pb_mrq": c['pb_mrq'],
+                "turnover": c['turnover'],
+                "roe": c.get('roe'), "debt_ratio": c.get('debt_ratio'),
+                "profit_growth": c.get('profit_growth'),
+                "financial_score": c.get('fin_score'),
+            }],
+            "north_flow": north, "market_flow": market, "index_data": idx,
+            "kb_insights": [], "kb_files": {},
+            "data_sources": {
+                "realtime": {"ok": c['close'] > 0, "source": "sina:batch"},
+                "kline": {"ok": c['bars_count'] > 0, "bars": c['bars_count']},
+                "macro": {"ok": bool(north)},
+                "financial": {"ok": c.get('roe') is not None, "score": c.get('fin_score')},
+            },
+            "_errors": [],
+        }
+
+        for r in researchers_list:
             try:
-                report = r.analyze(context)
-                emoji = r.emoji
-
-                # 提取领域专属学习点
-                lesson = _extract_domain_lesson(r.role_id, report, g)
+                report = r.analyze(ctx)
+                lesson = _extract_domain_lesson_v3(r.role_id, report, c)
                 if lesson:
-                    lines.append(f"### {emoji} {r.name}")
+                    lines.append(f"**{r.emoji} {r.name}**")
                     lines.append(f"")
                     lines.append(f"{lesson}")
                     lines.append(f"")
             except Exception as e:
-                lines.append(f"### {r.emoji} {r.name}: 分析异常 ({str(e)[:60]})")
+                lines.append(f"**{r.emoji} {r.name}**: 分析异常 ({str(e)[:60]})")
                 lines.append(f"")
 
-    # ── 跨标的共性与学习 ──
-    lines.append(f"---")
-    lines.append(f"")
-    lines.append(f"## 🧠 跨标的共性与系统学习")
-    lines.append(f"")
+        lines.append("")
 
-    common_patterns = _extract_common_patterns(top_gainers, researchers)
-    for pattern in common_patterns:
-        lines.append(f"- {pattern}")
-    lines.append(f"")
+    # ═══ 其余涨幅股快速分析 ═══
+    if len(quick_contexts) > 5:
+        lines.append("---")
+        lines.append("")
+        lines.append(f"## ⚡ 其余 {len(quick_contexts)-5} 只快速扫描")
+        lines.append("")
+        lines.append("| 代码 | 名称 | 涨幅 | 现价 | MA20偏离 | 池内 |")
+        lines.append("|:--|:--|:--|:--|:--|:--:|")
+        for c in quick_contexts[5:]:
+            # 计算MA20偏离
+            ma20_dev = "—"
+            if c['close_history'] and len(c['close_history']) >= 20:
+                ma20 = sum(c['close_history'][-20:]) / 20
+                if ma20 > 0:
+                    ma20_dev = f"{(c['close'] - ma20) / ma20 * 100:+.1f}%"
+            pool_mark = "⭐" if c['in_pool'] else ""
+            lines.append(
+                f"| {c['code']} | {c['name'][:8]} | {c['change_pct']:+.1f}% | "
+                f"{c['close']:.2f} | {ma20_dev} | {pool_mark} |"
+            )
+        lines.append("")
 
-    lines.append(f"---")
-    lines.append(f"*研究员涨幅榜学习 v2.4 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
+    # ═══ 跨标的共性与系统学习 ═══
+    lines.append("---")
+    lines.append("")
+    lines.append("## 🧠 跨标的共性与系统学习")
+    lines.append("")
+
+    # 行业集中度
+    sectors = {}
+    for c in quick_contexts:
+        sec = c.get('sector', '未知')
+        sectors[sec] = sectors.get(sec, 0) + 1
+    top_sectors = sorted(sectors.items(), key=lambda x: x[1], reverse=True)[:3]
+    sector_str = ", ".join(f"{s}({n}只)" for s, n in top_sectors if n >= 2)
+    if sector_str:
+        lines.append(f"- 📊 行业集中: {sector_str}")
+    else:
+        lines.append(f"- 📊 行业分布: 分散（无明显集中）")
+
+    avg_chg = sum(g.get('change_pct', 0) for g in gainers) / len(gainers) if gainers else 0
+    lines.append(f"- 📈 平均涨幅: {avg_chg:.1f}% — {'强趋势日' if avg_chg > 8 else '温和上涨日'}")
+
+    # 有数据的股票的技术特征
+    with_data = [c for c in quick_contexts if not c['data_error'] and c['close_history'] and len(c['close_history']) >= 20]
+    if with_data:
+        above_ma20 = sum(1 for c in with_data if c['close'] > sum(c['close_history'][-20:])/20)
+        lines.append(f"- 📐 技术面: {above_ma20}/{len(with_data)} 只站在MA20上方")
+        
+        pe_vals = [c['pe_ttm'] for c in with_data if c['pe_ttm'] and c['pe_ttm'] > 0]
+        if pe_vals:
+            lines.append(f"- 💰 估值: PE中位数 {sorted(pe_vals)[len(pe_vals)//2]:.1f} (有PE数据{len(pe_vals)}只)")
+
+    # 覆盖反思
+    lines.append(f"- 💡 系统反思: {in_pool_count}/{len(gainers)} 在推荐池 → 覆盖率 {pool_rate:.0f}%")
+    if pool_rate < 30:
+        lines.append(f"  - 🔴 覆盖率严重不足，需检查候选源和筛选条件")
+    elif pool_rate < 60:
+        lines.append(f"  - 🟡 覆盖率偏低，关注遗漏标的的共同特征")
+    else:
+        lines.append(f"  - 🟢 覆盖率良好")
+
+    not_covered_codes = [c['code'] for c in quick_contexts if not c['in_pool'] and not c['data_error']]
+    if not_covered_codes and pool_rate < 60:
+        lines.append(f"  - 遗漏标的: {', '.join(not_covered_codes[:8])}")
+        lines.append(f"  - 🔧 行动: 分析遗漏标的行业/市值/形态特征，调整筛选参数")
+
+    lines.append("")
+    lines.append("---")
+    lines.append(f"*研究员涨幅榜学习 v3.0 · {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
 
     report = "\n".join(lines)
 
-    # 保存报告
+    # 保存
     report_path = REPORTS_DIR / f"涨幅榜学习-{date_str}.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report)
@@ -1569,78 +1804,100 @@ def run_winner_study(gainers: List[Dict]) -> str:
     return report
 
 
-def _extract_domain_lesson(role_id: str, report, gainer: Dict) -> str:
-    """从研究员的报告提取该领域的专属学习洞察"""
-    chg = gainer.get('change_pct', 0)
-    name = gainer.get('name', '')
+def _extract_domain_lesson_v3(role_id: str, report, ctx: Dict) -> str:
+    """🆕 v3.0: 从研究员报告中提取真实的领域洞察，不再输出占位文本"""
+    name = ctx.get('name', '')
+    code = ctx.get('code', '')
+    chg = ctx.get('change_pct', 0)
+    # ctx 是 quick_context 字典，字段直接读取
+    ma5 = ctx.get('ma5')
+    ma10 = ctx.get('ma10')
+    close = ctx.get('close', 0)
+    roe = ctx.get('roe')
+    debt = ctx.get('debt_ratio')
+    growth = ctx.get('profit_growth')
+    in_pool = ctx.get('in_pool', False)
 
     if role_id == "data":
-        # 数据研究员：关注数据信号
-        key = []
+        parts = []
         if report.key_findings:
-            key.append(f"数据发现: {report.key_findings[0][:120]}")
+            real = [f for f in report.key_findings if "0 个数据源" not in f and "数据源正常" not in f]
+            if real:
+                parts.append(f"> 数据发现: {'; '.join(real[:3])}")
         if report.data_evidence:
-            key.append(f"证据: {report.data_evidence[0][:120]}")
-        if not key:
-            key.append(f"数据层面: {report.perspective[:200]}")
-        return "\n".join(f"> {k}" for k in key)
+            parts.append(f"> 证据: {'; '.join(report.data_evidence[:2])}")
+        if not parts:
+            parts.append(f"> 行情: {name or code} 现价¥{close:.2f} 涨{chg:+.1f}%")
+        return "\n".join(parts)
 
     elif role_id == "fundamental":
-        # 基本面：寻找催化剂
-        key = []
+        parts = []
+        metrics = []
+        if roe is not None: metrics.append(f"ROE {roe:.1f}%")
+        if debt is not None: metrics.append(f"负债率 {debt:.1f}%")
+        if growth is not None: metrics.append(f"利润增速 {growth:+.1f}%")
+        if metrics:
+            parts.append(f"> 财务指标: {', '.join(metrics)}")
         if report.key_findings:
-            key.append(f"基本面驱动力: {report.key_findings[0][:150]}")
-        if report.data_evidence:
-            key.append(f"财报/公告依据: {report.data_evidence[0][:150]}")
-        if not key:
-            key.append(f"基本面视角: {report.perspective[:200]}")
+            real = [f for f in report.key_findings if "中性" not in f and "无明显" not in f]
+            if real:
+                parts.append(f"> 基本面发现: {'; '.join(real[:3])}")
         if report.red_flags:
-            key.append(f"⚠️ 但仍需关注: {report.red_flags[0][:100]}")
-        return "\n".join(f"> {k}" for k in key)
+            parts.append(f"> ⚠️ 风险: {'; '.join(report.red_flags[:2])}")
+        if not parts:
+            parts.append(f"> 基本面: {name or code} — 暂无显著催化剂识别")
+        return "\n".join(parts)
 
     elif role_id == "technical":
-        # 技术面：形态特征
-        key = []
+        parts = []
+        if ma5 and ma10:
+            pos = "多头排列" if ma5 > ma10 else "空头排列"
+            parts.append(f"> 均线: MA5={ma5:.2f} MA10={ma10:.2f} ({pos})")
+        if close and ctx.get('close_history') and len(ctx['close_history']) >= 20:
+            ma20 = sum(ctx['close_history'][-20:]) / 20
+            if ma20 > 0:
+                dev = (close - ma20) / ma20 * 100
+                parts.append(f"> MA20偏离: {dev:+.1f}%")
         if report.key_findings:
-            key.append(f"技术形态: {report.key_findings[0][:150]}")
-        if report.data_evidence:
-            key.append(f"量价数据: {report.data_evidence[0][:150]}")
-        if not key:
-            key.append(f"技术视角: {report.perspective[:200]}")
-        # 提取学习点
-        key.append(f"💡 学习: {name} +{chg:.1f}% — 研究其涨幅前的技术setup，识别可复现形态")
-        return "\n".join(f"> {k}" for k in key)
+            real = [f for f in report.key_findings if "无显著" not in f and "中性" not in f]
+            if real:
+                parts.append(f"> 技术发现: {'; '.join(real[:3])}")
+        parts.append(f"> 💡 涨幅复盘: 今日 +{chg:.1f}%，回溯近5日K线 — 突破/回踩信号？MA偏离？成交量配合？")
+        return "\n".join(parts)
 
     elif role_id == "bull":
-        # 多方：检查是否漏掉信号
-        key = []
+        parts = []
         if report.key_findings:
-            key.append(f"多方信号: {report.key_findings[0][:150]}")
-        key.append(f"💡 反思: 系统是否在涨幅前识别到了这些看多信号？如果漏掉了，为什么？")
-        if report.red_flags and len(report.red_flags) > 0:
-            key.append(f"⚠️ 残余风险: {report.red_flags[0][:100]}")
-        return "\n".join(f"> {k}" for k in key)
+            real = [f for f in report.key_findings if "无明显看多" not in f]
+            if real:
+                parts.append(f"> 看多信号: {'; '.join(real[:3])}")
+        if in_pool:
+            parts.append(f"> ✅ 该股在推荐池中 — 系统已识别")
+        else:
+            parts.append(f"> ⚠️ 该股不在推荐池 — 检查是否漏掉做多信号")
+        parts.append(f"> 💡 反思: 涨幅 +{chg:.1f}% — 系统是否有任何前置看多信号？如果有为什么没触发？如果没有应该有什么？")
+        return "\n".join(parts)
 
     elif role_id == "bear":
-        # 空方：哪些担忧被证伪
-        key = []
+        parts = []
         if report.red_flags:
-            key.append(f"空方曾担忧: {report.red_flags[0][:150]}")
-            key.append(f"💡 教训: 这些空方信号今天被市场证伪（涨幅{chg:+.1f}%），权重是否需要下调？")
+            parts.append(f"> 空方曾担忧: {'; '.join(report.red_flags[:3])}")
+            parts.append(f"> 💡 教训: 这些空方信号今天被市场证伪（涨幅 +{chg:.1f}%），相关权重是否需要下调？")
         else:
-            key.append(f"空方未发现显著红旗 — {name} 的涨幅没有明显基本面/技术面隐患")
-        return "\n".join(f"> {k}" for k in key)
+            parts.append(f"> 空方未发现显著红旗 — {name or code} 的涨幅没有明显隐患")
+        return "\n".join(parts)
 
     elif role_id == "capital_flow":
-        # 资金面：资金流模式
-        key = []
+        parts = []
         if report.key_findings:
-            key.append(f"资金特征: {report.key_findings[0][:150]}")
+            real = [f for f in report.key_findings if "中性" not in f]
+            if real:
+                parts.append(f"> 资金特征: {'; '.join(real[:3])}")
         if report.data_evidence:
-            key.append(f"资金数据: {report.data_evidence[0][:150]}")
-        if not key:
-            key.append(f"资金视角: {report.perspective[:200]}")
-        return "\n".join(f"> {k}" for k in key)
+            parts.append(f"> 数据: {'; '.join(report.data_evidence[:2])}")
+        if not parts:
+            parts.append(f"> 资金面: {name or code} — 盘后资金流数据需T+1获取")
+        return "\n".join(parts)
 
     else:
         findings = report.key_findings[0][:200] if report.key_findings else report.perspective[:200]
