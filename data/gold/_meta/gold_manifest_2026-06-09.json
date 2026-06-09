@@ -1,0 +1,17 @@
+{
+  "date": "2026-06-09",
+  "version": "v3",
+  "n_stocks": 8,
+  "n_factors": 25,
+  "n_valid_factors": 6,
+  "coverage_pct": 100.0,
+  "ml_dataset_built": false,
+  "ml_n_samples": 0,
+  "pool_archived": true,
+  "data_sources": [
+    "silver",
+    "bronze_kline"
+  ],
+  "warnings": [],
+  "generated_at": "2026-06-09T22:16:03.529039"
+}

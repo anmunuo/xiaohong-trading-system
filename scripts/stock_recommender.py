@@ -67,9 +67,13 @@ def _guess_sector(name: str, code: str = '', kb_modules: Dict = None) -> str:
         except Exception:
             pass
 
-    # ── 优先级 2: KB 公告/研报匹配 ──
+    # ── 优先级 2: KB 公告/研报匹配（仅匹配该股自己的公告，非全局）──
     sector_hits = {}
     for entry in ann_data + broker_data:
+        # 🆕 只匹配该股自己的 entry，避免全局券商公告污染（eg. "证券"→金融）
+        entry_code = str(entry.get('code', ''))
+        if entry_code != code:
+            continue
         title = str(entry.get('title', ''))
         for sector, keywords in SECTOR_KEYWORDS.items():
             for kw in keywords:
@@ -258,6 +262,19 @@ class StockRecommender:
                     ind['avg_vol_5'] = round(sum(volumes[-5:]) / 5, 0)
                 if closes:
                     ind['close_history'] = closes
+                # ── 🆕 从 Baostock 提取 peTTM/pbMRQ（fast模式跳过了tushare，必须用Baostock补）──
+                if bars:
+                    last = bars[-1]
+                    pe_ttm = last.get('peTTM', 0) or 0
+                    pb_mrq = last.get('pbMRQ', 0) or 0
+                    if pe_ttm > 0:
+                        ind['pe'] = float(pe_ttm)
+                    if pb_mrq > 0:
+                        ind['pb'] = float(pb_mrq)
+                    # 尝试从 baostock 获取总市值（如果有的话）
+                    total_mv = last.get('total_mv', 0) or 0
+                    if total_mv > 0:
+                        ind['total_mv'] = float(total_mv) / 1e4  # 万元→亿元
                 self._indicators[code] = ind
                 bs_fetched.add(code)
             print(f'   [BaoStock] {len(bs_fetched)}/{len(codes)} codes fetched in {time.time()-t0:.1f}s')

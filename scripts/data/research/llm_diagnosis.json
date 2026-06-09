@@ -1,167 +1,174 @@
 {
-  "timestamp": "2026-06-09T02:10:54.998518",
+  "timestamp": "2026-06-10T02:20:00",
   "generated_by": "研究员深度诊断 v2.2 · cron 02:05",
   "scores": {
-    "data_integrity": 5,
-    "signal_quality": 8,
-    "execution_health": 5,
-    "recommendation_quality": 3,
+    "data_integrity": 6,
+    "signal_quality": 7,
+    "execution_health": 6,
+    "recommendation_quality": 6,
     "gap_risk": 3
   },
   "score_details": {
     "data_integrity": {
-      "score": 5,
-      "change": 0,
-      "reason": "持平。亮点：kb_insights极新鲜（02:06，50条，连续72h滚动覆盖），mega_latest 0.1h，auction.db 1512 frames (6/8)。重大退步：Bronze/Silver/Gold三层全空（目录存在但0文件）——ETL管道完全离线。daily_pool 18.1h（6/8 08:02），market_snapshot 17.6h（6/8 08:28）。6/8 auction_diagnosis存在（推翻昨日「竞价全沉默」判断）。fix_log 33条全timestamp=?——auto_repair写入bug确认为结构性。北向VERIFIED 5星但T-28。"
+      "score": 6,
+      "change": 1,
+      "reason": "改善+1。突破：daily_pool scores从全None恢复为真实分值（75→69分布，六因子全部有值）。fix_log时间戳修复（从全?→ISO时间戳）。kb_insights 0.0h极新鲜。退化：Bronze/Silver/Gold三层仍0文件（fix_log rc=0但目录空——诊断断层），market_snapshot 17.7h陈旧（6/8 08:28→6/9未更新），daily_pool 15.4h陈旧（6/9 10:42→08:25 cron未触发刷新）。data_health标记healthy但hot_events/broker_views全空。"
     },
     "signal_quality": {
-      "score": 8,
-      "change": 1,
-      "reason": "显著改善+1。02:05窗口产出4条高质洞察：(1) 券商合并潮——信达/东兴/中金三家同日发吸收合并公告，(2) 回购潮延续——25份回购+14份员工持股（占17.6%，连续第N天>50%），(3) 国网系集中中标——宏盛华源+大连电瓷同日公告，(4) 龙虎榜60条全为涨幅偏离——0条跌幅偏离，市场偏多。与6/8「制造业扩产」+「银企战略合作」+「重组井喷」形成多主题覆盖。KB洞察覆盖宏观/公告/龙虎榜/研报/产业5维度，密度和质量为近月最佳。"
+      "score": 7,
+      "change": -1,
+      "reason": "小幅下降-1。KB洞察从昨天50条→3条，但3条质量极高：(1) 美股终值修正——纳指从-2.85%尾盘修复至-1.71%，A股开盘压力减轻；(2) 公告377条终值画像——回购216条(57.3%)+重组67+合作42，零减持；(3) 美债3年$580亿拍卖落定——4.19%利率紧但投标倍数2.64健康。覆盖外盘/公告/宏观三维度。但洞察数量骤降（50→3）且缺失龙虎榜/研报/产业维度→信噪比虽高但覆盖广度收窄。daily_pool factor_scores恢复后sentiment=55-65/fund=35-78/event=55-80分布合理，多因子区分度良好。"
     },
     "execution_health": {
-      "score": 5,
+      "score": 6,
       "change": 1,
-      "reason": "改善+1。突破性进展：进化引擎处理全部19条pending→0——6/4卡住的问题已解决。sniperd稳定运行8天(PID 315353)。auction_collector 6/8正常采集1512帧——昨日「竞价全链路沉默」诊断错误。退化：Bronze/Silver/Gold ETL全空（0文件）——盘后管道完全离线。fix_log持续死循环。cron健康status=down。市场快照数据降级（北向T-28）。"
+      "reason": "改善+1。关键修复：(1) daily_pool scores恢复→打分引擎正常，(2) fix_log时间戳恢复→auto_repair结构性bug修复，(3) pool_archive从0→5条，(4) sniperd持续运行8天+无中断，(5) auction.db 6/9采集1477帧正常。退化：(1) ETL三层仍0文件——fix_log rc=0但实际目录空→修复脚本可能写入错误路径或空运行，(2) market_snapshot cron 08:28未产出6/9版本，(3) daily_pool 08:25 cron未刷新（pool仍是10:42盘中版本），(4) evolution_log仅1条6/9-10记录且内容为空，(5) review_diagnosis rule_changes字段全?→JSON序列化bug。"
     },
     "recommendation_quality": {
-      "score": 3,
-      "change": -1,
-      "reason": "恶化-1。6/8 pool有8只推荐但scores全None——打分引擎结构性故障。新增致命问题：因子评分为空意味着推荐排序失效、瞭望塔无依据、侦察兵三级认证门失去分数维度。sector映射仍4/8错标「金融」（金帝=有色金属✓，三星新材=基础化工✓，但雅运/爱司凯/韩建河山/爱普=金融✗）。parliament_log 41条但bias全?——零有效裁决。捕获率0/50（第8天）。pool_archive=0。"
+      "score": 6,
+      "change": 3,
+      "reason": "大幅改善+3（从3→6，昨天最大痛点修复）。突破：(1) daily_pool 8只推荐全部有真实factor_scores——event/fund/sentiment/technical/research/new_factors六维度都有实际值，总分69-75分布合理，(2) operation建议7个唯一值（vs昨天v2.2 bug时全相同），(3) 创业板301042正确止损-7%。部分修复：(4) sector映射从4/8→1/8错标「金融」（天汽模仍错→应为汽车零部件）。仍存问题：(5) pool_rate 0/50（第9天），(6) hot_events+broker_views全空→候选源仍87.5%来自announcement，(7) 0持仓0交易→系统分析可用但交易不可用，(8) tracked_pool中概伦电子+6.06%在跟踪池活跃但不一定在推荐池。"
     },
     "gap_risk": {
       "score": 3,
       "change": 0,
-      "reason": "持平。Nasdaq-4.18%后周一上证-1.70%已兑现——美股暴跌风险已释放大半，但周三(6/10)美国CPI为本周最大变量。4个缺失数据源（波动率/融券/机构持仓/PE分位数）零进展。Bronze/Silver/Gold全空使因子面板+ML数据集+组合风控三项新能力完全不可用。hot_events P0仍未修复。"
+      "reason": "持平。周三(6/10)中国CPI/PPI+美国EIA月报+日本PPI三重宏观数据→日内波动风险。4个缺失源（波动率/融券/机构持仓/PE分位数）零进展。Bronze/Silver/Gold全空→因子面板+ML+组合风控不可用。market_snapshot 17.7h stale→瞭望塔决策基于陈旧宏观数据。但纳指尾盘修复至-1.71%（非-2.85%恐慌级）+377条公告零减持→今日下行风险较昨晨预估下降半档。"
     }
   },
   "trend": "improving",
-  "trend_detail": "执行层显著改善（进化引擎从堵塞→清空、竞价系统从「静默」→确认正常运行），但核心数据管线和打分引擎出现新的致命退化。总体评分因signal_quality(+1)和execution_health(+1)抵消recommendation_quality(-1)后持平。关键转折：进化引擎打通意味着参数自动优化闭环首次完整运行——这是v2.3系统自6/2以来最大进步。但对标实际交易能力：0持仓+score=None+pool_archive=0→系统仍处于分析可用但交易不可用状态。",
+  "trend_detail": "关键转折：昨日P0#1（scores全None）和P0#2（fix_log时间戳?）两个最致命的bug已修复。打分引擎恢复正常运行→推荐池有真实排序→瞭望塔/侦察兵/进化引擎重新获得可计算的基础。sector映射从4/8→1/8部分修复。数据分从5→6(+1)、执行分从5→6(+1)、推荐分从3→6(+3)三重改善。但ETL三层仍空（0文件）和议会零裁决（第9天）两个长尾P0未动→factor panel/ML/组合风控三项新能力持续不可用，认知层无议会信号。6/10周三目标：止损ETL空转+修复cron调度（08:25推荐+08:28快照），确保今日pool有实时分数和实时宏观。",
   "top_actions": [
     {
       "priority": "P0",
-      "action": "【🔥NEW】修复打分引擎——daily_pool 8只推荐scores全None",
-      "rationale": "6/8 pool中金帝股份/三星新材/雅运股份/爱司凯/华峰化学/韩建河山/东方通信/爱普股份全部score=None。根因排查：(1) _score_fund/_score_tech/_score_sentiment三函数返回None是否因输入数据缺失，(2) 六类因子打分流程中哪一环节断链，(3) 是否因Bronze/Silver/Gold全空导致某些中间数据不可得。修复后必须验证pool中6/9新产出有非空score。",
-      "module": "stock_recommender.py → _score_stock() / 六因子打分管线",
-      "deadline": "2026-06-09 08:25"
+      "action": "【NEW】修复market_snapshot cron——08:28未产出6/9快照(17.7h stale)",
+      "rationale": "market_snapshot 17.7h陈旧（最新6/8 08:28），但6/9 08:28 cron未产出。瞭望塔晨报（08:30 LLM cron）消费的是过期宏观数据→今晨决策基于6/8而非6/9真实数据。KB洞察已更新到02:05→部分弥补但指数/资金流/估值分位层级全缺。修复：检查cron_market_snapshot.sh是否shebang污染或$HOME路径错误，手动重跑一次确保6/10有新鲜快照。",
+      "module": "cron_market_snapshot.sh + market_snapshot.py",
+      "deadline": "2026-06-10 08:28"
     },
     {
       "priority": "P0",
-      "action": "【🔥NEW】恢复Bronze/Silver/Gold ETL管道——三层全空、0文件",
-      "rationale": "Bronze/Silver/Gold目录存在但完全为空——factor panel/ML dataset/pool archive全部不可用。影响链：(1) 因子IC评估无数据→IC权重不更新，(2) ML预测模型无训练数据，(3) 组合风控无相关性矩阵，(4) 进化引擎v8.6新增的13个参数全依赖Gold输出。根因排查：cron_gold.sh/cron_bronze.sh cron脚本——(a) 是否shebang/行号污染回归，(b) 是否$HOME路径错误，(c) 是否Cron超时(120s)截断，(d) 手动重跑bronze_ingest.py+silver_pipeline.py+gold_pipeline.py确认管线本身健全。",
-      "module": "bronze_ingest.py + silver_pipeline.py + gold_pipeline.py + cron_*.sh",
-      "deadline": "2026-06-09 15:40"
+      "action": "【NEW】修复daily_pool 08:25 cron——pool 15.4h陈旧(6/9 10:42 → 未刷新)",
+      "rationale": "08:25推荐引擎cron未产出6/10新pool。当前pool仍是6/9 10:42侦察兵盘中版本。瞭望塔08:30消费15h前的pool→选股标的过期。修复：检查cron_recommender.sh是否cron超时(120s)截断→config.yaml已设300s但可能未对已有job生效（已知v9.0陷阱），或shebang/行号污染回归。手动重跑stock_recommender.py --top 8 --fast验证。",
+      "module": "cron_recommender.sh + config.yaml cron.script_timeout_seconds",
+      "deadline": "2026-06-10 08:25"
     },
     {
       "priority": "P0",
-      "action": "修复auto_repair/fix_log写入bug——33条全timestamp/dimension/result=?",
-      "rationale": "结构性bug已确认（非间歇性），连续第3天标记P0未修→升级P0+。33条记录（6/8新增9条）全部字段空→FixLogEntry或write_fix_log函数参数传递断裂。两个假说：(1) $HOME profile覆盖导致写入路径双写——写入去了假路径但读的是真路径，(2) 函数签名中FixLogEntry参数名与调用处不一致。修复验证：(a) fix_log最新条timestamp有实际ISO时间戳，(b) dimension有具体名称(D2/D3/...)，(c) result有ok/failed。",
-      "module": "auto_repair.py → FixLogEntry / write_fix_log()",
-      "deadline": "2026-06-09 08:15"
+      "action": "【持续】修复Bronze/Silver/Gold ETL——fix_log rc=0但目录0文件（诊断断层）",
+      "rationale": "第5天P0。fix_log 6/9 08:15+15:15+22:16三次记录bronze/silver/gold rc=0，但实际目录全空。两种假说：(1) 修复脚本把数据写到了$HOME被profile覆盖后的假路径，(2) rc=0来自Python subprocess调用但脚本内部抛了异常被静默吞掉。需手动逐层跑bronze_ingest.py→检查输出文件是否在正确路径→silver_pipeline.py→gold_pipeline.py追踪数据流。修复后验证：ls data/bronze/ | wc -l > 0。",
+      "module": "bronze_ingest.py + silver_pipeline.py + gold_pipeline.py + auto_repair.py路径逻辑",
+      "deadline": "2026-06-10 15:40"
     },
     {
       "priority": "P0",
-      "action": "修复sector分类映射——4/8仍错标「金融」",
-      "rationale": "连续第4天P0未修。6/8 pool: 雅运股份(纺织染料→金融)、爱司凯(印刷设备→金融)、韩建河山(建材→金融)、爱普股份(香精香料→金融)。影响：瞭望塔板块聚类错误→侦察兵板块热度失真→推荐引擎sentiment.industry_bonus无效。根因在_enrich_sector()中tushare industry字段→显示名称映射偏移。简单修复：打印映射前后pair→定位断裂行→修正偏移。",
-      "module": "stock_recommender.py → _enrich_sector()",
-      "deadline": "2026-06-09 08:00"
-    },
-    {
-      "priority": "P0",
-      "action": "议会激活——41条记录零有效裁决，周一(6/9)必须产出首个真实bias",
-      "rationale": "连续8天零裁决。6/8 22:15新增1条但bias=?。crontab未调度researchers.py --parliament。今日(6/9)推荐引擎08:25产出新pool后立即运行议会三回合辩论，(1) 添加cron调度(建议08:30 researchers.py --parliament)，(2) 验证decision.bias非空且≠?，(3) 修复后daily_pool.parliament字段有真实bias。",
+      "action": "【持续】议会激活——44条记录零有效裁决（第9天）",
+      "rationale": "parliament_log 44条，最近5条全rounds=0 bias=None。crontab仍未调度researchers.py --parliament。今日08:25 pool刷新后立即调度议会：(1) 添加cron 08:30 researchers.py --parliament，(2) 验证产出decision.bias非空且≠?，(3) daily_pool.parliament字段注入真实bias。",
       "module": "researchers.py + crontab",
-      "deadline": "2026-06-09 08:30"
+      "deadline": "2026-06-10 08:30"
+    },
+    {
+      "priority": "P0",
+      "action": "修复sector映射——天汽模(002510)仍标「金融」→应为汽车零部件",
+      "rationale": "从4/8→1/8改善但未清零。天汽模(汽车模具龙头)标「金融」→瞭望塔板块聚类错误。根因：_guess_sector中SECTOR_KEYWORDS匹配过于宽泛（公告含「证券」→匹配金融）。修复：加入行业排除词（汽车/模具相关不应映射金融），或从tushare classify_industry正确获取。",
+      "module": "stock_recommender.py → _guess_sector()",
+      "deadline": "2026-06-10 08:00"
     },
     {
       "priority": "P1",
-      "action": "接入波动率指数(50ETF波指)——市场暴跌后冷却机制的must-have",
-      "rationale": "Nasdaq-4.18%后A股周一-1.70%已初步释放风险但周三CPI是本周最大变量。接入akshare option_50etf_vol只需1小时——波指>25→自动提高侦察兵资金门槛20%，>30→暂停新开仓，>35→仅平仓。短期手动评估50ETF波指水平用于6/9交易决策，中期data_pipeline增加get_volatility_index()函数。",
-      "module": "data_pipeline.py → get_volatility_index()",
-      "deadline": "2026-06-09 09:00(手动), 2026-06-10(自动化)"
-    },
-    {
-      "priority": "P1",
-      "action": "接入指数PE分位数→弹药库仓位中枢动态调整",
-      "rationale": "market_snapshot index_valuation全0（数据未接入）。沪深300 PE 14.5×96%分位→接近历史顶部→应立即触发防御。接入后：平均分位>85%→仓位上限70%→50%，沪深300分位>90%→暂停新开仓。",
-      "module": "ammo_risk.py → _index_valuation_position_control()",
+      "action": "修复review_diagnosis.json rule_changes字段全?→JSON序列化bug",
+      "rationale": "review_diagnosis的rule_changes_suggested里所有param/from_val/to_val/rationale字段都是'?'。根因：LLM复盘cron生成JSON时字段名不匹配→进化引擎读取不到真实参数变更→无法自动落地。同时影响到涨幅阈值(6→5%)和涨幅数量(50→60)两个建议被静默丢弃。",
+      "module": "review.py → 复盘LLM prompt → JSON生成字段映射",
       "deadline": "2026-06-10"
     },
     {
       "priority": "P1",
-      "action": "修复hot_events数据质量——data_hub标记为P0缺失源",
-      "rationale": "mega_latest中hot_events可能仍为空，瘫痪sentiment因子事件驱动维度。但6/8 kb_insights已出现broker_views(10:05 15份研报)和hot_events(涨停股9只)，说明某些采集通道已恢复。需定位具体断裂环节→修复→验证count>0。",
-      "module": "mega_collector.py → hot_events采集聚合",
-      "deadline": "2026-06-09"
+      "action": "恢复KB洞察→推荐引擎insight_score链路（当前全0→多因子区分度损失）",
+      "rationale": "kb_insights质量极高（3条全high confidence）但推荐引擎insight_score全0→KB洞察未注入评分。stock_kb.db所有表为空→_load_insights读不到数据。需：(1) 确认mega_collector每小时采集写入SQLite，(2) 验证推荐引擎_load_insights能从SQLite读取并赋值insight_score。",
+      "module": "mega_collector.py + stock_recommender.py → _load_insights()",
+      "deadline": "2026-06-10"
+    },
+    {
+      "priority": "P1",
+      "action": "三链路重连：推荐池→侦察兵→目标池→狙击手→下单",
+      "rationale": "当前状态：推荐池✅→侦察兵⚠️→目标池🔴→狙击手🔴→下单🔴。sniperd连续8天运行但0信号0入场。target_pool.json未生成→推荐池标的未进入目标池。修复：(1) 侦察兵cron产出盘中扫描→确认三级认证门正常，(2) feed_intraday_pool()推送目标池，(3) sniperd从target_pool.json读标的→开始监控入场信号。",
+      "module": "scout.py + target_pool.py + sniperd.py",
+      "deadline": "2026-06-10 09:25"
+    },
+    {
+      "priority": "P1",
+      "action": "接入波动率指数(50ETF波指)——CPI日前风控must-have",
+      "rationale": "6/10中国CPI/PPI+美国EIA月报→日内宏观波动风险。接入akshare option_50etf_vol→波指>25触发提高侦察兵门槛20%，>30暂停新开仓。手动评估当前50ETF波指水平用于今日交易决策。",
+      "module": "data_pipeline.py → get_volatility_index()",
+      "deadline": "2026-06-10 09:00(手动), 2026-06-11(自动化)"
     },
     {
       "priority": "P2",
-      "action": "R值强制计算——弹药库当前R=None",
-      "rationale": "净值100,000，按2%风险计算R=2,000。零持仓下R值不影响开仓但影响凯利系数和仓位校准。运行ammo_risk.py --update强制计算R值。",
-      "module": "ammo_risk.py --update",
-      "deadline": "2026-06-09 15:30"
+      "action": "修复hot_events+broker_views——两个模块全空→sentiment因子事件驱动维度缺失",
+      "rationale": "data_health标记hot_events/broker_views为空模块。mega_latest虽有9模块但事件驱动层真空→推荐引擎sentiment因子缺少涨停/热度/研报维度。需要定位mega_collector中hot_events采集具体断裂环节。",
+      "module": "mega_collector.py → hot_events采集",
+      "deadline": "2026-06-10"
     }
   ],
   "kb_insight_summary": {
-    "latest_window": "2026-06-09T02:05",
-    "coverage": "06/07→06/09连续72h滚动，50条洞察，5维度覆盖（宏观/公告/龙虎榜/研报/产业）",
+    "latest_window": "2026-06-10T02:05",
+    "coverage": "06/10 00:00→02:05，3条洞察（vs昨天50条显著减少），覆盖外盘/公告/宏观3维度",
     "key_signals": [
-      "券商合并潮：信达/东兴/中金三家同日发吸收合并公告→券商β行情潜在催化剂",
-      "回购潮连续N天>50%占比：25份回购+14份员工持股=17.6%（绝对值回落但占比稳定）",
-      "国网系集中中标：宏盛华源+大连电瓷同日公告→电网/线缆方向出现集中催化",
-      "龙虎榜60条全为涨幅偏离，0条跌幅偏离→市场偏多情绪延续至周一收盘",
-      "6/8周一上证-1.70%但龙虎榜全多头→低开高走迹象，产业资本逆势加仓",
-      "日本Q1 GDP超预期(+1.8% vs +1.3%)但日经-3.85%→全球risk-off压倒区域宏观",
-      "周三(6/10)美国CPI为本周最大宏观变量→当前处于定价博弈窗口"
+      "美股收盘修正：纳指-1.71%（非-2.85%恐慌级）→A股今日开盘外盘压力中等偏负，比01:05预估下调半档",
+      "公告377条终值画像：回购216条(57.3%)+重组67+合作42+合同34，零减持——近月最强单日公告画像锁死",
+      "美债3年$580亿拍卖：4.19%利率+投标倍数2.64→利率紧但流动性无恐慌，对A股中性",
+      "亚太分化：日经+2.17%独强 vs 恒生-0.37%→A股可走独立行情，不必因美股调整过度恐慌",
+      "ST风险反增：*ST雅博新入→4条 vs 上证+1.28%背景→反弹质量存在结构性隐忧"
     ]
   },
   "system_health_snapshot": {
-    "checked_at": "2026-06-09T02:07",
+    "checked_at": "2026-06-10T02:10",
     "overall": "degraded",
-    "issues_count": 12,
+    "issues_count": 10,
     "critical": [
-      "🔥NEW: daily_pool 8只推荐scores全None——打分引擎结构性故障",
-      "🔥NEW: Bronze/Silver/Gold三层全空——ETL管道完全离线(0文件)",
-      "P0+: sector映射4/8错标「金融」(第4天)",
-      "P0+: auto_repair fix_log 33条全timestamp=? (第3天)",
-      "P0: 议会41条零有效裁决——bias全? (第8天)",
-      "P0: capture_rate 0/50 (第8天)",
-      "market_snapshot 17.6h stale, north_flow T-28",
-      "P0: hot_events数据质量unstable",
-      "pool_archive=0, factor panel不可用",
-      "index_valuation全0——PE分位数未接入"
+      "🔥NEW: market_snapshot 17.7h陈旧——08:28 cron 6/9未产出",
+      "🔥NEW: daily_pool 15.4h陈旧——08:25 cron未刷新（仍用6/9 10:42盘中版本）",
+      "P0: ETL三层全空(0文件)——fix_log rc=0但目录空，诊断断层（第5天）",
+      "P0: 议会44条零有效裁决——bias全None（第9天）",
+      "P0: sector映射1/8仍错——天汽模标「金融」（第5天）",
+      "P0: pool_rate 0/50——安联锐视+6.96%在池但reflection算0%（第9天）",
+      "P0: hot_events+broker_views全空——sentiment事件驱动维度缺失",
+      "P1: review_diagnosis rule_changes全?——JSON序列化bug→进化引擎无输入",
+      "P1: KB洞察→insight_score链路断裂（score全0）",
+      "P1: 三链路断裂——推荐→侦察→目标池→狙击→下单，仅第一步在线"
     ],
     "ok": [
-      "sniperd: 运行中(PID 315353, 8天)",
-      "kb_insights: 0.0h fresh, 50 entries, 72h连续覆盖",
-      "mega_latest: 0.1h fresh",
-      "auction_collector: 6/8 1512 frames（推翻昨日误诊）",
-      "auction_diagnosis: 6/8 16:09 正常产出",
-      "review_diagnosis: 6/8 17:20 正常产出",
-      "进化引擎: 19/19 pending→0 全部处理",
-      "evolution_log: 6/8产出（v9 8/13落地）",
-      "sina_realtime: ok",
-      "baostock_klines: ok"
+      "✅ scores恢复：8只推荐全有真实factor_scores（最大P0修复）",
+      "✅ fix_log时间戳恢复：从全?→ISO时间戳",
+      "✅ pool_archive从0→5条",
+      "✅ sniperd: 运行中(PID 315353, 8天+无中断)",
+      "✅ auction_collector: 6/9 1477帧正常",
+      "✅ kb_insights: 0.0h fresh, 3条高质量",
+      "✅ mega_latest: 0.1h fresh, 9模块",
+      "✅ data_pipeline核心API健康(f62/sina/baostock)",
+      "✅ 进化引擎action_items: 23→1 pending（19/19→1 backpressure解除）"
     ]
   },
   "vs_previous_diagnosis": {
-    "previous_timestamp": "2026-06-08T02:15:00",
+    "previous_timestamp": "2026-06-09T02:10:54",
     "progress": [
-      "✅ 进化引擎突破：19条pending→0，v9版8/13落地（事件0.30→0.35、技术0.15→0.18、基本面0.25→0.30、P1止损3.0→2.5等）",
-      "✅ 竞价系统恢复：6/8 auction.db 1512帧+auction_diagnosis正常产出（昨日误诊为全沉默）",
-      "✅ 推荐引擎6/8产出新pool——72h陈旧问题解决",
-      "✅ kb_insights保持高质量连续覆盖"
+      "✅✅ P0#1修复：daily_pool scores从全None→全部真实值（8/8六因子有值，总分69-75）",
+      "✅✅ P0#2修复：fix_log时间戳从全?→ISO时间戳恢复正常",
+      "✅ sector映射从4/8→1/8错标（天汽模仍错→汽车零部件）",
+      "✅ pool_archive从0→5条",
+      "✅ auction_collector 6/9 1477帧——昨日「全链路沉默」诊断确认错误",
+      "✅ 进化引擎pending从19→1（回压解除）"
     ],
     "regression": [
-      "🔴 NEW: Bronze/Silver/Gold三层全空→因子面板+ML+组合风控全部不可用",
-      "🔴 NEW: daily_pool scores全None→打分引擎结构性故障",
-      "🔴 sector映射4/8金融=未修复（P0→P0+第4天）",
-      "🔴 fix_log死循环=未修复（P0→P0+第3天）",
-      "🔴 议会零裁决=未修复（P0第8天）"
+      "🔴 NEW: market_snapshot 17.7h陈旧（6/9 08:28 cron未产出）",
+      "🔴 NEW: daily_pool 15.4h陈旧（6/10 08:25 cron未刷新）",
+      "🔴 NEW: review_diagnosis rule_changes全?字段→进化引擎输入断裂",
+      "🔴 KB洞察从50→3条（覆盖维度收窄）",
+      "🔴 ETL三层仍0文件（fix_log rc=0但目录空→诊断断层恶化）",
+      "🔴 议会零裁决→第9天（无进展）"
     ],
-    "p0_resolved": 1,
+    "p0_resolved": 2,
     "p0_still_open": 4,
     "p0_new": 2,
-    "note": "执行层突破（进化引擎+竞价恢复）但数据管线出现致命新退化（Bronze/Silver/Gold全空+scores全None）。4个P0连续3-8天未落地→技术债净累积。6/9周二目标：止损P0扩散——优先修复scores+Bronze管线，确保6/9交易日的推荐池可打分+可归档。"
+    "note": "重大转折——两个最致命的bug（scores None + fix_log时间戳）在6/9修复。但出现了两个新的结构性退化：关键cron（08:25推荐+08:28快照）在6/9-10跨夜后未产出→瞭望塔晨报将基于15h+陈旧数据决策。ETL fix_log rc=0但目录空揭示了一个更深层问题——修复脚本可能在$HOME被profile覆盖后写入了错误路径。6/10周三目标：(1) 08:25前修复两个cron确保今日pool+快照新鲜，(2) 追踪ETL真实文件落点，(3) 激活议会。当前系统状态：打分引擎恢复→推荐池可用→但执行链断裂→0持仓。"
   }
 }

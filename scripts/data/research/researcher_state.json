@@ -1,6 +1,6 @@
 {
   "version": "2.2.0",
-  "updated_at": "2026-06-09T02:01:40.895087",
+  "updated_at": "2026-06-10T02:01:19.646736",
   "hypotheses": {
     "data_20260604220204_001": {
       "id": "data_20260604220204_001",
@@ -763,18 +763,19 @@
       "id": "data_20260607020109_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "2026-06-09 02:01",
-      "verified_at": "2026-06-09 02:01",
-      "status": "active",
+      "updated_at": "2026-06-10 02:01",
+      "verified_at": "2026-06-10 02:01",
+      "status": "rejected",
       "related_symbols": [],
       "source": "data"
     },
@@ -962,17 +963,19 @@
       "id": "flow_20260607020112_011",
       "statement": "北向单日流入36亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.25,
-      "alpha": 1,
+      "confidence": 0.4,
+      "alpha": 2,
       "beta": 3,
-      "evidence_for": [],
+      "evidence_for": [
+        "上证+1.28%"
+      ],
       "evidence_against": [
         "上证-0.74%",
         "上证-1.70%"
       ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "2026-06-09 02:01",
-      "verified_at": "2026-06-09 02:01",
+      "updated_at": "2026-06-10 02:01",
+      "verified_at": "2026-06-10 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -981,16 +984,17 @@
       "id": "data_20260608020128_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-08 02:01",
-      "updated_at": "2026-06-09 02:01",
-      "verified_at": "2026-06-09 02:01",
+      "updated_at": "2026-06-10 02:01",
+      "verified_at": "2026-06-10 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "data"
@@ -1161,16 +1165,18 @@
       "id": "flow_20260608020131_011",
       "statement": "北向单日流入42亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.3333,
-      "alpha": 1,
+      "confidence": 0.5,
+      "alpha": 2,
       "beta": 2,
-      "evidence_for": [],
+      "evidence_for": [
+        "上证+1.28%"
+      ],
       "evidence_against": [
         "上证-1.70%"
       ],
       "created_at": "2026-06-08 02:01",
-      "updated_at": "2026-06-09 02:01",
-      "verified_at": "2026-06-09 02:01",
+      "updated_at": "2026-06-10 02:01",
+      "verified_at": "2026-06-10 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -1179,14 +1185,16 @@
       "id": "data_20260609020137_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.55,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "当前过期数据源: 2个"
+      ],
       "created_at": "2026-06-09 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-10 02:01",
+      "verified_at": "2026-06-10 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "data"
@@ -1339,12 +1347,280 @@
       "id": "flow_20260609020140_010",
       "statement": "北向单日流入37亿，次日上证上涨概率>60%",
       "category": "market",
+      "confidence": 0.6667,
+      "alpha": 2,
+      "beta": 1,
+      "evidence_for": [
+        "上证+1.28%"
+      ],
+      "evidence_against": [],
+      "created_at": "2026-06-09 02:01",
+      "updated_at": "2026-06-10 02:01",
+      "verified_at": "2026-06-10 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260610020116_001": {
+      "id": "data_20260610020116_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
       "confidence": 0.55,
       "alpha": 1,
       "beta": 1,
       "evidence_for": [],
       "evidence_against": [],
-      "created_at": "2026-06-09 02:01",
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260610020119_002": {
+      "id": "technical_20260610020119_002",
+      "statement": "天汽模(002510) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002510"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_003": {
+      "id": "technical_20260610020119_003",
+      "statement": "广东明珠(600382) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600382"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_004": {
+      "id": "technical_20260610020119_004",
+      "statement": "英洛华(000795) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "000795"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_005": {
+      "id": "technical_20260610020119_005",
+      "statement": "华润双鹤(600062) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600062"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_006": {
+      "id": "technical_20260610020119_006",
+      "statement": "安联锐视(301042) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301042"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_007": {
+      "id": "technical_20260610020119_007",
+      "statement": "太平鸟(603877) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603877"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_008": {
+      "id": "technical_20260610020119_008",
+      "statement": "梅花生物(600873) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600873"
+      ],
+      "source": "technical"
+    },
+    "technical_20260610020119_009": {
+      "id": "technical_20260610020119_009",
+      "statement": "银龙股份(603969) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603969"
+      ],
+      "source": "technical"
+    },
+    "bear_20260610020119_010": {
+      "id": "bear_20260610020119_010",
+      "statement": "天汽模(002510) 小市值(68亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002510"
+      ],
+      "source": "bear"
+    },
+    "bear_20260610020119_011": {
+      "id": "bear_20260610020119_011",
+      "statement": "广东明珠(600382) 小市值(60亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600382"
+      ],
+      "source": "bear"
+    },
+    "bear_20260610020119_012": {
+      "id": "bear_20260610020119_012",
+      "statement": "安联锐视(301042) 小市值(73亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301042"
+      ],
+      "source": "bear"
+    },
+    "bear_20260610020119_013": {
+      "id": "bear_20260610020119_013",
+      "statement": "太平鸟(603877) 小市值(66亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603877"
+      ],
+      "source": "bear"
+    },
+    "bear_20260610020119_014": {
+      "id": "bear_20260610020119_014",
+      "statement": "银龙股份(603969) 小市值(68亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603969"
+      ],
+      "source": "bear"
+    },
+    "flow_20260610020119_015": {
+      "id": "flow_20260610020119_015",
+      "statement": "北向单日流入36亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.55,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-10 02:01",
       "updated_at": "",
       "verified_at": "",
       "status": "active",
@@ -1355,10 +1631,10 @@
   "agenda": [],
   "gaps": [],
   "stats": {
-    "total_hypotheses": 70,
+    "total_hypotheses": 85,
     "confirmed": 0,
-    "rejected": 9,
-    "total_verifications": 70,
+    "rejected": 10,
+    "total_verifications": 76,
     "accuracy": 0.0
   }
 }

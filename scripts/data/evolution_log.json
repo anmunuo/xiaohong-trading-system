@@ -401,5 +401,303 @@
         }
       }
     ]
+  },
+  {
+    "date": "2026-06-09 17:12:23",
+    "version": "#10",
+    "dry_run": true,
+    "changes_attempted": 5,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-09 17:13:09",
+    "version": "#11",
+    "dry_run": true,
+    "changes_attempted": 5,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-09 17:13:59",
+    "version": "#12",
+    "dry_run": true,
+    "changes_attempted": 7,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-09 17:14:30",
+    "version": "#13",
+    "dry_run": true,
+    "changes_attempted": 7,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-09 17:14:45",
+    "version": "#14",
+    "dry_run": false,
+    "changes_attempted": 7,
+    "changes_applied": 6,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "description": "竞价价格斜率权重",
+        "old_value": 0.25,
+        "new_value": 0.2,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_price_slope",
+          "old_value": 0.25,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.22,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.22,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_imbalance",
+        "description": "竞价委托不平衡权重",
+        "old_value": 0.2,
+        "new_value": 0.2,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_imbalance",
+          "old_value": 0.2,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_premium",
+        "description": "竞价开盘溢价权重",
+        "old_value": 0.15,
+        "new_value": 0.18,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_premium",
+          "old_value": 0.15,
+          "new_value": 0.18,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "review_gainer_min_pct",
+        "description": "文工团涨幅榜最低%",
+        "old_value": 6.0,
+        "new_value": 5.0,
+        "reason": "涨幅阈值: 涨幅阈值从6%降低到5%",
+        "test_result": {
+          "param": "review_gainer_min_pct",
+          "old_value": 6.0,
+          "new_value": 5.0,
+          "strategy": "lightweight_sim",
+          "passed": true,
+          "details": "📉 放宽文工团参数 review_gainer_min_pct: 6.0→5.0 | 覆盖更多涨幅股"
+        }
+      },
+      {
+        "param": "review_gainer_top_n",
+        "description": "文工团涨幅榜数量",
+        "old_value": 50,
+        "new_value": 60.0,
+        "reason": "涨幅数量: 涨幅数量从50增加到60",
+        "test_result": {
+          "param": "review_gainer_top_n",
+          "old_value": 50,
+          "new_value": 60.0,
+          "strategy": "lightweight_sim",
+          "passed": true,
+          "details": "📈 收紧文工团参数 review_gainer_top_n: 50→60.0 | 覆盖更多涨幅股"
+        }
+      }
+    ]
+  },
+  {
+    "date": "2026-06-09 17:33:56",
+    "version": "#15",
+    "dry_run": true,
+    "changes_attempted": 7,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-09 17:34:41",
+    "version": "#16",
+    "dry_run": false,
+    "changes_attempted": 7,
+    "changes_applied": 6,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "description": "竞价价格斜率权重",
+        "old_value": 0.25,
+        "new_value": 0.2,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_price_slope",
+          "old_value": 0.25,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.22,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.22,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_imbalance",
+        "description": "竞价委托不平衡权重",
+        "old_value": 0.2,
+        "new_value": 0.2,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_imbalance",
+          "old_value": 0.2,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_premium",
+        "description": "竞价开盘溢价权重",
+        "old_value": 0.15,
+        "new_value": 0.18,
+        "reason": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
+        "test_result": {
+          "param": "auction_weight_premium",
+          "old_value": 0.15,
+          "new_value": 0.18,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "review_gainer_min_pct",
+        "description": "文工团涨幅榜最低%",
+        "old_value": 6.0,
+        "new_value": 5.0,
+        "reason": "涨幅阈值: 涨幅阈值从6%降低到5%",
+        "test_result": {
+          "param": "review_gainer_min_pct",
+          "old_value": 6.0,
+          "new_value": 5.0,
+          "strategy": "lightweight_sim",
+          "passed": true,
+          "details": "📉 放宽文工团参数 review_gainer_min_pct: 6.0→5.0 | 覆盖更多涨幅股"
+        }
+      },
+      {
+        "param": "review_gainer_top_n",
+        "description": "文工团涨幅榜数量",
+        "old_value": 50,
+        "new_value": 60.0,
+        "reason": "涨幅数量: 涨幅数量从50增加到60",
+        "test_result": {
+          "param": "review_gainer_top_n",
+          "old_value": 50,
+          "new_value": 60.0,
+          "strategy": "lightweight_sim",
+          "passed": true,
+          "details": "📈 收紧文工团参数 review_gainer_top_n: 50→60.0 | 覆盖更多涨幅股"
+        }
+      }
+    ]
+  },
+  {
+    "version": 17,
+    "timestamp": "2026-06-09T17:36:43.521643",
+    "date": "2026-06-09",
+    "run": "17:30 cron",
+    "changes_applied": 4,
+    "changes_total": 7,
+    "changes_rejected": 1,
+    "changes_noop": 2,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "result": "noop",
+        "note": "文件值=目标值0.2"
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "result": "applied",
+        "from": 0.3,
+        "to": 0.22
+      },
+      {
+        "param": "auction_weight_imbalance",
+        "result": "noop",
+        "note": "文件值=目标值0.2"
+      },
+      {
+        "param": "auction_weight_premium",
+        "result": "noop",
+        "note": "文件值=目标值0.18"
+      },
+      {
+        "param": "auction_weight_sector_dev",
+        "result": "applied_step1",
+        "from": 0.15,
+        "to": 0.18,
+        "target": 0.2,
+        "step": "1/2"
+      },
+      {
+        "param": "review_gainer_min_pct",
+        "result": "applied",
+        "from": 6.0,
+        "to": 5.0,
+        "fix": "修复变量名GAINER_MIN_PCT"
+      },
+      {
+        "param": "review_gainer_top_n",
+        "result": "applied",
+        "from": 50,
+        "to": 60,
+        "fix": "修复变量名GAINER_TOP_N"
+      }
+    ],
+    "bugs_fixed": [
+      "apply_param_to_file: review变量名min_pct→GAINER_MIN_PCT, top_n→GAINER_TOP_N",
+      "apply_param_to_file: auction_weight 改用文件实际值而非spec[default]"
+    ],
+    "backups": "evolution_backups/auction_features_20260609_173500.py, review_20260609_173500.py"
   }
 ]

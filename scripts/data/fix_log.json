@@ -196,5 +196,47 @@
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
     "ok": true
+  },
+  {
+    "ts": "2026-06-09T08:15:39.707873",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-09T08:15:40.345887",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-09T15:15:46.528539",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-09T15:15:46.923481",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-09T22:16:03.323084",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-09T22:16:03.323671",
+    "action": "data_pipeline",
+    "detail": "cleared 0 cache files",
+    "ok": false
+  },
+  {
+    "ts": "2026-06-09T22:16:03.716843",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
   }
 ]

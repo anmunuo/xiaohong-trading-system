@@ -1,57 +1,57 @@
 {
-  "generated_at": "2026-06-08 08:28:33",
+  "generated_at": "2026-06-09 08:28:48",
   "indices": {
     "us": {
       "dow": [
-        51561.93,
-        1.73
+        50866.78,
+        -1.35
       ],
       "sp500": [
-        7584.31,
-        0.41
+        7383.74,
+        -2.64
       ],
       "nasdaq": [
-        26830.96,
-        -0.09
+        25709.43,
+        -4.18
       ]
     },
     "europe": {
       "ftse": [
-        10360.32,
-        0.27
+        10368.05,
+        0.07
       ],
       "dax": [
-        24944.95,
-        0.6
+        24759.05,
+        -0.75
       ]
     },
     "asia": {
       "nikkei": [
-        67470.69,
-        -1.36
+        66588.12,
+        -1.31
       ],
       "hangseng": [
-        25253.4,
-        -1.48
+        24961.95,
+        -1.15
       ],
       "shanghai": [
-        4057.78,
-        -0.64
+        4027.74,
+        -0.74
       ]
     }
   },
   "north_flow": {
-    "net_flow": 36.52,
-    "status": "🟢 36.5亿元 净流入",
-    "detail": "沪股通:17.1亿, 深股通:19.4亿",
-    "date": "20260604",
-    "data_type": "T-1日终（非实时） (滞后1天)",
+    "net_flow": 42.4,
+    "status": "🟢 42.4亿元 净流入",
+    "detail": "沪股通:19.6亿, 深股通:22.8亿",
+    "date": "20260511",
+    "data_type": "T-1日终（非实时） (滞后28天)",
     "data_source": "tushare_pro",
-    "_quality": "T-1",
+    "_quality": "T-28",
     "_quality_stamp": {
       "data_type": "north_flow",
       "source": "get_north_flow",
-      "collected_at": "2026-06-05T08:01:18.723872",
+      "collected_at": "2026-06-08T08:01:40.160001",
       "freshness": "T-0",
       "trust": "VERIFIED",
       "passed_gates": [
@@ -62,7 +62,9 @@
         "trend"
       ],
       "failed_gates": [],
-      "warnings": [],
+      "warnings": [
+        "与tushare原始值偏差1.9亿"
+      ],
       "repair_hint": "",
       "stars": "★★★☆☆"
     }

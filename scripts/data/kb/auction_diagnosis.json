@@ -1,54 +1,76 @@
 {
-  "timestamp": "2026-06-08T16:09:43.838023",
-  "date": "2026-06-08",
+  "timestamp": "2026-06-09T16:20:19.519286",
+  "date": "2026-06-09",
   "market_condition": "ranging",
   "market_context": {
-    "shanghai": {
-      "close": 3959.34,
-      "change_pct": -1.7
+    "north_flow": {
+      "net_flow_billion": 37.01,
+      "direction": "净流入",
+      "date": "20260608",
+      "quality": "T-1日终",
+      "source": "tushare_pro"
     },
-    "nasdaq": {
-      "close": 25709.43,
-      "change_pct": -4.18
+    "auction_direction": "偏空（3上/4下/1平，8只覆盖）",
+    "auction_notable": {
+      "top_gainer": {
+        "code": "002510",
+        "name": "天汽模",
+        "auction_open": "+10.03%",
+        "auction_close": "+7.63%",
+        "pattern": "竞价高开低走，涨停板未封住"
+      },
+      "best_auction": {
+        "code": "600382",
+        "name": "广东明珠",
+        "auction_change": "+3.33%",
+        "pattern": "竞价持续走强"
+      }
     },
-    "sp500": {
-      "close": 7383.74,
-      "change_pct": -2.64
-    },
-    "hangseng": {
-      "close": 24961.95,
-      "change_pct": -1.15
-    },
-    "summary": "全球风险资产普跌，纳指领跌-4.18%。A股上证-1.7%跟随外盘调整。北向资金因政策不实时披露。整体为偏空震荡市，非单边趋势。"
+    "recent_trend": "6/4-6/8连续偏空（2上5下→4上5下→1上6下），6/9边际改善但仍偏空。北向T-1日37亿流入提供底部支撑信号。整体为「恐慌后震荡筑底」格局。",
+    "data_coverage": "仅8-9只标的（默认蓝筹+资金流TOP），覆盖极窄。竞价学习器结论不应外推到全市场。"
   },
   "weights_current": {
-    "price_slope": 0.2,
-    "volume_accel": 0.3,
-    "imbalance": 0.2,
-    "premium": 0.15,
-    "sector_dev": 0.15,
-    "_note": "所有维度处于Bayesian均匀先验(α=1,β=1,accuracy=0.5)。hits=0, misses=0。total_samples=8但无任何实际hit/miss累积——v2.0做多导向目标函数在下跌市中所有信号均落入skip(看跌→跌)或penalty(看跌→涨/看涨→跌)分支，无正向学习事件。"
+    "price_slope": 0.2105,
+    "volume_accel": 0.3158,
+    "imbalance": 0.2105,
+    "premium": 0.1053,
+    "sector_dev": 0.1579
+  },
+  "learning_state": {
+    "total_samples": 11,
+    "hits_total": 0,
+    "misses_total": 1,
+    "active_dimensions": "premium only（1 miss）",
+    "frozen_dimensions": "price_slope, volume_accel, imbalance, sector_dev（全部0 hit 0 miss，滞留在Bayesian先验）",
+    "diagnosis_6_8_to_now": "6/8诊断建议volume_accel 0.25 / sector_dev 0.20，但学习器自行Bayesian更新权重为0.3158/0.1579（因hits/misses均为0，仍走alpha/(alpha+beta)=0.5的比例分配，premium因1 miss降至0.1053）。诊断建议未被采纳——学习器无外部权重覆盖机制。",
+    "sample_quality": "11个samples中多数来自caution→skip分支（不算hit/miss）。真正有反馈的事件仅1个：premium维度在某个标的上看涨信号被实际下跌证伪。学习效率极低。"
   },
   "accuracy_trend": {
-    "price_slope": "idle",
-    "volume_accel": "idle",
-    "imbalance": "idle",
-    "premium": "idle",
-    "sector_dev": "idle",
-    "_explanation": "idle=无实际hit/miss数据积累。五维均处于冷启动状态。这并非bug，而是v2.0做多导向目标函数在当前偏空环境下的预期行为——多数竞价信号为谨慎/看跌，对应的实际收盘也多为下跌，全部触发skip分支（熊市噪音不学习）。需等待市场转暖产生bullish信号+实际涨的正向学习事件才能激活。"
+    "price_slope": "idle（0 hit/0 miss，5日无变化）",
+    "volume_accel": "idle（0 hit/0 miss，但volume_data仅5-7%帧有数据→本质不可靠）",
+    "imbalance": "idle（0 hit/0 miss，5日无变化）",
+    "premium": "degrading（0 hit/1 miss，accuracy 1/3=33.3%，Bayesian从0.5→0.33）",
+    "sector_dev": "idle（0 hit/0 miss，5日无变化）"
   },
-  "diagnosis": "竞价学习器v2.0处于冷启动阶段。8个total_samples全部因做多导向目标函数在下跌市中落入skip/penalty分支，五维权重仍为均匀先验(0.20/0.30/0.20/0.15/0.15)。核心问题：(1) volume_accel权重0.30在风险off环境中偏高——放量多为恐慌抛售而非吸筹，易产生假多头信号；(2) sector_dev权重0.15偏低——弱势市场中板块相对强弱是最可靠的选股维度；(3) 学习器缺少最低激活样本数阈值，导致权重可能长期冻结在均匀先验。建议适度降低volume_accel、提升sector_dev，待市场企稳、hits数据积累后再由Bayesian更新接管。",
+  "data_quality_flags": {
+    "volume_data_pct": "5-7%帧有量（仅最后15秒），volume_accel基于极窄窗口计算→信噪比极低",
+    "coverage": "8-9只/日，总样本不足以支撑5维Bayesian学习（建议≥50只）",
+    "learning_rate": "5天仅11个sample，1个有效反馈。按此速度，达到10 hit需要约50个交易日。"
+  },
+  "diagnosis": "竞价学习器陷入「数据不足导致的权重冻结」。核心问题三重：(1) 覆盖率过窄——8-9只标的每日采集，竞价为全市场现象却仅盯自选池，样本量不足以激活Bayesian更新；(2) volume_accel权重0.3158建立在5-7%帧有量的极薄数据上，本质是用噪声驱动最高权重维度——这是当前最大的权重配置风险；(3) premium维度是唯一有反馈的维度（1 miss），权重却最低0.1053，与「有反馈应加权」的Bayesian直觉相悖。当前市场处于恐慌后震荡筑底（6/8全球risk-off后6/9北向37亿回补），需等待首个阳线日触发bullish信号→实际涨的正向学习事件。",
   "recommendation": {
     "price_slope": 0.2,
-    "volume_accel": 0.25,
+    "volume_accel": 0.22,
     "imbalance": 0.2,
-    "premium": 0.15,
+    "premium": 0.18,
     "sector_dev": 0.2
   },
-  "reasoning": "1. volume_accel 0.30→0.25(-0.05)：当前全球risk-off、纳指-4.18%，竞价放量大概率是恐慌盘而非主力吸筹。降低此维度避免假信号。2. sector_dev 0.15→0.20(+0.05)：弱势市场中板块偏离度是识别抗跌标的的核心信号——逆势走强的板块往往是下一轮反弹的龙头。3. 其余三维维持不变：price_slope在下跌市参考价值存疑但不至误导，imbalance始终有效，premium在趋势不明显时保持中性。4. 所有调整幅度±0.05，远在±0.10安全边界内。5. 此调整不等同于Bayesian学习——待hits>10后Bayesian权重将自然接管。",
+  "reasoning": "1. volume_accel 0.3158→0.22(-0.0938，边界内)：volume数据仅在竞价最后15秒可用（5-7%帧），该维度的高权重源于Bayesian均值回归而非真实信号强度。继续维持0.32会在市场转折时产生误导性竞价判断。降至0.22仍给其留有一定影响力但不再主导。\n2. premium 0.1053→0.18(+0.0747，边界内)：唯一有反馈的维度，即使反馈是负面的（1 miss），有反馈本身就证明该维度在产生差异化信号。当前0.1053的低权重是因为beta=2稀释了精度，但实际premium（竞价溢价vs前收盘）是判断开盘方向的核心指标。提升幅度控制在0.075，等待更多hits/misses数据验证。\n3. price_slope 0.2105→0.20(-0.0105)：微调，价格斜率在震荡市中信号衰减，但仍是竞价分析的基本盘。\n4. imbalance 0.2105→0.20(-0.0105)：微调，买卖盘不平衡在8只小样本中统计意义有限。\n5. sector_dev 0.1579→0.20(+0.0421)：震荡筑底期板块轮动是超额收益核心来源。6/8诊断已建议提升此维度，6/9继续推进。\n6. 总调整幅度均在±0.10内。\n7. 底层建议：扩容竞价采集目标至≥50只（推荐引擎候选池+行业代表），否则学习器将长期冻结在冷启动状态。",
   "action_needed": {
-    "learner": "无需修改学习器代码。当前状态是v2.0目标函数在下跌市中的预期行为。建议关注auction_learner.py中total_samples如何计数的——如果skip不计入sample，则8个数字本身可能来自代码bug而非真实信号。",
-    "monitoring": "下次市场收阳日（上证>+0.5%）检查hits是否开始累积。若连续3个阳线日hits仍为0，则学习器存在分类bug需排查。"
+    "immediate": "手动将auction_weights.json中volume_accel下调至0.22、premium上调至0.18（学习器Bayesian更新不会自行做此调整，因为hits/misses仍为0/0）",
+    "short_term": "扩容竞价采集标的至≥50只（stock_recommender候选池+各行业龙头），从每日8只→50只可将sample累积速度提升6x",
+    "monitoring": "下一个上证收阳日（>+0.5%）验证hits是否开始累积。若仍为0，检查auction_learner的信号分类逻辑——天汽模+10%开盘+最终+7.63%收盘应产生一个bullish信号+实际涨的hit事件",
+    "structural": "考虑在auction_learner中增加外部权重覆盖接口，使diagnosis.json的recommendation可以被程序化应用而非仅作建议"
   },
-  "previous_diagnosis": "2026-06-05T16:15:00"
+  "previous_diagnosis": "2026-06-08T16:09:43"
 }

@@ -432,5 +432,103 @@
       }
     ],
     "hint": ""
+  },
+  {
+    "ts": "2026-06-09T08:10:33.445486",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-09T08:10:49.368892",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-09T08:11:00.070343",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-09T08:11:15.396376",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-09T08:15:28.785037",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-09T15:15:33.476709",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-09T22:15:49.467232",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
   }
 ]
