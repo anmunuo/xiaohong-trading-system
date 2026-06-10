@@ -238,5 +238,41 @@
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
     "ok": true
+  },
+  {
+    "ts": "2026-06-10T08:15:57.738289",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-10T08:15:58.115471",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-10T15:15:48.049128",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-10T15:15:48.465132",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-10T22:16:15.750543",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-10T22:16:16.114792",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
   }
 ]

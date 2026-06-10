@@ -1,6 +1,6 @@
 {
   "version": "2.2.0",
-  "updated_at": "2026-06-10T02:01:19.646736",
+  "updated_at": "2026-06-11T02:01:51.934898",
   "hypotheses": {
     "data_20260604220204_001": {
       "id": "data_20260604220204_001",
@@ -963,19 +963,20 @@
       "id": "flow_20260607020112_011",
       "statement": "北向单日流入36亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.4,
+      "confidence": 0.3333,
       "alpha": 2,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [
         "上证+1.28%"
       ],
       "evidence_against": [
         "上证-0.74%",
-        "上证-1.70%"
+        "上证-1.70%",
+        "上证-0.42%"
       ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "2026-06-10 02:01",
-      "verified_at": "2026-06-10 02:01",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -984,18 +985,19 @@
       "id": "data_20260608020128_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-08 02:01",
-      "updated_at": "2026-06-10 02:01",
-      "verified_at": "2026-06-10 02:01",
-      "status": "active",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
+      "status": "rejected",
       "related_symbols": [],
       "source": "data"
     },
@@ -1165,18 +1167,19 @@
       "id": "flow_20260608020131_011",
       "statement": "北向单日流入42亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.5,
+      "confidence": 0.4,
       "alpha": 2,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [
         "上证+1.28%"
       ],
       "evidence_against": [
-        "上证-1.70%"
+        "上证-1.70%",
+        "上证-0.42%"
       ],
       "created_at": "2026-06-08 02:01",
-      "updated_at": "2026-06-10 02:01",
-      "verified_at": "2026-06-10 02:01",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -1185,16 +1188,17 @@
       "id": "data_20260609020137_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.3333,
+      "confidence": 0.25,
       "alpha": 1,
-      "beta": 2,
+      "beta": 3,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-09 02:01",
-      "updated_at": "2026-06-10 02:01",
-      "verified_at": "2026-06-10 02:01",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "data"
@@ -1347,16 +1351,18 @@
       "id": "flow_20260609020140_010",
       "statement": "北向单日流入37亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.6667,
+      "confidence": 0.5,
       "alpha": 2,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [
         "上证+1.28%"
       ],
-      "evidence_against": [],
+      "evidence_against": [
+        "上证-0.42%"
+      ],
       "created_at": "2026-06-09 02:01",
-      "updated_at": "2026-06-10 02:01",
-      "verified_at": "2026-06-10 02:01",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -1365,14 +1371,16 @@
       "id": "data_20260610020116_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.55,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "当前过期数据源: 2个"
+      ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "data"
@@ -1381,14 +1389,16 @@
       "id": "technical_20260610020119_002",
       "statement": "天汽模(002510) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "002510 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [
         "002510"
@@ -1435,14 +1445,16 @@
       "id": "technical_20260610020119_005",
       "statement": "华润双鹤(600062) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "600062 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [
         "600062"
@@ -1453,14 +1465,16 @@
       "id": "technical_20260610020119_006",
       "statement": "安联锐视(301042) MA20附近盘整，预计5日内选择向上突破",
       "category": "stock",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "301042 MA20偏离+0.0%"
+      ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [
         "301042"
@@ -1525,14 +1539,16 @@
       "id": "bear_20260610020119_010",
       "statement": "天汽模(002510) 小市值(68亿)流动性风险将导致日内波动>5%",
       "category": "risk",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "002510 波动0.0%"
+      ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [
         "002510"
@@ -1561,14 +1577,16 @@
       "id": "bear_20260610020119_012",
       "statement": "安联锐视(301042) 小市值(73亿)流动性风险将导致日内波动>5%",
       "category": "risk",
-      "confidence": 0.5,
+      "confidence": 0.3333,
       "alpha": 1,
-      "beta": 1,
+      "beta": 2,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "301042 波动0.0%"
+      ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "",
-      "verified_at": "",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
       "status": "active",
       "related_symbols": [
         "301042"
@@ -1615,12 +1633,262 @@
       "id": "flow_20260610020119_015",
       "statement": "北向单日流入36亿，次日上证上涨概率>60%",
       "category": "market",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "上证-0.42%"
+      ],
+      "created_at": "2026-06-10 02:01",
+      "updated_at": "2026-06-11 02:01",
+      "verified_at": "2026-06-11 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260611020148_001": {
+      "id": "data_20260611020148_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
       "confidence": 0.55,
       "alpha": 1,
       "beta": 1,
       "evidence_for": [],
       "evidence_against": [],
-      "created_at": "2026-06-10 02:01",
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260611020151_002": {
+      "id": "technical_20260611020151_002",
+      "statement": "长高电气(002452) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002452"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_003": {
+      "id": "technical_20260611020151_003",
+      "statement": "天汽模(002510) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002510"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_004": {
+      "id": "technical_20260611020151_004",
+      "statement": "公牛集团(603195) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603195"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_005": {
+      "id": "technical_20260611020151_005",
+      "statement": "威迈斯(688612) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "688612"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_006": {
+      "id": "technical_20260611020151_006",
+      "statement": "华润双鹤(600062) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600062"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_007": {
+      "id": "technical_20260611020151_007",
+      "statement": "安联锐视(301042) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301042"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_008": {
+      "id": "technical_20260611020151_008",
+      "statement": "天味食品(603317) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603317"
+      ],
+      "source": "technical"
+    },
+    "technical_20260611020151_009": {
+      "id": "technical_20260611020151_009",
+      "statement": "运机集团(001288) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "001288"
+      ],
+      "source": "technical"
+    },
+    "bear_20260611020151_010": {
+      "id": "bear_20260611020151_010",
+      "statement": "长高电气(002452) 小市值(71亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002452"
+      ],
+      "source": "bear"
+    },
+    "bear_20260611020151_011": {
+      "id": "bear_20260611020151_011",
+      "statement": "天汽模(002510) 小市值(69亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "002510"
+      ],
+      "source": "bear"
+    },
+    "bear_20260611020151_012": {
+      "id": "bear_20260611020151_012",
+      "statement": "安联锐视(301042) 小市值(78亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301042"
+      ],
+      "source": "bear"
+    },
+    "bear_20260611020151_013": {
+      "id": "bear_20260611020151_013",
+      "statement": "运机集团(001288) 小市值(59亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "001288"
+      ],
+      "source": "bear"
+    },
+    "flow_20260611020151_014": {
+      "id": "flow_20260611020151_014",
+      "statement": "北向单日流入35亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.55,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-11 02:01",
       "updated_at": "",
       "verified_at": "",
       "status": "active",
@@ -1631,10 +1899,10 @@
   "agenda": [],
   "gaps": [],
   "stats": {
-    "total_hypotheses": 85,
+    "total_hypotheses": 99,
     "confirmed": 0,
-    "rejected": 10,
-    "total_verifications": 76,
+    "rejected": 11,
+    "total_verifications": 88,
     "accuracy": 0.0
   }
 }

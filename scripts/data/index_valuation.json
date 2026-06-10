@@ -1,38 +1,38 @@
 {
-  "generated_at": "2026-06-09T08:28:45.769892",
+  "generated_at": "2026-06-10T08:29:03.475720",
   "indices": {
     "000016.SH": {
       "name": "上证50",
       "pe_ttm": 11.1,
-      "percentile": 66.4,
+      "percentile": 66.2,
       "signal": "🟠 合理偏高",
-      "history_points": 723
+      "history_points": 724
     },
     "000300.SH": {
       "name": "沪深300",
-      "pe_ttm": 14.2,
-      "percentile": 90.3,
+      "pe_ttm": 14.4,
+      "percentile": 93.1,
       "signal": "🔴 偏贵",
-      "history_points": 723
+      "history_points": 724
     },
     "000905.SH": {
       "name": "中证500",
-      "pe_ttm": 34.9,
-      "percentile": 86.4,
+      "pe_ttm": 35.7,
+      "percentile": 88.4,
       "signal": "🔴 偏贵",
-      "history_points": 723
+      "history_points": 724
     },
     "399006.SZ": {
       "name": "创业板指",
-      "pe_ttm": 45.3,
-      "percentile": 96.5,
+      "pe_ttm": 47.0,
+      "percentile": 97.4,
       "signal": "🔴 偏贵",
-      "history_points": 723
+      "history_points": 724
     }
   },
   "summary": {
-    "avg_pe_ttm": 26.4,
-    "avg_percentile": 84.9,
+    "avg_pe_ttm": 27.1,
+    "avg_percentile": 86.3,
     "undervalued_count": 0,
     "overvalued_count": 3,
     "position_signal": "轻仓/防御（整体偏贵）"

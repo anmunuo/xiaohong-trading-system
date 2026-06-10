@@ -148,6 +148,15 @@
         "603877",
         "600873"
       ]
+    },
+    {
+      "date": "20260610",
+      "stock_count": 3,
+      "stocks": [
+        "688612",
+        "603317",
+        "001288"
+      ]
     }
   ],
   "stocks": [
@@ -2210,6 +2219,93 @@
         {
           "date": "20260609",
           "close": 9.38,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "688612",
+      "name": "威迈斯",
+      "entry_date": "20260610",
+      "entry_close": 36.58,
+      "entry_score": 73.2,
+      "entry_factors": {
+        "event": 55,
+        "fund": 67.4,
+        "sentiment": 60,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 6.8
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 34.75,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260610",
+          "close": 36.58,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603317",
+      "name": "天味食品",
+      "entry_date": "20260610",
+      "entry_close": 13.28,
+      "entry_score": 71.2,
+      "entry_factors": {
+        "event": 60,
+        "fund": 80.6,
+        "sentiment": 65,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 0.0
+      },
+      "entry_sector": "食品饮料",
+      "stop_loss_price": 12.62,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260610",
+          "close": 13.28,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "001288",
+      "name": "运机集团",
+      "entry_date": "20260610",
+      "entry_close": 25.1,
+      "entry_score": 70.5,
+      "entry_factors": {
+        "event": 55,
+        "fund": 71.0,
+        "sentiment": 65,
+        "technical": 65,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 23.84,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260610",
+          "close": 25.1,
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0

@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-06-09 08:28:51",
-  "market_bias": "neutral",
+  "generated_at": "2026-06-10 08:29:09",
+  "market_bias": "bearish",
   "risk_signals": [],
   "opportunity_signals": [
     "回购潮(买入信号): 回购/减持比 >3:1"
   ],
-  "policy_density": 98,
-  "buyback_count": 58,
+  "policy_density": 120,
+  "buyback_count": 107,
   "reduce_count": 0
 }

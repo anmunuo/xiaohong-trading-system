@@ -296,14 +296,16 @@
     "rationale": "竞价诊断(6/9): sector_dev从0.15→0.2分两步，第一步0.15→0.18(+20%)，明天第二步0.18→0.2",
     "source": "auction_diagnosis",
     "week": "2026-W24",
-    "status": "pending",
+    "status": "applied",
     "param_id": "auction_weight_sector_dev",
     "old_value": 0.15,
     "new_value": 0.18,
     "target_value": 0.2,
-    "step": "1/2",
+    "step": "2/2",
     "change_pct": "+20.0%",
     "note": "原建议0.15→0.2被20%硬上限拒绝，拆分渐进",
-    "processed_at": "2026-06-09T17:36:43.521643"
+    "processed_at": "2026-06-09T17:36:43.521643",
+    "applied_at": "2026-06-10T17:32:14.964975",
+    "result": "Step 1/2 完成: sector_dev 0.15→0.18 (+20.0%)。目标0.20需新建action_item继续。"
   }
 ]

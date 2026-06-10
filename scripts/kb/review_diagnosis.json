@@ -1,63 +1,53 @@
 {
-  "date": "20260609",
-  "diagnosis": "三链路断裂+议会停摆5天+KB全空，8只推荐捕获率0%，系统处于「有推荐无执行」状态。核心根因：(1) 候选源99%来自announcement，资金流/板块/券商源缺失→选股同质化，(2) insight_score全0→KB洞察链路断裂，(3) 狙击手6610次扫描0信号→目标池未生成→推荐→侦察→狙击三链路完全断开，(4) 议会6/4后停摆5天无新裁决。急需修复候选源多样性和目标池生成链。",
+  "date": "20260610",
+  "diagnosis": "三链路断裂+候选源单一连续第6天，pool_rate=0%无改善。但昨日进化引擎已落地6项变更（涨幅阈值6→5%、涨幅数量50→60、市值上下限、竞价权重等），待明日观测效果。竞价学习器14样本维度全0需降阈值。侦察兵数据目录完全缺失→盘中异动检测链断裂。议会bias中性(2:2)符合沪指+1.28%趋势日。",
   "module_scores": {
     "recommender": {
-      "status": "error",
-      "note": "8只推荐操作建议唯一值7（合格），但source 87.5%来自announcement单源，资金流/板块/券商源全部缺失→选股严重同质化。insight_score全0→KB洞察链路断裂。research因子全50→研究员分析无区分度。sentiment仅2个唯一值。sector标注bug（天汽模标金融）。pool_rate 0/50——安联锐视+6.96%在池中但reflection算0%，疑似计算窗口问题。"
+      "status": "warn",
+      "note": "8只推荐全source=announcement单一候选源，tech因子全None，operation_advice/risk_rating全空。pool_rate=0%连续6天(6/5-6/10)。天汽模sector误标'金融'(SECTOR_KEYWORDS bug未修)。好消息：昨日进化已降涨幅阈值6→5%、涨幅数量50→60、市值下限50→40亿、上限3000→2000——明日可观察捕获率是否回升。"
     },
     "scout": {
-      "status": "warn",
-      "note": "今日侦察兵盘中扫描产出文件未找到。三级认证门无可见输出。狙击手6610次扫描但无侦察兵底层数据支撑（资金流异动检测可能因f62归零而降级为动量模式）。"
+      "status": "error",
+      "note": "侦察兵数据目录完全缺失(/data/scout_output和/scripts/data/scout均不存在)。盘中4次扫描(10:00/11:00/13:00/14:00)均未产出任何数据。双重确认+盘中异动检测链断裂。scout.py文件存在(2372行)，但产出目录从未创建，疑为scout.py内output_dir路径配置错误或脚本执行失败。"
     },
     "sniper": {
       "status": "error",
-      "note": "守护进程运行正常（09:29→15:01，6610次扫描），但全天0信号0入场。target_pool.json未生成→推荐池标的未进入目标池→狙击手无标的可监控。三链路（推荐→侦察→狙击→下单）完全断裂。「有推荐无执行」状态已持续。"
+      "note": "sniperd守护进程运行正常(Active 1周)，但0交易记录。根因：target_pool.json不存在→狙击手无入场标的可监控→扫描6610次0信号。上游断裂(推荐池不含实时异动股+侦察兵无产出)导致狙击手空转。"
     },
     "ammo": {
-      "status": "ok",
-      "note": "0持仓空仓，初始净值10万。由于狙击手0入场，无新增持仓风险。弹药库cron产出文件未在预期路径找到，但无活跃持仓需要风控。"
+      "status": "warn",
+      "note": "0持仓+净值100000初始状态。ammo_output无产出文件(无持仓则无报告产出属正常)。无风险暴露→当前无需调整风控参数。一旦有仓位入池需恢复弹药库每日更新和移动止盈跟踪。"
     },
     "knowledge_base": {
-      "status": "error",
-      "note": "stock_kb.db所有表为空（0表）→知识库完全未初始化。每小时采集cron持续运行但数据未写入SQLite。推荐引擎通过data_pipeline获取行情成功，但KB洞察→insight_score链路完全断裂（全0）。"
+      "status": "ok",
+      "note": "kb_insights.json有今日14:05数据(37KB)，采集管道正常运作。但洞察未融入推荐池评分(pool中insight_score未体现)——KB→推荐引擎的桥接链路待验证。"
     },
     "auction": {
       "status": "warn",
-      "note": "auction_diagnosis.json不存在。竞价采集器cron可能运行但LLM诊断未产出。无今日竞价五维数据可评估先验/权重。"
+      "note": "14样本/6天，利用率0.16%，五维hits全0——先验驱动状态。核心问题：维度阈值0.6过高(auction_learner.py:301)，导致14个正确预测的样本也无法为具体维度加分(hits永远达不到dim_max×0.6)。auction_diagnosis建议降至0.35。昨日进化已调整五维权重，但阈值未动——建议分3步(0.6→0.48→0.38→0.35)渐进降低。"
     },
     "review": {
       "status": "warn",
-      "note": "reflection_log有今日记录但pool_rate=0%，missed_count=50。正确诊断了「候选源过度依赖announcement」根因，但未完成自我修复。tips建议增加资金流候选权重+放宽首板纳入。"
+      "note": "reflection_log有今日记录(6/10)，pool_rate=0%+missed=50。但5天来tips完全相同(板块集中+检查候选源)→复盘诊断陷入重复模式，未产生新洞察。建议复盘LLM融入今日议会结论(中性2:2+小市值红旗)和宏观环境(沪指+1.28%趋势日)做差异化分析。"
     },
     "parliament": {
-      "status": "error",
-      "note": "真实议会裁决停摆5天（最新6/4），6/5-6/9只有健康检查空壳。parliament_log 43条中28条为真实裁决但全在6/2-6/4区间。daily_pool.parliament为空dict→议会结论未注入推荐引擎。瞭望塔/决策官/LLM复盘均无法引用议会信号。议会静默停摆无人感知（已命中v8.11陷阱）。"
+      "status": "warn",
+      "note": "议会实际有产出：今日15:15 bias=中性(2:2)、conf=0.5，red_flags指出5只小市值风险(59-78亿)+2个数据过期误报。46条日志中28条为健康检查空壳污染(rounds=0, decision全空)——需修复健康检查写入逻辑避免污染议会日志。关键缺陷：daily_pool.json的parliament字段为空{}——议会结论未写入推荐池，导致瞭望塔/决策官看不到议会判断。"
     }
   },
   "rule_changes_suggested": [
     {
       "rule": "涨幅阈值",
-      "change": "涨幅阈值从6%降低到5%",
-      "reason": "reflection_log显示missed_count=50但pool_rate=0%，降低阈值可增加推荐池与涨幅榜的交集，提高捕获率。当前市场环境下6%门槛过高。",
-      "confidence": "medium"
+      "change": "涨幅阈值已从6%降至5%(昨日进化引擎已落地)",
+      "reason": "已执行，本轮无需再调。观测明日pool_rate是否回升后再评估是否需要进一步降至4%。",
+      "confidence": "high"
     },
     {
       "rule": "涨幅数量",
-      "change": "涨幅数量从50增加到80",
-      "reason": "降低涨幅阈值从6%→5%后，涨幅股数量会显著增加，需要同步提高采样数量以避免遗漏。80只可覆盖更多样化的板块和信号模式。",
-      "confidence": "medium"
+      "change": "涨幅数量已从50增至60(昨日进化引擎已落地，第1/2步目标80)",
+      "reason": "已执行第一步。50→60(20%)符合硬约束。如果明天pool_rate仍0%，第二步60→72(20%)。",
+      "confidence": "high"
     }
   ],
-  "no_change": false,
-  "_sys_notes": {
-    "candidate_source_diversity": "P0: 需要从announcement单源扩展到多源（资金流+板块+券商+首板）",
-    "kb_initialization": "P0: stock_kb.db空表需 --init 全量初始化",
-    "sniper_target_pool": "P0: 狙击手→目标池→推荐池三链路断裂需紧急修复",
-    "parliament_resume": "P1: 议会需恢复每日调度（crontab添加researchers.py --parliament）",
-    "insight_score_zero": "P1: KB洞察→insight_score链路需重连",
-    "research_factor_flat": "P1: research因子全50→研究员分析结果未正确流向评分",
-    "sentiment_diversity": "P2: sentiment仅2个唯一值→外盘/板块情绪因子区分度需提升",
-    "ankurui_capture_false_negative": "P2: 301042安联锐视+6.96%在池中但reflection算0%→需修复捕获率计算窗口"
-  }
+  "no_change": false
 }

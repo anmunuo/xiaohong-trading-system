@@ -687,12 +687,63 @@
     "records": [
       {
         "source": "eastmoney",
+        "category": "market_index",
+        "date": "2026-06-10",
+        "fetched_at": "2026-06-10T15:40:12.820353",
+        "item_count": 5,
+        "file_path": "market_index/2026/06/10/eastmoney.json.gz",
+        "sha256": "575517f675bbaca3",
+        "fields": [
+          "main_net",
+          "sh_index",
+          "sh_change"
+        ],
+        "notes": ""
+      },
+      {
+        "source": "akshare",
+        "category": "events",
+        "date": "2026-06-10",
+        "fetched_at": "2026-06-10T15:40:41.753468",
+        "item_count": 71,
+        "file_path": "events/2026/06/10/akshare.json.gz",
+        "sha256": "c29f77786807fa3e",
+        "fields": [
+          "代码",
+          "名称",
+          "连板数",
+          "封板资金"
+        ],
+        "notes": "limit_ups: 71 stocks"
+      },
+      {
+        "source": "sina",
+        "category": "daily_kline",
+        "date": "2026-06-10",
+        "fetched_at": "2026-06-10T16:01:02.019935",
+        "item_count": 1,
+        "file_path": "daily_kline/2026/06/10/sina.json.gz",
+        "sha256": "dff2258f76cbf662",
+        "fields": [
+          "code",
+          "close",
+          "change_pct",
+          "open",
+          "high",
+          "low",
+          "volume",
+          "name"
+        ],
+        "notes": "1 stocks"
+      },
+      {
+        "source": "eastmoney",
         "category": "fund_flow",
         "date": "2026-06-10",
-        "fetched_at": "2026-06-10T04:01:27.141271",
+        "fetched_at": "2026-06-10T23:01:00.170044",
         "item_count": 0,
         "file_path": "fund_flow/2026/06/10/eastmoney.json.gz",
-        "sha256": "9b452eae9df7169f",
+        "sha256": "77cc15eefa229430",
         "fields": [
           "code",
           "name",
@@ -707,10 +758,10 @@
         "source": "tushare",
         "category": "fund_flow",
         "date": "2026-06-10",
-        "fetched_at": "2026-06-10T04:01:38.017219",
+        "fetched_at": "2026-06-10T23:01:11.904914",
         "item_count": 8,
         "file_path": "fund_flow/2026/06/10/tushare.json.gz",
-        "sha256": "d237800b37693dfb",
+        "sha256": "33f23afaa30814fb",
         "fields": [
           "net_flow",
           "status"
@@ -721,10 +772,65 @@
         "source": "akshare",
         "category": "market_index",
         "date": "2026-06-10",
-        "fetched_at": "2026-06-10T04:01:39.154729",
+        "fetched_at": "2026-06-10T23:01:13.089640",
         "item_count": 4,
         "file_path": "market_index/2026/06/10/akshare.json.gz",
-        "sha256": "054c773f86d03632",
+        "sha256": "e0612e46ea00f5fd",
+        "fields": [
+          "asia",
+          "europe",
+          "us"
+        ],
+        "notes": ""
+      }
+    ],
+    "total_items": 89,
+    "completeness_pct": 0.0,
+    "generated_at": "2026-06-10T23:01:13.090092"
+  },
+  "2026-06-11": {
+    "date": "2026-06-11",
+    "records": [
+      {
+        "source": "eastmoney",
+        "category": "fund_flow",
+        "date": "2026-06-11",
+        "fetched_at": "2026-06-11T04:01:22.169077",
+        "item_count": 0,
+        "file_path": "fund_flow/2026/06/11/eastmoney.json.gz",
+        "sha256": "b2d67c21cfc6bbfc",
+        "fields": [
+          "code",
+          "name",
+          "net_flow",
+          "change_pct",
+          "turnover",
+          "volume_ratio"
+        ],
+        "notes": ""
+      },
+      {
+        "source": "tushare",
+        "category": "fund_flow",
+        "date": "2026-06-11",
+        "fetched_at": "2026-06-11T04:01:33.383192",
+        "item_count": 8,
+        "file_path": "fund_flow/2026/06/11/tushare.json.gz",
+        "sha256": "487e0157beaa7253",
+        "fields": [
+          "net_flow",
+          "status"
+        ],
+        "notes": ""
+      },
+      {
+        "source": "akshare",
+        "category": "market_index",
+        "date": "2026-06-11",
+        "fetched_at": "2026-06-11T04:01:34.443418",
+        "item_count": 4,
+        "file_path": "market_index/2026/06/11/akshare.json.gz",
+        "sha256": "d2869cbb689a8631",
         "fields": [
           "asia",
           "europe",
@@ -735,6 +841,6 @@
     ],
     "total_items": 12,
     "completeness_pct": 0.0,
-    "generated_at": "2026-06-10T04:01:39.155181"
+    "generated_at": "2026-06-11T04:01:34.443977"
   }
 }

@@ -699,5 +699,128 @@
       "apply_param_to_file: auction_weight 改用文件实际值而非spec[default]"
     ],
     "backups": "evolution_backups/auction_features_20260609_173500.py, review_20260609_173500.py"
+  },
+  {
+    "date": "2026-06-10 17:11:49",
+    "version": "#18",
+    "dry_run": true,
+    "changes_attempted": 7,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-10 17:12:12",
+    "version": "#19",
+    "dry_run": false,
+    "changes_attempted": 7,
+    "changes_applied": 6,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "description": "竞价价格斜率权重",
+        "old_value": 0.25,
+        "new_value": 0.25,
+        "reason": "竞价学习器处于先验驱动状态（14样本/6天，利用率0.16%）。五维hits全为0——不是信号没对过，而是维度级60%阈值过高，导致正确预测的样本也无法为具体维度加分。premium已有1次miss被β惩罚至0.3333准确率（权重0.1304），在14样本阶段惩罚过早。当前权重分布仅反映贝叶斯先验(α=1,β=1→50%)的微小扰动，尚未形成有效的自适应分化。",
+        "test_result": {
+          "param": "auction_weight_price_slope",
+          "old_value": 0.25,
+          "new_value": 0.25,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.28,
+        "reason": "竞价学习器处于先验驱动状态（14样本/6天，利用率0.16%）。五维hits全为0——不是信号没对过，而是维度级60%阈值过高，导致正确预测的样本也无法为具体维度加分。premium已有1次miss被β惩罚至0.3333准确率（权重0.1304），在14样本阶段惩罚过早。当前权重分布仅反映贝叶斯先验(α=1,β=1→50%)的微小扰动，尚未形成有效的自适应分化。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.28,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_imbalance",
+        "description": "竞价委托不平衡权重",
+        "old_value": 0.2,
+        "new_value": 0.2,
+        "reason": "竞价学习器处于先验驱动状态（14样本/6天，利用率0.16%）。五维hits全为0——不是信号没对过，而是维度级60%阈值过高，导致正确预测的样本也无法为具体维度加分。premium已有1次miss被β惩罚至0.3333准确率（权重0.1304），在14样本阶段惩罚过早。当前权重分布仅反映贝叶斯先验(α=1,β=1→50%)的微小扰动，尚未形成有效的自适应分化。",
+        "test_result": {
+          "param": "auction_weight_imbalance",
+          "old_value": 0.2,
+          "new_value": 0.2,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_premium",
+        "description": "竞价开盘溢价权重",
+        "old_value": 0.15,
+        "new_value": 0.12,
+        "reason": "竞价学习器处于先验驱动状态（14样本/6天，利用率0.16%）。五维hits全为0——不是信号没对过，而是维度级60%阈值过高，导致正确预测的样本也无法为具体维度加分。premium已有1次miss被β惩罚至0.3333准确率（权重0.1304），在14样本阶段惩罚过早。当前权重分布仅反映贝叶斯先验(α=1,β=1→50%)的微小扰动，尚未形成有效的自适应分化。",
+        "test_result": {
+          "param": "auction_weight_premium",
+          "old_value": 0.15,
+          "new_value": 0.12,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_sector_dev",
+        "description": "竞价板块偏离权重",
+        "old_value": 0.15,
+        "new_value": 0.15,
+        "reason": "竞价学习器处于先验驱动状态（14样本/6天，利用率0.16%）。五维hits全为0——不是信号没对过，而是维度级60%阈值过高，导致正确预测的样本也无法为具体维度加分。premium已有1次miss被β惩罚至0.3333准确率（权重0.1304），在14样本阶段惩罚过早。当前权重分布仅反映贝叶斯先验(α=1,β=1→50%)的微小扰动，尚未形成有效的自适应分化。",
+        "test_result": {
+          "param": "auction_weight_sector_dev",
+          "old_value": 0.15,
+          "new_value": 0.15,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "review_gainer_min_pct",
+        "description": "文工团涨幅榜最低%",
+        "old_value": 6.0,
+        "new_value": 5.0,
+        "reason": "涨幅阈值: 涨幅阈值已从6%降至5%(昨日进化引擎已落地)",
+        "test_result": {
+          "param": "review_gainer_min_pct",
+          "old_value": 6.0,
+          "new_value": 5.0,
+          "strategy": "lightweight_sim",
+          "passed": true,
+          "details": "📉 放宽文工团参数 review_gainer_min_pct: 6.0→5.0 | 覆盖更多涨幅股"
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-10T17:32:16.045781",
+    "date": "2026-06-10",
+    "module": "auction_features",
+    "param_id": "auction_weight_sector_dev",
+    "action": "竞价sector_dev权重提升 0.15→0.18 (第1/2步)",
+    "old_value": 0.15,
+    "new_value": 0.18,
+    "target_value": 0.2,
+    "change_pct": "+20.0%",
+    "step": "1/2→2/2",
+    "status": "applied",
+    "source": "auction_diagnosis",
+    "file": "scripts/auction_features.py",
+    "note": "Step 1完成。目标0.20需新建action_item继续。语法验证通过，备份已存evolution_backups/"
   }
 ]
