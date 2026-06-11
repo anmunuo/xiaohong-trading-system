@@ -822,5 +822,109 @@
     "source": "auction_diagnosis",
     "file": "scripts/auction_features.py",
     "note": "Step 1完成。目标0.20需新建action_item继续。语法验证通过，备份已存evolution_backups/"
+  },
+  {
+    "date": "2026-06-11 17:10:37",
+    "version": "#21",
+    "dry_run": true,
+    "changes_attempted": 6,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-11 17:11:04",
+    "version": "#22",
+    "dry_run": false,
+    "changes_attempted": 6,
+    "changes_applied": 3,
+    "details": [
+      {
+        "param": "auction_weight_price_slope",
+        "description": "竞价价格斜率权重",
+        "old_value": 0.25,
+        "new_value": 0.28,
+        "reason": "【数据饥渴】Bayesian学习器仅积累15个样本、1次实际反馈（premium维度1次miss）。 当前权重本质是均匀先验+单一噪声事件驱动——premium因1次miss被从~0.20锤至0.08（-55%），过度反应。 volume_accel以0.283居首但零证据支撑；price_slope和imbalance在「指数微跌+主力巨量流出(-694亿)」的背离市中本应更有判别力，却被压在低位。 结论：权重配置未反映当前市场结构，需向量价真实性维度倾斜。",
+        "test_result": {
+          "param": "auction_weight_price_slope",
+          "old_value": 0.25,
+          "new_value": 0.28,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.22,
+        "reason": "【数据饥渴】Bayesian学习器仅积累15个样本、1次实际反馈（premium维度1次miss）。 当前权重本质是均匀先验+单一噪声事件驱动——premium因1次miss被从~0.20锤至0.08（-55%），过度反应。 volume_accel以0.283居首但零证据支撑；price_slope和imbalance在「指数微跌+主力巨量流出(-694亿)」的背离市中本应更有判别力，却被压在低位。 结论：权重配置未反映当前市场结构，需向量价真实性维度倾斜。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.22,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_premium",
+        "description": "竞价开盘溢价权重",
+        "old_value": 0.15,
+        "new_value": 0.14,
+        "reason": "【数据饥渴】Bayesian学习器仅积累15个样本、1次实际反馈（premium维度1次miss）。 当前权重本质是均匀先验+单一噪声事件驱动——premium因1次miss被从~0.20锤至0.08（-55%），过度反应。 volume_accel以0.283居首但零证据支撑；price_slope和imbalance在「指数微跌+主力巨量流出(-694亿)」的背离市中本应更有判别力，却被压在低位。 结论：权重配置未反映当前市场结构，需向量价真实性维度倾斜。",
+        "test_result": {
+          "param": "auction_weight_premium",
+          "old_value": 0.15,
+          "new_value": 0.14,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-11T17:32:31.163894",
+    "date": "2026-06-11",
+    "version": "#23",
+    "dry_run": false,
+    "changes_attempted": 2,
+    "changes_applied": 2,
+    "changes_rejected": 0,
+    "details": [
+      {
+        "param": "auction_weight_sector_dev",
+        "description": "竞价板块偏离权重 (跨日渐进完成)",
+        "old_value": 0.18,
+        "new_value": 0.2,
+        "change_pct": "+11.1%",
+        "target_value": 0.2,
+        "step": "2/2",
+        "reason": "竞价诊断(6/9)拆分渐进第二步。原0.15→0.20(33%)拆两步，6/9第一步0.15→0.18，今日第二步0.18→0.20。",
+        "test_result": {
+          "strategy": "safety_floor",
+          "passed": true,
+          "details": "+11.1% 远低于50%红线，两步累计+33%完成既定目标"
+        }
+      },
+      {
+        "param": "review_gainer_top_n",
+        "description": "文工团涨幅榜采样数量",
+        "old_value": 60,
+        "new_value": 72,
+        "change_pct": "+20.0%",
+        "target_value": 80,
+        "step": "2/3",
+        "reason": "LLM复盘(6/11)预承诺递进。观测期满pool_rate 0%→按计划继续。需等候选源管线修复后验证效果。",
+        "test_result": {
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "+20.0% 精确等于递进台阶阈值"
+        }
+      }
+    ],
+    "backups": "evolution_backups/auction_features_20260611_173000.py, review_20260611_173000.py"
   }
 ]

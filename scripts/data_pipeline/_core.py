@@ -1193,76 +1193,79 @@ def _code_to_sina(code: str) -> str:
 def _sina_batch_fetch(codes: List[str], timeout: int = 5) -> Dict[str, Dict]:
     """
     Sina 批量实时行情（快路径）。
-    单次 HTTP 请求支持 ~800 只股票，无 subprocess 开销。
+    单次 HTTP 请求 ~800 只，超量自动分块请求。
     """
     if not codes:
         return {}
 
+    CHUNK_SIZE = 800
+    all_results = {}
     sina_codes = [_code_to_sina(c) for c in codes]
-    url = SINA_BATCH_URL + ",".join(sina_codes)
 
-    try:
-        import urllib.request
-        req = urllib.request.Request(url, headers={
-            'Referer': 'https://finance.sina.com.cn',
-            'User-Agent': 'Mozilla/5.0',
-        })
-        resp = urllib.request.urlopen(req, timeout=timeout)
-        data = resp.read().decode('gbk', errors='ignore')
-    except Exception:
-        return {}
-
-    results = {}
-    code_map = {_code_to_sina(c): c for c in codes}
-
-    for line in data.strip().split('\n'):
-        if '=' not in line:
-            continue
+    for i in range(0, len(sina_codes), CHUNK_SIZE):
+        chunk = sina_codes[i:i + CHUNK_SIZE]
+        url = SINA_BATCH_URL + ",".join(chunk)
         try:
-            sina_code, rest = line.split('=', 1)
-            sina_code = sina_code.strip().split('_')[-1]
-            original_code = code_map.get(sina_code)
-            if not original_code:
-                continue
-
-            quote = rest.strip('";\n ').split(',')
-            if len(quote) < 32:
-                continue
-
-            name = quote[0].strip()
-            open_p = float(quote[1]) if quote[1] else 0
-            prev_close = float(quote[2]) if quote[2] else 0
-            close = float(quote[3]) if quote[3] else 0
-            high = float(quote[4]) if quote[4] else 0
-            low = float(quote[5]) if quote[5] else 0
-            volume = float(quote[8]) if quote[8] else 0
-            amount = float(quote[9]) if quote[9] else 0
-
-            change_pct = ((close - prev_close) / prev_close * 100) if prev_close > 0 else 0
-            if close <= 0:
-                continue
-
-            results[original_code] = {
-                'close': round(close, 2),
-                'change_pct': round(change_pct, 2),
-                'open': round(open_p, 2),
-                'high': round(high, 2),
-                'low': round(low, 2),
-                'volume': volume,
-                'amount': amount,
-                'name': name,
-                'data_source': 'sina:batch',
-                'trade_date': datetime.now().strftime('%Y%m%d'),
-            }
-        except (ValueError, IndexError):
+            import urllib.request
+            req = urllib.request.Request(url, headers={
+                'Referer': 'https://finance.sina.com.cn',
+                'User-Agent': 'Mozilla/5.0',
+            })
+            resp = urllib.request.urlopen(req, timeout=timeout)
+            data = resp.read().decode('gbk', errors='ignore')
+        except Exception:
             continue
 
-    return results
+        code_map = {_code_to_sina(c): c for c in codes}
+
+        for line in data.strip().split('\n'):
+            if '=' not in line:
+                continue
+            try:
+                sina_code, rest = line.split('=', 1)
+                sina_code = sina_code.strip().split('_')[-1]
+                original_code = code_map.get(sina_code)
+                if not original_code:
+                    continue
+
+                quote = rest.strip('";\n ').split(',')
+                if len(quote) < 32:
+                    continue
+
+                name = quote[0].strip()
+                open_p = float(quote[1]) if quote[1] else 0
+                prev_close = float(quote[2]) if quote[2] else 0
+                close = float(quote[3]) if quote[3] else 0
+                high = float(quote[4]) if quote[4] else 0
+                low = float(quote[5]) if quote[5] else 0
+                volume = float(quote[8]) if quote[8] else 0
+                amount = float(quote[9]) if quote[9] else 0
+
+                change_pct = ((close - prev_close) / prev_close * 100) if prev_close > 0 else 0
+                if close <= 0:
+                    continue
+
+                all_results[original_code] = {
+                    'close': round(close, 2),
+                    'change_pct': round(change_pct, 2),
+                    'open': round(open_p, 2),
+                    'high': round(high, 2),
+                    'low': round(low, 2),
+                    'volume': volume,
+                    'amount': amount,
+                    'name': name,
+                    'data_source': 'sina:batch',
+                    'trade_date': datetime.now().strftime('%Y%m%d'),
+                }
+            except (ValueError, IndexError):
+                continue
+
+    return all_results
 
 
 # ==================== Hermes data fetch 桥接 ====================
 
-def get_stock_realtime(stock_codes: list) -> Dict[str, Dict]:
+def get_stock_realtime(stock_codes: list, force_refresh: bool = False) -> Dict[str, Dict]:
     """
     获取个股实时/最新日线数据。
 
@@ -1280,6 +1283,10 @@ def get_stock_realtime(stock_codes: list) -> Dict[str, Dict]:
     global _QUOTE_CACHE, _QUOTE_CACHE_TIME
 
     now = time.time()
+    # force_refresh: 清空缓存，强制重新拉取
+    if force_refresh:
+        _QUOTE_CACHE.clear()
+        _QUOTE_CACHE_TIME = 0
     # 检查缓存
     if _QUOTE_CACHE and (now - _QUOTE_CACHE_TIME) < _QUOTE_CACHE_TTL:
         missing = [c for c in stock_codes if c not in _QUOTE_CACHE]

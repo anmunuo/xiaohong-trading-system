@@ -1,64 +1,46 @@
 {
-  "timestamp": "2026-06-10T16:10:36.886983",
-  "market_condition": "trending",
+  "timestamp": "2026-06-11T16:09:46",
+  "market_condition": "volatile",
   "market_context": {
-    "shanghai": "4010.03 (+1.28%)",
-    "hang_seng": "24565.9 (-0.37%)",
-    "sp500": "7386.65 (-0.26%)",
-    "note": "A股单边上行，沪指+1.28%属中等趋势日。外盘偏弱，但A股独立走强，内资主导。"
+    "shanghai": {
+      "close": 3987.01,
+      "change_pct": -0.16
+    },
+    "us_dow": {
+      "change_pct": -1.87
+    },
+    "us_nasdaq": {
+      "change_pct": -1.98
+    },
+    "main_net_flow_billion": -694.46,
+    "narrative": "指数维稳+主力巨量撤退——典型背离市"
+  },
+  "data_quality": {
+    "total_samples": 15,
+    "dimensions_with_feedback": 1,
+    "warning": "样本极度不足，本次建议基于市场结构推理而非统计收敛"
   },
   "weights_current": {
-    "price_slope": 0.2174,
-    "volume_accel": 0.2391,
-    "imbalance": 0.2174,
-    "premium": 0.1304,
-    "sector_dev": 0.1957
-  },
-  "learning_status": {
-    "total_samples": 14,
-    "raw_frames": 8839,
-    "unique_dates": 6,
-    "unique_codes": 36,
-    "utilization_rate": "0.16%",
-    "effective_signals_per_day": "~2.3 (14样本/6天)",
-    "flag": "🟡 数据饥饿——8839原始帧中仅14条被有效标记，维度级命中率为0"
+    "price_slope": 0.2525,
+    "volume_accel": 0.2828,
+    "imbalance": 0.202,
+    "premium": 0.0808,
+    "sector_dev": 0.1818
   },
   "accuracy_trend": {
-    "price_slope": "stale",
-    "volume_accel": "stale",
-    "imbalance": "stale",
-    "premium": "stale",
-    "sector_dev": "stale",
-    "note": "五维hits均为0，misses除premium外均为0。维度级60%阈值对早期样本过严，14个样本中仅1次触发了维度评分（premium的1次miss）。所有准确率仍由先验驱动（α/(α+β)=0.5），无任何趋势可读。"
+    "price_slope": "stable",
+    "volume_accel": "stable",
+    "imbalance": "stable",
+    "premium": "declining",
+    "sector_dev": "stable"
   },
-  "diagnosis": "竞价学习器处于先验驱动状态（14样本/6天，利用率0.16%）。五维hits全为0——不是信号没对过，而是维度级60%阈值过高，导致正确预测的样本也无法为具体维度加分。premium已有1次miss被β惩罚至0.3333准确率（权重0.1304），在14样本阶段惩罚过早。当前权重分布仅反映贝叶斯先验(α=1,β=1→50%)的微小扰动，尚未形成有效的自适应分化。",
+  "diagnosis": "【数据饥渴】Bayesian学习器仅积累15个样本、1次实际反馈（premium维度1次miss）。 当前权重本质是均匀先验+单一噪声事件驱动——premium因1次miss被从~0.20锤至0.08（-55%），过度反应。 volume_accel以0.283居首但零证据支撑；price_slope和imbalance在「指数微跌+主力巨量流出(-694亿)」的背离市中本应更有判别力，却被压在低位。 结论：权重配置未反映当前市场结构，需向量价真实性维度倾斜。",
   "recommendation": {
-    "price_slope": 0.25,
-    "volume_accel": 0.28,
-    "imbalance": 0.2,
-    "premium": 0.12,
-    "sector_dev": 0.15
+    "price_slope": 0.28,
+    "volume_accel": 0.22,
+    "imbalance": 0.25,
+    "premium": 0.14,
+    "sector_dev": 0.11
   },
-  "reasoning": "1) 今日沪指+1.28%为明确趋势日，volume_accel和price_slope在趋势市中验证效力最高，各+0.04→+0.05。2) sector_dev从0.20降至0.15——当前学习器仅有36只代码覆盖，板块偏离信号受限于样本多样性不足，权重虚高。3) premium已从0.20被惩罚至0.13，维持低位合理（溢价因子在无重大消息的趋势日无效）。4) imbalance降至0.20释放权重给量价维度。5) 所有调整幅度≤±0.05，在±0.10安全边界内。⚠️ 更关键的是维度级阈值问题：建议将learner中threshold从`dim_max*0.6`降至`dim_max*0.35`，让早期样本能产出有效命中数据，否则权重永远停在先验区。",
-  "action_items": [
-    {
-      "priority": "P1",
-      "action": "降低维度级阈值",
-      "detail": "auction_learner.py line 301: threshold = dim_max * 0.35 (当前0.6)",
-      "expected": "14样本利用率从0.16%提升至~5%，3-5天内积累足够命中/失误数据以形成真实权重分化"
-    },
-    {
-      "priority": "P2",
-      "action": "premium重置评估",
-      "detail": "仅1次miss在14样本期不足以判断premium因子失效，可考虑将premium的beta从2回退到1（或等累计30+样本后重新评估）"
-    },
-    {
-      "priority": "P2",
-      "action": "采集标的扩充",
-      "detail": "当前仅36只代码，建议扩充至80-100只（覆盖更多板块），提升sector_dev因子的有效性"
-    }
-  ],
-  "reflection_log_context": {
-    "note": "最近7个交易日推荐池捕获率均为0%，但这是推荐引擎的问题（候选源单一+排除规则过严），与竞价学习器权重无直接关联。竞价诊断聚焦于竞价信号→收盘方向的预测准确率，不与池捕获率混为一谈。"
-  }
+  "reasoning": "1. premium(0.08→0.14): 仅1次miss就剥夺55%权重过于激进。Bayesian学习在样本<50时的beta更新应更保守。\n2. volume_accel(0.28→0.22): 当前最高权重完全来自均匀先验，无任何实证。在主力净流出694亿的背离日，竞价量能放大更可能是恐慌盘而非真实方向。\n3. price_slope(0.25→0.28)+imbalance(0.20→0.25): 背离市的核心特征是「指数不跌但钱在跑」——竞价阶段的价格斜率和买卖不平衡比量能更真实反映主力意图。\n4. sector_dev(0.18→0.11): 系统性资金流出时板块偏离的信号被淹没，降低权重避免噪音。\n5. 市场环境: 上证-0.16%表面平稳，但主力净流出694亿+美股隔夜大跌(DOW-1.87%/NASDAQ-1.98%)→判定为volatile背离市。"
 }

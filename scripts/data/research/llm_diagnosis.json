@@ -1,107 +1,45 @@
 {
-  "timestamp": "2026-06-11T02:05:00",
-  "generated_by": "研究员深度诊断 v2.3 · cron 02:05",
+  "timestamp": "2026-06-12T02:07:45.648185",
   "scores": {
-    "data_integrity": 5,
-    "signal_quality": 3,
+    "data_integrity": 7,
+    "signal_quality": 8,
     "execution_health": 7,
     "recommendation_quality": 5,
-    "gap_risk": 4
+    "gap_risk": 5
   },
   "top_actions": [
     {
-      "priority": "P0",
-      "action": "修复 KB LLM 消化 cron — 每小时 :05 产出全部空壳（25/25条 title/content 为空），信号层全面失明",
-      "rationale": "kb_insights.json 中 25 条记录 title 和 content 全部为空字符串。每小时 :05 的 LLM cron 在运行但产出空内容。根因疑为：1) mega_collector 采集数据为空或格式不匹配，2) LLM prompt 未正确注入采集数据。修复后信号质量可从 3→6+。",
-      "diagnostic": "grep -c '\"title\": \"\"' data/kb/kb_insights.json → 25"
-    },
-    {
-      "priority": "P0",
-      "action": "修复 Bronze/Silver/Gold ETL — 三条管线自 6月4日起全部停摆（7天无新数据），因子面板和ML数据集冻结",
-      "rationale": "Bronze/Silver/Gold 目录最新数据均为 2026-06-04。cron_gold.sh 可能因 $HOME profile 覆盖导致 cd 失败（已知P0根因）。修复后 data_integrity 可回到 7+。",
-      "diagnostic": "ls -lt data/bronze/market_index/ → 6月4日；ls -lt data/gold/factor_panel/ → 6月4日"
-    },
-    {
-      "priority": "P0",
-      "action": "议会激活 — 47条记录零有效裁决（第10天），daily_pool 中全部 bias=?",
-      "rationale": "parliament_log.json 有 47 条但 rounds=0 且 bull/bear signals 全为 0。6月10日的3条全是健康检查空壳污染（08:15/15:15/22:15）。crontab 缺少 researchers.py --parliament 调度。修复后 recommendation_quality 可提升。",
-      "diagnostic": "python3 -c \"rounds>0 AND (bull>0 OR bear>0)\" → 0 valid out of 47"
-    },
-    {
-      "priority": "P0",
-      "action": "修复 sector 映射 — 天汽模(002510)仍标「金融」（第3天未修复），SECTOR_KEYWORDS 公告关键词污染根因",
-      "rationale": "_guess_sector() Priority 2 遍历KB全部公告做关键词匹配不按code过滤。天汽模公告含「华泰联合证券」→命中「金融」。修复方案：加 entry_code == code 过滤，仅匹配目标股自己的公告。",
-      "diagnostic": "daily_pool.json → 002510 sector=金融（应为汽车零部件）"
+      "priority": "P1",
+      "action": "接入 volatility_index（波指/VIX）— 市场恐慌指标可触发行情冷却机制保护持仓",
+      "rationale": "当前创业板指 PE 分位 95.9%、全市场估值偏贵，无恐慌指数意味着高位回落时无法自动触发防御。market_snapshot 已有指数 PE 分位数据，但缺波动率维度。可用 50ETF 波指替代。"
     },
     {
       "priority": "P1",
-      "action": "修复 tech 因子全 0 — --fast 模式 _prefetch_indicators 不提取 Baostock peTTM/pbMRQ，tech 评分路径全跳过",
-      "rationale": "daily_pool 中 8 只推荐 tech=0（全零）。--fast 跳过 tushare PE/PB 后 _prefetch_indicators 只提 close/volume/ma20 不提 peTTM/pbMRQ。v9.0 已有 fix 方案（从 bars[-1] 提取 peTTM→ind['pe']）。需确认是否已落地。",
-      "diagnostic": "daily_pool.json → 全 8 只 tech=0"
-    },
-    {
-      "priority": "P1",
-      "action": "接入 index_valuation 指数估值分位数 — 决定整体仓位中枢的系统级参数缺失",
-      "rationale": "market_snapshot 已有 index_valuation 数据（PE 27.1, 86.3%分位→轻仓防御），但推荐引擎/瞭望塔未消费此信号。应在 sentiment 因子中注入指数水位权重。",
-      "diagnostic": "data_hub.py --discover → index_valuation: 高优先级缺口"
+      "action": "修复 hot_events 数据质量 — 当前不稳定，影响推荐引擎 sentiment 因子评分的可靠性",
+      "rationale": "数据缺口扫描标记 P0，影响链路为 推荐引擎→daily_pool→瞭望塔/决策官。建议双通道（东方财富热度+百度搜索指数）交叉验证。"
     },
     {
       "priority": "P2",
-      "action": "sector_flow_top5 持续为空 — market_snapshot 板块资金流数据缺失",
-      "rationale": "market_snapshot.json 中 sector_flow_top5=[]，external_futures={}。数据管线 sector_flow 采集可能因东方财富 API 限流静默失败。不影响核心功能但降低瞭望塔板块分析质量。",
-      "diagnostic": "market_snapshot.json → sector_flow_top5: []"
+      "action": "推荐引擎候选源多元化 — 当前 8 只推荐全部来自 announcement 单一来源",
+      "rationale": "daily_pool 中 source=announcement 占比 100%，无 broker_views/hot_events/fund_flow 来源标的。08:25 推荐引擎运行时应检查多源候选覆盖。"
+    },
+    {
+      "priority": "P2",
+      "action": "接入 short_selling（融券余量）— 对高估值/创业板预警价值高",
+      "rationale": "创业板 PE 95.9% 分位 + 20cm 涨停频现，做空信号可辅助识别筹码过热。tushare margin_detail 可用。"
     }
   ],
   "trend": {
-    "vs_last_week": "declining",
-    "detail": {
-      "data_integrity": "6→5 (declining — ETL管线7天停摆)",
-      "signal_quality": "7→3 (sharply declining — KB insights从部分退化到全空)",
-      "execution_health": "6→7 (improving — sniperd稳定, cron基础功能恢复)",
-      "recommendation_quality": "6→5 (declining — tech因子仍全0, pool_rate持续0%)",
-      "gap_risk": "3→4 (slight improvement — market_snapshot/daily_pool cron已修复, 但ETL缺口扩大)"
-    }
+    "vs_last_week": "improving",
+    "key_change": "KB 信号层从全空壳恢复为富内容（昨日 P0 修复生效），signal_quality 3→8；核心管线全线健康，cron 零故障",
+    "persistent_gaps": "4 项数据缺口持续未接入（volatility_index/hot_events/short_selling/institutional_holdings），其中 hot_events 影响推荐引擎评分"
   },
-  "previous_p0_status": {
-    "market_snapshot_cron": "✅ 已修复 — 6/10 08:28正常产出",
-    "daily_pool_cron": "✅ 已修复 — 6/10 08:10正常产出",
-    "bronze_silver_gold_etl": "🔴 恶化 — 6/4后完全停摆(7天), 之前部分工作",
-    "parliament_activation": "🔴 未修复 — 第10天, 47条零有效裁决",
-    "sector_mapping": "🔴 未修复 — 天汽模仍标「金融」"
-  },
-  "data_snapshot": {
-    "health": "healthy (data_hub)",
-    "daily_pool_age": "18.0h (6/10 08:10 → 正常)",
-    "market_snapshot_age": "17.7h (6/10 08:28 → 正常)",
-    "kb_insights": "25 total, 0 meaningful (全空壳)",
-    "kb_insights_age": "0.0h (最新 6/10 23:05 → 持续产出但空)",
-    "sniperd": "active since 6/1 (1w2d uptime, waiting market open)",
-    "parliament": "47 entries, 0 valid (第10天)",
-    "etl_bronze": "6 dirs, latest 6/4",
-    "etl_silver": "2 dirs, latest 6/4",
-    "etl_gold": "3 dirs, latest 6/4",
-    "reflection_log": "pool_rate=0% (6/8-6/10, 连续3天)",
-    "evolution_log": "20 entries, last 6/10 17:32, 0 changes applied",
-    "market_valuation": "PE 27.1 / 86.3%分位 → 轻仓防御信号",
-    "north_flow": "36.1亿净流入 (6/9 T-1, tushare, VERIFIED)",
-    "market_money": "主力+301.8亿, 散户-89.5亿",
-    "margin": "14654亿, 🟡平稳 (+0.9% 5d)"
-  },
-  "module_status": {
-    "watchtower_cron": "⚠️ 08:30 LLM cron — 依赖 daily_pool + market_snapshot (两者正常)",
-    "recommender": "✅ 08:25 cron产出8只推荐 (tech=0 已知bug)",
-    "scout": "⚠️ 09:25 + 盘中4次 — 依赖资金流数据",
-    "sniperd": "✅ active — 等待09:29开盘",
-    "ammo_risk": "⚠️ 15:30 cron — 需验证",
-    "review": "⚠️ 17:00 cron — 需验证",
-    "auction_collector": "⚠️ 09:15 cron — 需验证",
-    "auction_learner": "⚠️ 16:00 cron — 需验证",
-    "evolution_engine": "⚠️ 17:30 cron — 6/10运行但0变更",
-    "health_check": "✅ 08:15/15:15/22:15 — 需确认 --fix 模式",
-    "kb_collect": "⚠️ 每小时 — 采集运行但LLM消化产出空壳",
-    "researchers_study": "⚠️ 02:00 cron — researcher_state更新但无latest_study.json",
-    "bronze_etl": "🔴 15:40 cron — 6/4起停摆",
-    "silver_etl": "🔴 15:45 cron — 6/4起停摆",
-    "gold_etl": "🔴 15:50 cron — 6/4起停摆"
+  "diagnostic_detail": {
+    "kb_insights": "每小时消化 cron 正常产出，最近 3 批次含 14 条实质性洞察（外盘/板块/资金/风险四维全覆盖），置信度标注 medium-high",
+    "market_context": "指数估值整体偏贵（沪深300 90%分位/创业板 96%分位），但北向连续净流入（34.99亿）+ 外盘强势反弹，内外资信号共振偏多。矛盾点：估值说防御，情绪说进攻。",
+    "sector_signals": "溅射靶材四股 +20% → 半导体材料全链传导；合同签订 9.2% 占比回升 → 回购到产业落地的传导链初现；机器人+AI 新方向首次入池",
+    "risk_signals": "高位回落（凡拓数创-20%）+ ST 退市持续出清。主力净流出-694亿 vs 散户+536亿，短期资金面分歧。中国 5 月金融数据待发布，M1/M2 为本周最大宏观催化剂。",
+    "daily_pool_status": "8 只标的 scores 71.5-77.4，来源全为 announcement。fund 因子 57-82 有区分度，sentiment 因子 45-55 集中。age=18h 待 08:25 刷新。",
+    "sniperd": "active(running) since 6/1，1周3天无重启，PID 315353，内存 22.5M 健康"
   }
 }

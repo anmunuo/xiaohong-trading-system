@@ -220,18 +220,21 @@ def check_data_pipeline() -> dict:
     except Exception as e:
         results['tushare_basic'] = f'down: {e}'
 
-    # 测试 BaoStock
+    # 测试 BaoStock（抑制 login/logout 输出污染 JSON）
     try:
-        import baostock as bs
-        lg = bs.login()
-        if lg.error_code == '0':
-            rs = bs.query_history_k_data_plus('sh.000001', 'date,close',
-                start_date=(datetime.now()-timedelta(days=5)).strftime('%Y-%m-%d'),
-                end_date=datetime.now().strftime('%Y-%m-%d'), frequency='d', adjustflag='2')
-            results['baostock_klines'] = 'ok' if rs.error_code == '0' and rs.data else 'degraded'
-            bs.logout()
-        else:
-            results['baostock_klines'] = 'down: login failed'
+        import io, contextlib
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            import baostock as bs
+            lg = bs.login()
+            if lg.error_code == '0':
+                rs = bs.query_history_k_data_plus('sh.000001', 'date,close',
+                    start_date=(datetime.now()-timedelta(days=5)).strftime('%Y-%m-%d'),
+                    end_date=datetime.now().strftime('%Y-%m-%d'), frequency='d', adjustflag='2')
+                results['baostock_klines'] = 'ok' if rs.error_code == '0' and rs.data else 'degraded'
+                bs.logout()
+            else:
+                results['baostock_klines'] = 'down: login failed'
     except Exception as e:
         results['baostock_klines'] = f'down: {e}'
 
@@ -714,6 +717,14 @@ def format_report(result: dict) -> str:
 
 if __name__ == '__main__':
     import argparse
+    # 抑制 baostock 的 login/logout 输出污染 JSON
+    import os, sys
+    if '--json' in sys.argv:
+        import logging
+        logging.getLogger().setLevel(logging.ERROR)
+        # 重定向 baostock 噪音
+        import warnings
+        warnings.filterwarnings('ignore')
     parser = argparse.ArgumentParser()
     parser.add_argument('--json', action='store_true')
     parser.add_argument('--push', action='store_true')
@@ -753,7 +764,7 @@ if __name__ == '__main__':
                     report += "\n" + format_fix_report(result['auto_fix'])
                 except ImportError:
                     report += "\n## 🩺 自主修复: 模块不可用"
-            push_text(report)
+            push_text('review', report)
         except Exception as e:
             print(f"推送失败: {e}")
 

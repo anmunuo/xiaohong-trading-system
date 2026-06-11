@@ -31,7 +31,7 @@ from report_formatter import Report
 
 # ── 可进化参数常量（evolution_engine v2.0 可自动调整）──
 GAINER_MIN_PCT: float = 5.0   # path: review_gainer_min_pct  (进化引擎 #16: 6.0→5.0, -16.7%)
-GAINER_TOP_N: int = 60        # path: review_gainer_top_n  (进化引擎 #16: 50→60, +20%)
+GAINER_TOP_N: int = 72        # path: review_gainer_top_n  (进化引擎 #16: 50→60→72, 目标80, 第2/3步)
 
 HOLDINGS_PATH = BASE_DIR / "data" / "holdings.json"
 POOL_PATH = SCRIPT_DIR / "data" / "daily_pool.json"

@@ -1,6 +1,6 @@
 {
   "version": "2026.04.09.version.fix",
-  "updateTime": "2026-06-10T15:30:49+08:00",
+  "updateTime": "2026-06-11T23:40:03+08:00",
   "accountInfo": {
     "initialCapital": 100000,
     "currentNetValue": 100000.0,
@@ -71,7 +71,7 @@
       "maxPositionPerStockPct": 0.333,
       "stopLossMethod": "technical_analysis",
       "stopLossDescription": "不再使用固定百分比止损，止损位由技术面支撑位决定，仓位由 R 值反推",
-      "rValueUpdateTime": "2026-06-10"
+      "rValueUpdateTime": "2026-06-11"
     }
   },
   "monitoring": {
@@ -116,6 +116,10 @@
     },
     {
       "date": "2026-06-10",
+      "value": 100000.0
+    },
+    {
+      "date": "2026-06-11",
       "value": 100000.0
     }
   ],

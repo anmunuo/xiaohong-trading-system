@@ -41,6 +41,8 @@ cronjob action=update
 | 进化引擎 | e6b2b24c7316 | no_agent→LLM | 读action→评估→patch+验证→记录 |
 | 研究员研学 | 1a0ebb16ec85 | 🆕 新增并行LLM | 02:05 5维诊断打分 |
 | 文工团·周报 | 1de9a545a043 | no_agent→LLM | 叙事性复盘+行为偏差+6维评分 |
+| 竞价采集器 | 99d740ca2dc6 | no_agent→LLM 🆕 v9.1 | 120s timeout→LLM 300s，解决 API 预热+采集耗时问题 |
+| 涨幅榜学习 | ac4772979e24 | no_agent→LLM 🆕 v9.1 | 50只串行 >120s→LLM 300s，解决 --winners timeout |
 
 ### 4. 保留的 no_agent 脚本
 

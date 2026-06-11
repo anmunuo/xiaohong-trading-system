@@ -157,6 +157,18 @@
         "603317",
         "001288"
       ]
+    },
+    {
+      "date": "20260611",
+      "stock_count": 6,
+      "stocks": [
+        "002768",
+        "001395",
+        "603277",
+        "603697",
+        "603987",
+        "300827"
+      ]
     }
   ],
   "stocks": [
@@ -176,7 +188,7 @@
       "entry_sector": "普钢",
       "stop_loss_price": 9.21,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260602",
@@ -205,9 +217,21 @@
           "change_pct": -3.19,
           "vs_entry_pct": -2.99,
           "volume": 19548201.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 9.09,
+          "change_pct": -3.4,
+          "vs_entry_pct": -6.29,
+          "volume": 22338907.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 9.09,
+        "return_pct": -6.29,
+        "reason": "触发止损价 9.21（收盘 9.09）"
+      }
     },
     {
       "code": "002119",
@@ -254,6 +278,13 @@
           "change_pct": 1.62,
           "vs_entry_pct": 12.7,
           "volume": 54444835.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 31.2,
+          "change_pct": 27.35,
+          "vs_entry_pct": 43.51,
+          "volume": 54700343.0
         }
       ],
       "exit": {}
@@ -303,6 +334,13 @@
           "change_pct": 2.82,
           "vs_entry_pct": 3.8,
           "volume": 4041515.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 54.01,
+          "change_pct": -6.82,
+          "vs_entry_pct": -3.28,
+          "volume": 3228145.0
         }
       ],
       "exit": {}
@@ -323,7 +361,7 @@
       "entry_sector": "元器件",
       "stop_loss_price": 41.19,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260602",
@@ -352,9 +390,21 @@
           "change_pct": -2.49,
           "vs_entry_pct": -3.54,
           "volume": 5460178.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 39.49,
+          "change_pct": -7.56,
+          "vs_entry_pct": -10.84,
+          "volume": 4355777.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 39.49,
+        "return_pct": -10.84,
+        "reason": "触发止损价 41.19（收盘 39.49）"
+      }
     },
     {
       "code": "688206",
@@ -401,6 +451,13 @@
           "change_pct": 6.06,
           "vs_entry_pct": 6.09,
           "volume": 14237637.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 40.08,
+          "change_pct": 2.77,
+          "vs_entry_pct": 9.03,
+          "volume": 15392194.0
         }
       ],
       "exit": {}
@@ -475,7 +532,7 @@
       "entry_sector": "中成药",
       "stop_loss_price": 27.24,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260602",
@@ -504,9 +561,21 @@
           "change_pct": -0.29,
           "vs_entry_pct": -4.05,
           "volume": 2931173.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 26.37,
+          "change_pct": -4.14,
+          "vs_entry_pct": -8.02,
+          "volume": 6895800.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 26.37,
+        "return_pct": -8.02,
+        "reason": "触发止损价 27.24（收盘 26.37）"
+      }
     },
     {
       "code": "001393",
@@ -524,7 +593,7 @@
       "entry_sector": "电气设备",
       "stop_loss_price": 60.74,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260602",
@@ -553,9 +622,21 @@
           "change_pct": 1.72,
           "vs_entry_pct": 6.37,
           "volume": 9071851.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 55.62,
+          "change_pct": -18.22,
+          "vs_entry_pct": -13.01,
+          "volume": 4482785.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 55.62,
+        "return_pct": -13.01,
+        "reason": "触发止损价 60.74（收盘 55.62）"
+      }
     },
     {
       "code": "301367",
@@ -573,7 +654,7 @@
       "entry_sector": "医疗保健",
       "stop_loss_price": 42.27,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -595,9 +676,21 @@
           "change_pct": 0.04,
           "vs_entry_pct": -1.54,
           "volume": 781048.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 41.78,
+          "change_pct": -6.64,
+          "vs_entry_pct": -8.07,
+          "volume": 674420.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 41.78,
+        "return_pct": -8.07,
+        "reason": "触发止损价 42.27（收盘 41.78）"
+      }
     },
     {
       "code": "002206",
@@ -615,7 +708,7 @@
       "entry_sector": "化纤",
       "stop_loss_price": 5.23,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -637,9 +730,21 @@
           "change_pct": -2.74,
           "vs_entry_pct": -3.27,
           "volume": 17763190.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 5.16,
+          "change_pct": -3.19,
+          "vs_entry_pct": -6.35,
+          "volume": 12898786.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 5.16,
+        "return_pct": -6.35,
+        "reason": "触发止损价 5.23（收盘 5.16）"
+      }
     },
     {
       "code": "605507",
@@ -679,6 +784,13 @@
           "change_pct": 0.83,
           "vs_entry_pct": 1.34,
           "volume": 4078320.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 15.89,
+          "change_pct": 0.25,
+          "vs_entry_pct": 1.6,
+          "volume": 3916018.0
         }
       ],
       "exit": {}
@@ -721,6 +833,13 @@
           "change_pct": -1.46,
           "vs_entry_pct": -3.51,
           "volume": 3271164.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 50.03,
+          "change_pct": 2.94,
+          "vs_entry_pct": -0.68,
+          "volume": 3161139.0
         }
       ],
       "exit": {}
@@ -763,6 +882,13 @@
           "change_pct": -0.92,
           "vs_entry_pct": -3.18,
           "volume": 2540384.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 27.65,
+          "change_pct": -1.43,
+          "vs_entry_pct": -4.56,
+          "volume": 2377289.0
         }
       ],
       "exit": {}
@@ -805,6 +931,13 @@
           "change_pct": 3.8,
           "vs_entry_pct": 11.06,
           "volume": 2130546578.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 4.51,
+          "change_pct": -8.33,
+          "vs_entry_pct": 1.81,
+          "volume": 892782828.0
         }
       ],
       "exit": {}
@@ -847,6 +980,13 @@
           "change_pct": -0.91,
           "vs_entry_pct": -1.77,
           "volume": 5711100.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 30.18,
+          "change_pct": -0.89,
+          "vs_entry_pct": -2.65,
+          "volume": 4680015.0
         }
       ],
       "exit": {}
@@ -868,7 +1008,7 @@
       "entry_sector": "钢加工",
       "stop_loss_price": 5.28,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -883,9 +1023,21 @@
           "change_pct": -4.14,
           "vs_entry_pct": -4.14,
           "volume": 26363363.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 4.98,
+          "change_pct": -6.57,
+          "vs_entry_pct": -10.43,
+          "volume": 6460300.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 4.98,
+        "return_pct": -10.43,
+        "reason": "触发止损价 5.28（收盘 4.98）"
+      }
     },
     {
       "code": "002452",
@@ -919,6 +1071,13 @@
           "change_pct": -1.69,
           "vs_entry_pct": -1.69,
           "volume": 19679374.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 10.74,
+          "change_pct": -2.98,
+          "vs_entry_pct": -4.62,
+          "volume": 18297732.0
         }
       ],
       "exit": {}
@@ -940,7 +1099,7 @@
       "entry_sector": "家居用品",
       "stop_loss_price": 16.98,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -955,9 +1114,21 @@
           "change_pct": -1.1,
           "vs_entry_pct": -1.1,
           "volume": 2531700.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 16.07,
+          "change_pct": -11.02,
+          "vs_entry_pct": -11.99,
+          "volume": 2443824.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 16.07,
+        "return_pct": -11.99,
+        "reason": "触发止损价 16.98（收盘 16.07）"
+      }
     },
     {
       "code": "688377",
@@ -1017,7 +1188,7 @@
       "entry_sector": "其他建材",
       "stop_loss_price": 7.92,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -1032,9 +1203,21 @@
           "change_pct": -1.2,
           "vs_entry_pct": -1.2,
           "volume": 11617672.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 7.62,
+          "change_pct": -7.52,
+          "vs_entry_pct": -8.63,
+          "volume": 8706795.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 7.62,
+        "return_pct": -8.63,
+        "reason": "触发止损价 7.92（收盘 7.62）"
+      }
     },
     {
       "code": "603899",
@@ -1068,6 +1251,13 @@
           "change_pct": -2.53,
           "vs_entry_pct": -2.53,
           "volume": 5733600.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 22.17,
+          "change_pct": 0.86,
+          "vs_entry_pct": -1.69,
+          "volume": 3424724.0
         }
       ],
       "exit": {}
@@ -1089,7 +1279,7 @@
       "entry_sector": "电气设备",
       "stop_loss_price": 29.07,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -1104,9 +1294,21 @@
           "change_pct": 0.07,
           "vs_entry_pct": 0.07,
           "volume": 11103068.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 28.7,
+          "change_pct": -6.27,
+          "vs_entry_pct": -6.21,
+          "volume": 3920123.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 28.7,
+        "return_pct": -6.21,
+        "reason": "触发止损价 29.07（收盘 28.7）"
+      }
     },
     {
       "code": "601600",
@@ -1166,7 +1368,7 @@
       "entry_sector": "电气设备",
       "stop_loss_price": 15.62,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260604",
@@ -1181,9 +1383,21 @@
           "change_pct": 5.54,
           "vs_entry_pct": 5.54,
           "volume": 47182528.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 14.7,
+          "change_pct": -15.27,
+          "vs_entry_pct": -10.58,
+          "volume": 25746300.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 14.7,
+        "return_pct": -10.58,
+        "reason": "触发止损价 15.62（收盘 14.7）"
+      }
     },
     {
       "code": "688100",
@@ -1202,7 +1416,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 33.11,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260604",
@@ -1217,9 +1431,21 @@
           "change_pct": -2.44,
           "vs_entry_pct": -2.44,
           "volume": 3204803.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 30.7,
+          "change_pct": -9.71,
+          "vs_entry_pct": -11.91,
+          "volume": 3944746.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 30.7,
+        "return_pct": -11.91,
+        "reason": "触发止损价 33.11（收盘 30.7）"
+      }
     },
     {
       "code": "603529",
@@ -1238,7 +1464,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 20.13,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260604",
@@ -1253,9 +1479,21 @@
           "change_pct": -2.17,
           "vs_entry_pct": -2.17,
           "volume": 6358664.0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 20.02,
+          "change_pct": -3.42,
+          "vs_entry_pct": -5.52,
+          "volume": 8533290.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 20.02,
+        "return_pct": -5.52,
+        "reason": "触发止损价 20.13（收盘 20.02）"
+      }
     },
     {
       "code": "002895",
@@ -1323,6 +1561,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 632.35,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 8606383.0
         }
       ],
       "exit": {}
@@ -1352,6 +1597,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 5.72,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 5243900.0
         }
       ],
       "exit": {}
@@ -1381,6 +1633,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 46.09,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 4141310.0
         }
       ],
       "exit": {}
@@ -1410,6 +1669,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 16.51,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 10827774.0
         }
       ],
       "exit": {}
@@ -1439,6 +1705,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 8.67,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 98731134.0
         }
       ],
       "exit": {}
@@ -1468,6 +1741,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 218.38,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 1786423.0
         }
       ],
       "exit": {}
@@ -1497,6 +1777,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 64.58,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 122484282.0
         }
       ],
       "exit": {}
@@ -1526,6 +1813,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 69.21,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 32808126.0
         }
       ],
       "exit": {}
@@ -1547,7 +1841,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 8.02,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260605",
@@ -1555,9 +1849,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 7.31,
+          "change_pct": -13.39,
+          "vs_entry_pct": -13.39,
+          "volume": 9415909.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 7.31,
+        "return_pct": -13.39,
+        "reason": "触发止损价 8.02（收盘 7.31）"
+      }
     },
     {
       "code": "000333",
@@ -1584,6 +1890,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 85.35,
+          "change_pct": 3.71,
+          "vs_entry_pct": 3.71,
+          "volume": 52143692.0
         }
       ],
       "exit": {}
@@ -1605,7 +1918,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 1.74,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260605",
@@ -1613,9 +1926,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 1.66,
+          "change_pct": -9.29,
+          "vs_entry_pct": -9.29,
+          "volume": 481980804.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 1.66,
+        "return_pct": -9.29,
+        "reason": "触发止损价 1.74（收盘 1.66）"
+      }
     },
     {
       "code": "603270",
@@ -1642,6 +1967,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 30.1,
+          "change_pct": 1.11,
+          "vs_entry_pct": 1.11,
+          "volume": 8178716.0
         }
       ],
       "exit": {}
@@ -1663,7 +1995,7 @@
       "entry_sector": "基础化工",
       "stop_loss_price": 14.73,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260608",
@@ -1671,9 +2003,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 12.98,
+          "change_pct": -16.31,
+          "vs_entry_pct": -16.31,
+          "volume": 5620800.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 12.98,
+        "return_pct": -16.31,
+        "reason": "触发止损价 14.73（收盘 12.98）"
+      }
     },
     {
       "code": "603790",
@@ -1700,6 +2044,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 26.14,
+          "change_pct": -3.93,
+          "vs_entry_pct": -3.93,
+          "volume": 5265120.0
         }
       ],
       "exit": {}
@@ -1729,6 +2080,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 27.3,
+          "change_pct": 13.0,
+          "vs_entry_pct": 13.0,
+          "volume": 5599912.0
         }
       ],
       "exit": {}
@@ -1758,6 +2116,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 9.86,
+          "change_pct": -3.52,
+          "vs_entry_pct": -3.52,
+          "volume": 46067165.0
         }
       ],
       "exit": {}
@@ -1787,6 +2152,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 6.56,
+          "change_pct": 8.79,
+          "vs_entry_pct": 8.79,
+          "volume": 32693810.0
         }
       ],
       "exit": {}
@@ -1816,6 +2188,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 15.35,
+          "change_pct": -3.7,
+          "vs_entry_pct": -3.7,
+          "volume": 37593142.0
         }
       ],
       "exit": {}
@@ -1845,6 +2224,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 11.85,
+          "change_pct": 11.06,
+          "vs_entry_pct": 11.06,
+          "volume": 14519100.0
         }
       ],
       "exit": {}
@@ -1866,7 +2252,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 6.35,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260609",
@@ -1874,9 +2260,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 6.19,
+          "change_pct": -7.34,
+          "vs_entry_pct": -7.34,
+          "volume": 29371100.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 6.19,
+        "return_pct": -7.34,
+        "reason": "触发止损价 6.35（收盘 6.19）"
+      }
     },
     {
       "code": "301042",
@@ -1895,7 +2293,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 97.36,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260609",
@@ -1903,9 +2301,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 76.99,
+          "change_pct": -26.46,
+          "vs_entry_pct": -26.46,
+          "volume": 2504678.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 76.99,
+        "return_pct": -26.46,
+        "reason": "触发止损价 97.36（收盘 76.99）"
+      }
     },
     {
       "code": "600382",
@@ -1924,7 +2334,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 8.27,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260609",
@@ -1932,9 +2342,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 8.22,
+          "change_pct": -5.63,
+          "vs_entry_pct": -5.63,
+          "volume": 21308558.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 8.22,
+        "return_pct": -5.63,
+        "reason": "触发止损价 8.27（收盘 8.22）"
+      }
     },
     {
       "code": "603129",
@@ -1953,7 +2375,7 @@
       "entry_sector": "新能源",
       "stop_loss_price": 223.44,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260609",
@@ -1961,9 +2383,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 220.49,
+          "change_pct": -6.25,
+          "vs_entry_pct": -6.25,
+          "volume": 1673847.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 220.49,
+        "return_pct": -6.25,
+        "reason": "触发止损价 223.44（收盘 220.49）"
+      }
     },
     {
       "code": "300611",
@@ -1990,6 +2424,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 26.5,
+          "change_pct": -4.74,
+          "vs_entry_pct": -4.74,
+          "volume": 4014500.0
         }
       ],
       "exit": {}
@@ -2019,6 +2460,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 14.41,
+          "change_pct": 2.56,
+          "vs_entry_pct": 2.56,
+          "volume": 31230567.0
         }
       ],
       "exit": {}
@@ -2040,7 +2488,7 @@
       "entry_sector": "通信",
       "stop_loss_price": 14.34,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260609",
@@ -2048,9 +2496,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 13.79,
+          "change_pct": -8.61,
+          "vs_entry_pct": -8.61,
+          "volume": 30399662.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 13.79,
+        "return_pct": -8.61,
+        "reason": "触发止损价 14.34（收盘 13.79）"
+      }
     },
     {
       "code": "603195",
@@ -2077,6 +2537,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 40.49,
+          "change_pct": 1.17,
+          "vs_entry_pct": 1.17,
+          "volume": 3759073.0
         }
       ],
       "exit": {}
@@ -2106,6 +2573,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 75.6,
+          "change_pct": 3.07,
+          "vs_entry_pct": 3.07,
+          "volume": 41588390.0
         }
       ],
       "exit": {}
@@ -2135,6 +2609,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 9.14,
+          "change_pct": 0.11,
+          "vs_entry_pct": 0.11,
+          "volume": 32675544.0
         }
       ],
       "exit": {}
@@ -2164,6 +2645,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 17.05,
+          "change_pct": 1.55,
+          "vs_entry_pct": 1.55,
+          "volume": 5199798.0
         }
       ],
       "exit": {}
@@ -2193,6 +2681,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 13.13,
+          "change_pct": -3.46,
+          "vs_entry_pct": -3.46,
+          "volume": 4873371.0
         }
       ],
       "exit": {}
@@ -2214,7 +2709,7 @@
       "entry_sector": "医药生物",
       "stop_loss_price": 8.91,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260609",
@@ -2222,9 +2717,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 8.73,
+          "change_pct": -6.93,
+          "vs_entry_pct": -6.93,
+          "volume": 42774231.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 8.73,
+        "return_pct": -6.93,
+        "reason": "触发止损价 8.91（收盘 8.73）"
+      }
     },
     {
       "code": "688612",
@@ -2243,7 +2750,7 @@
       "entry_sector": "综合",
       "stop_loss_price": 34.75,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260610",
@@ -2251,9 +2758,21 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 31.67,
+          "change_pct": -13.42,
+          "vs_entry_pct": -13.42,
+          "volume": 9376885.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-11",
+        "close": 31.67,
+        "return_pct": -13.42,
+        "reason": "触发止损价 34.75（收盘 31.67）"
+      }
     },
     {
       "code": "603317",
@@ -2280,6 +2799,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 13.56,
+          "change_pct": 2.11,
+          "vs_entry_pct": 2.11,
+          "volume": 10631344.0
         }
       ],
       "exit": {}
@@ -2309,6 +2835,229 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 24.28,
+          "change_pct": -3.27,
+          "vs_entry_pct": -3.27,
+          "volume": 3260148.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "002768",
+      "name": "国恩股份",
+      "entry_date": "20260611",
+      "entry_close": 65.43,
+      "entry_score": 77.4,
+      "entry_factors": {
+        "event": 55,
+        "fund": 71.4,
+        "sentiment": 55,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 62.16,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260611",
+          "close": 65.43,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 66.99,
+          "change_pct": 2.38,
+          "vs_entry_pct": 2.38,
+          "volume": 7313206.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "001395",
+      "name": "亚联机械",
+      "entry_date": "20260611",
+      "entry_close": 36.9,
+      "entry_score": 73.3,
+      "entry_factors": {
+        "event": 55,
+        "fund": 74.6,
+        "sentiment": 55,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "机械设备",
+      "stop_loss_price": 35.05,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260611",
+          "close": 36.9,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 36.72,
+          "change_pct": -0.49,
+          "vs_entry_pct": -0.49,
+          "volume": 581648.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603277",
+      "name": "银都股份",
+      "entry_date": "20260611",
+      "entry_close": 10.84,
+      "entry_score": 72.5,
+      "entry_factors": {
+        "event": 65,
+        "fund": 82.2,
+        "sentiment": 45,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 0.0
+      },
+      "entry_sector": "专用设备",
+      "stop_loss_price": 10.3,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260611",
+          "close": 10.84,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 10.97,
+          "change_pct": 1.2,
+          "vs_entry_pct": 1.2,
+          "volume": 1682595.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603697",
+      "name": "有友食品",
+      "entry_date": "20260611",
+      "entry_close": 10.46,
+      "entry_score": 72.4,
+      "entry_factors": {
+        "event": 65,
+        "fund": 81.0,
+        "sentiment": 55,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "食品饮料",
+      "stop_loss_price": 9.94,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260611",
+          "close": 10.46,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 11.17,
+          "change_pct": 6.79,
+          "vs_entry_pct": 6.79,
+          "volume": 14059779.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603987",
+      "name": "康德莱",
+      "entry_date": "20260611",
+      "entry_close": 7.25,
+      "entry_score": 72.2,
+      "entry_factors": {
+        "event": 55,
+        "fund": 71.0,
+        "sentiment": 55,
+        "technical": 85,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 6.89,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260611",
+          "close": 7.25,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 7.19,
+          "change_pct": -0.83,
+          "vs_entry_pct": -0.83,
+          "volume": 3746050.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300827",
+      "name": "上能电气",
+      "entry_date": "20260611",
+      "entry_close": 30.46,
+      "entry_score": 71.5,
+      "entry_factors": {
+        "event": 70,
+        "fund": 57.0,
+        "sentiment": 55,
+        "technical": 75,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 28.33,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260611",
+          "close": 30.46,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-11",
+          "close": 29.83,
+          "change_pct": -2.07,
+          "vs_entry_pct": -2.07,
+          "volume": 18480048.0
         }
       ],
       "exit": {}

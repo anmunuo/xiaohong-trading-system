@@ -23,7 +23,7 @@ triggers:
   - 知识库|知识库检索|每小时采集|最新线索|SQLite.*知识库|stock_kb|本地.*数据库
   - 个股.*事件|公告|新闻.*爬取|消息.*传言|催化.*事件|event.*type
   - "Skills.*MCP|claude-trading-skills|Skills架构"
-  - "交易系统.*架构|系统全景|整体架构"
+  - 架构审计|架构.*优化|全流程.*审计|系统.*审计|系统.*稳定性|架构.*诊断|Phase.*优化|Phase.*Gate
   - "部署|Docker.*交易|硬件盒子|Pi.*交易"
   - "TradingSkill|交易系统升级|产品化|硬件盒子|小程序|MCP|商业化|PRD|产品需求"
   - 进化引擎|自动进化|LLM复盘|全域进化|推荐池.*逻辑|推荐引擎|诊断.*执行|沙箱.*超时|沙箱.*验证
@@ -79,7 +79,7 @@ python3 -c "from data_pipeline import get_index_data; print(get_index_data())"
 | `get_sector_flow_rank(sector_type='3')` | 板块资金排名 | sector_type: 行业分类 |
 | `get_top_flow_stocks(n=10, no_cache=False)` | 个股净流入 TOP N 🆕 v4.1: f62 健康检测+动量 fallback | n: 返回数量 |
 | `get_market_money_flow()` | 全市场主力/散户资金 | 无 |
-| `get_stock_realtime(codes: list)` | 个股实时日线 (OHLCV) | codes: 代码列表 |
+| `get_stock_realtime(codes: list, force_refresh=False)` | 个股实时日线 (OHLCV) 🆕 v9.1: force_refresh 强制跳过缓存 | codes: 代码列表 |
 | `get_historical_k_with_ma(codes, days=30)` | BaoStock 历史K线+MA5/10/20+peTTM/pbMRQ (ProcessPool 8x加速) | codes: 代码列表, days: 回溯天数 |
 | `check_data_health()` | 🆕 数据源健康检查 (f62/f184/sina) → status+flow_field | 无 |
 | `get_intraday_minutes(code, scale=5, count=48)` | 分时K线 (Sina) | code: 纯数字, scale: 1/5/15/30/60 |
@@ -106,6 +106,8 @@ python3 -c "from data_pipeline import get_index_data; print(get_index_data())"
 完整 API 见 → `references/data-source-cheatsheet.md`。
 
 ### SQLite 本地知识库 (stock_kb.py v1.1) 🆕
+
+> 📝 知识库获取逻辑浓缩提示词 → `references/knowledge-acquisition-prompt.md`（469字，四通道+三层架构全景）
 
 位于 `~/.hermes/profiles/xiaohong/scripts/stock_kb.py`，将所有 A 股历史数据爬取到本地 SQLite，毫秒级查询，不依赖远程 API。
 
@@ -364,7 +366,7 @@ PB 分布 (N=3961):
 | ⭐ Gold 因子覆盖率低 (启动期 ~24%) | 正常现象。仅有 Silver 当日数据的因子可用（资金+质量）。动量/波动/筹码/滚动需要 6-61 天回溯 → 随 Silver 日积累自动提升。不要为此告警或试图绕过 Silver 调 API。详见 `references/gold-layer-design.md` |
 | ⭐ Gold PE/PB 全为 None | Silver 仅 100 只样本且 PE/PB 为 0（Bronze 样本缺基本面数据）。需 tushare `fina_indicator` 或 `daily_basic` 数据注入 Silver 后才能激活估值因子。PE/PB 为 0 时因子填 None。 |
 | 🆕 议会静默停摆无人感知 (v8.11) | **根因**：parliament_log.json 超过 24h 无新记录，daily_pool.parliament 引用陈旧数据，认知层链路断裂但无监控。**检测**：`python3 -c "import json; log=json.load(open('scripts/data/research/parliament_log.json')); print(max(e['timestamp'] for e in log))"` 应与今天日期相差≤24h。**修复**：system_health_check 计划增加第13维「议会数据新鲜度」。详见 `references/llm-review-pitfalls.md`。 |
-| 🆕 **v8.12** 议会僵尸条目——40条记录零真实裁决 | **根因**：(1) Round 3 key 是 `decision` 非 `verdict`→旧查询永远 null；(2) decision.bias/confidence 字段存在但值全空；(3) 后38条 rounds=0（健康检查空壳污染）。**检测**：不只查时间戳——必须验证 `decision.bias` 非空且 ≠ `?`。**修复**：crontab 添加 `researchers.py --parliament` 调度 + 修复裁决写入逻辑。详见 `references/llm-review-pitfalls.md` 陷阱1升级版。 |
+| ⭐🆕 **P0 Sina 批量 URL 长度限制导致 Bronze/Silver 近乎空库** (v9.1) | **致命 bug (2026-06-11 发现)**：`_sina_batch_fetch()` 将所有 5528 只股票拼接为一个 URL（`http://hq.sinajs.cn/list=sh000001,sh000002,...5528项`），URL 超长被 Sina 服务端拒绝或超时 → 静默返回 `{}` → `get_stock_realtime()` 收到空 dict → Bronze `daily_kline/sina.json.gz` 仅 0-1 只股票 → Silver ETL 产出 8 行（应为 5196）→ Gold 因子覆盖率 0%。**现象链**：健康检查「Silver 行数过少: 8」+「ML 未生成」+「因子IC未生成」——三条告警根因都是这同一个 bug。**修复**：`_sina_batch_fetch()` 改为分块请求（`CHUNK_SIZE = 800`），逐块 fetch 后累积到 `all_results`。修复后 Bronze 5196 只、Silver 5196 行、Gold 覆盖率 100%。**诊断**：`python3 -c "import json,gzip; d=json.loads(gzip.decompress(open('data/bronze/daily_kline/YYYY/MM/DD/sina.json.gz','rb').read())); print(len(d))"` — 若 <100 则触发此 bug。**教训**：API 有隐式限制但文档不写——Sina 官方从未说明 URL 长度上限，需从实际行为反推。批量 API 调用永远分块，不要假设「一次全传」安全。 |\n| ⭐🆕 `get_stock_realtime(force_refresh=True)` 参数 (v9.1) | **新增 API**：`get_stock_realtime(codes, force_refresh=False)`。当 `force_refresh=True` 时，清空 `_QUOTE_CACHE` 并强制重新从 Sina 拉取，避免模块级缓存被上游小范围调用污染。**适用场景**：Bronze 全量采集（`bronze_ingest.py` 使用 `force_refresh=True`）、健康检查数据源探测。**陷阱**：不加此参数时，若侦察兵/狙击手在 120s 内调用了 `get_stock_realtime` 并写入少量股票到缓存，紧随其后的 Bronze 采集会命中缓存返回不完整数据。 |\n| 🆕 **v8.12** 议会僵尸条目——40条记录零真实裁决 | **根因**：(1) Round 3 key 是 `decision` 非 `verdict`→旧查询永远 null；(2) decision.bias/confidence 字段存在但值全空；(3) 后38条 rounds=0（健康检查空壳污染）。**检测**：不只查时间戳——必须验证 `decision.bias` 非空且 ≠ `?`。**修复**：crontab 添加 `researchers.py --parliament` 调度 + 修复裁决写入逻辑。详见 `references/llm-review-pitfalls.md` 陷阱1升级版。 |
 | 🆕 **v8.12** 市场快照三重静默降级 | **症状**：北向 T-28 + 资金流全空 + 板块流全空同时发生。**根因**：三路 API 独立断连均被静默吞掉，瞭望塔/决策官 LLM 只看有值不看 `_quality` 标记→基于 28 天前假数据做判断。**检测**：`_quality` 前缀检查 + `main_net`/`sector_flow` 非空验证。详见 `references/llm-review-pitfalls.md` 陷阱5。 |
 | 🆕 **v8.12** 进化引擎基线追踪——用原始值非当前值算变更幅度 | **症状**：2400→2000(16.7%) 被报 33% 拒绝。**根因**：引擎用参数首次定义值(3000)计算而非当前值(2400)，导致分步递进中间步被误拒。**应对**：建议前先 grep 源码确认当前值，计算 (当前-目标)/当前≤20%。详见 `references/llm-review-pitfalls.md` 陷阱6。 |
 | 🆕 进化引擎 ±20% 边界拒绝大跨步变更 (v8.11) | **根因**：`review_diagnosis.json` 中建议「50→30」(40%) 被 --dry-run 拒绝。单次调整≤20% 是硬约束。**正确做法**：分步递进——50→40→32→30 (3天完成)，每步在 change 字段写明分步目标。详见 `references/llm-review-pitfalls.md`。 |
@@ -373,7 +375,13 @@ PB 分布 (N=3961):
 | ⭐ Cron 裸 python3 导致 26 脚本静默失败 (v8.7) | **根因**：cron 环境的 PATH 仅为 `/usr/bin:/bin`，不包含 venv。`cron_*.sh` 中写 `python3` 或 `exec python3` → cron 找不到解释器 → `exit 127`。影响 26 个脚本，4 个 job 标记 error（选股推荐 08:25、竞价采集 09:15、侦察兵盘中 11:00、健康检查 08:15）。**修复**：全量替换为 `/home/pc/.hermes/hermes-agent/venv/bin/python3`。新 cron 脚本**必须**使用绝对路径。验证：`grep -l 'venv/bin/python3' cron_*.sh | wc -l` → 应为 26。 |
 | ⭐ Cron 脚本行号污染 (v8.10) | **根因**：`cron_*.sh` 文件内容被写入带 `     N|` 行号前缀的内容（如 `     1|#!/bin/bash`）。bash 无法解析 shebang 报 `未找到命令`。22/26 脚本受影响。stdout 仍有产出（pipeline 后半段 `exec python3` 仍能执行）→ 健康检查只看输出文件永远发现不了。**修复**：`sed -i 's/^[[:space:]]*[0-9]\\+|//'` 批量去行号；`system_health_check.py` v1.2.0 新增维度12（Cron脚本完整性 - shebang 检测）+ 维度6重构（Cron执行退出码 - 扫描所有 output 目录的 `script failed` / `exited with code` 标记）。**教训**：监控产出物≠监控管道。写 cron 脚本时务必验证文件以 `#!` 开头。 |
 | ⭐ **🆕 Cron `script` 参数不支持命令行参数** | **根因**：cron 调度器的 `script` 字段把整串当文件名。`system_health_check.py --fix` → 找名为 `system_health_check.py --fix` 的文件 → 不存在 → 永远 `Script not found`。**修复**：创建 wrapper shell 脚本（`cron_health_fix.sh`）包装参数：`exec python3 system_health_check.py --fix --push`，cron 指向 wrapper。本次修复前健康检查+自主修复连续 3 天静默失败，4 个 cron job 问题积压形成恶性循环。 |
-| ⭐ **🆕 Cron 脚本默认 timeout 仅 120s** | **根因**：`config.yaml` 中 `cron.script_timeout_seconds` 默认 120s。推荐引擎 run ~120s、竞价采集器 >120s → 每天 `Script timed out`。**修复**：`config.yaml` → `cron: script_timeout_seconds: 300`，所有 no_agent 脚本全局受益。检测：`grep script_timeout ~/.hermes/config.yaml`。 |
+| ⭐ **🆕 Cron 脚本默认 timeout 仅 120s** | **根因**：`config.yaml` 中 `cron.script_timeout_seconds` 默认 120s。推荐引擎 run ~120s、竞价采集器 >120s → 每天 `Script timed out`。**修复**：`config.yaml` → `cron: script_timeout_seconds: 300`，所有 no_agent 脚本全局受益。检测：`grep script_timeout ~/.hermes/config.yaml`。**注意**：config 改动后**已有 no_agent cron job 不会自动继承新 timeout**——scheduler 缓存了创建时的值。需通过 cronjob update 重新写入或转为 LLM 模式绕过。 |\n| ⭐ **🆕 Stock Tracker NoneType 比较崩溃** (v9.1) | **根因**：`stock_tracker.py:239` `if stop_price > 0 and close <= stop_price` 中 `stop_price` 为 None（止损失踪的持仓）。不同于 L217 的 ZeroDivisionError。**修复**：`if stop_price is not None and stop_price > 0 and close <= stop_price and close > 0`。**诊断**：`grep \"stop_price\" stock_tracker.py` 确认所有访问点都有 None 防护。 |\n| ⭐ **🆕 竞价采集器 120s timeout** (v9.1) | **根因**：`cron_auction.sh` 调用 `auction_collector.py --live`，在交易时段 09:15 运行时 push2 API 偶尔断连→指数退避预热 6 轮 ≈ 60-90s → 剩余采集时间不足 → 总耗时 >120s → scheduler 杀进程。与「09:15 cron error」（API 拒绝连接）**不同根因**——timeout 是采集本身时间不够而非 API 不可达。**修复**：(1) 预热轮数动态调整——API 首轮成功则跳过后几轮，(2) cron job timeout 显式设为 300s，(3) 采集阶段加 `time.time()` 计时，接近 timeout 时提前输出部分结果。**诊断**：cron output 里 `Script timed out after 120s` → 非 API 连接错误。 |\n| ⭐ **🆕 涨幅榜学习 120s timeout** (v9.1) | **根因**：`researchers.py --winners` 逐只串行处理 50+ 只涨幅股，每只 `build_stock_context` + `analyze()` 耗时 8-15s → 总耗时 400-750s 远超 120s。**修复**：转为 LLM 驱动模式（移除 `no_agent`/`script`，改用 `prompt` + `enabled_toolsets: [\"terminal\",\"file\"]`），LLM 模式不受 120s 限制。或先执行 no_agent 脚本收集数据（不分析），后续 LLM cron 基于收集数据做分析。**诊断**：cron output 里 `Script timed out after 120s` + 产出文件仅部分股票。 |\n| ⭐ **🆕 健康检查 push_text() API 崩溃** (v9.1) | **根因**：`system_health_check.py --fix --push` 调用飞书推送时 `push_text()` 签名不匹配——传了位置参数但函数签名已变为 keyword-only 或缺少 `text=` 参数。**修复**：检查 `auto_repair.py` 或 `notifier.py` 中 `push_text` 实际签名，改为 `push_text(text=report)`。**诊断**：健康检查输出底部显示「推送失败: push_text() missing 1 required positional argument: 'text'」。 |\n| ⭐ **🆕 baostock login/logout 污染 JSON stdout** (v9.1) | **根因**：`system_health_check.py --json` 输出被 `login success!` / `logout success!` 污染，首字符非 `{` → `json.load()` 解析失败。baostock 在 `bs.login()`/`bs.logout()` 时无条件向 stdout 打印，无法通过环境变量关闭。`check_data_pipeline()` 中的 baostock 测试段是无辜来源。**修复**：用 `contextlib.redirect_stdout(io.StringIO())` 包裹 baostock 调用块，将噪音重定向到黑洞。**诊断**：`python3 system_health_check.py --json 2>/dev/null | xxd | head -1` → 首行若为 `6c6f67696e`（"login"）则触发。 |
+
+
+| ⭐ **🆕 knowledge_base 空库静默** (v9.1) | **根因**：`knowledge_base.py stats` 输出 `total_files=0, total_events=0`——知识库完全为空但无任何告警。**原因**：(1) 每小时采集 cron job 可能未产出（需检查 `cron_kb_collector.sh` 执行日志），(2) `mega_collector.py --quiet` 静默失败，(3) KB 目录结构存在但文件从未写入。**诊断**：`python3 knowledge_base.py stats` → 若 `total_events=0` → `python3 knowledge_base.py collect` 手动填充 → 检查 `data/knowledge_base/` 目录是否创建了日期文件。**修复后**：本 session 手动 collect 后入库 657 条（533公告+75政策+49研报）。 |
+
+
+| ⭐ **🆕 scout.py --once 参数不存在** (v9.1) | **根因**：scout.py 实际参数为 `--push`/`--auction`/`--intraday`，但 sniper_healthcheck 和手动测试惯用 `--once` → 脚本报 `unrecognized arguments`。**修复**：在 argparse 中添加 `p.add_argument('--once', action='store_true', help='单次扫描')` 作为 no-op flag（等同于默认模式）。**诊断**：`grep 'add_argument.*--once' scout.py` 为空 → 需添加。 |
 | ⭐ **🆕 Stock Tracker ZeroDivisionError** | **根因**：`stock_tracker.py:217` 无快照时 `entry_close`=0，直接除 → 崩溃连续 4 天。**修复**：加 `if s["entry_close"] <= 0: vs_entry = 0` 防护。 |
 | ⭐ **🆕 sed 修改 f-string 导致语法错误** | **根因**：`sed` 将 f-string 内的 `e["code"]` 转义为 `e[\"code\"]` → Python 无法解析。**修复**：f-string 内用变量提取：`code = e.get('code',''); f"{code}"`。**教训**：不要用 sed 修改含 f-string 的 Python 代码，用 Python 脚本做替换。 |
 | ⭐ **🆕 sed 修改 Python f-string 导致 SyntaxError** | **根因**：用 `sed` 替换 Python f-string 时，双引号 `\"` 被转义成文字反斜杠+引号。f-string 内部 `.get("key")` 与外层引号冲突。**修复**：用 Python 脚本替代 sed 做多行复杂替换——`python3 -c "content = open('f.py').read(); content.replace(...); open('f.py','w').write(content)"`。或在 f-string 中将字典访问提取为独立变量。 |
@@ -820,6 +828,7 @@ idx = get_index_data(); nf = get_north_flow()
 - `references/maturity-assessment.md`
 - `references/winners-study-v3.md` — 🆕 涨幅榜学习 v3.0 架构与陷阱 — 🆕 六维成熟度评估框架（月度审计用：市场数据/清洗/特征/模型/风控/执行）
 - `references/health-check-system.md` — 🆕 系统健康自检 v1.0（进化后自动触发，7维扫描+6种自修复）
+- `references/architecture-audit-workflow.md` — 🆕 v1.0 全流程架构审计四步法（健康扫描→Cron排查→输出取证→分级修复，含诊断命令速查和故障矩阵）
 - `references/layered-data-architecture.md` — 🆕 v8.6 分层数据架构 v1.0 (Bronze/Silver/Gold三层，可复现性保证，70MB/天×17GB/年)
 - `references/gold-layer-design.md` — 🆕 v8.7 Gold 层设计 (26维因子注册表+启动期陷阱+因子覆盖率时间线+可复现性验证)
 - `references/cron-script-corruption.md` — 🆕 v8.10 Cron脚本行号污染诊断与修复手册（症状/根因/诊断/修复/防范全流程）

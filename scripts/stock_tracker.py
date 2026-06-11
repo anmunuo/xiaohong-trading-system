@@ -235,8 +235,8 @@ class StockTracker:
             updated += 1
 
             # 检测止损失效
-            stop_price = s.get("stop_loss_price", 0)
-            if stop_price > 0 and close <= stop_price and close > 0:
+            stop_price = s.get("stop_loss_price") or 0
+            if stop_price is not None and stop_price > 0 and close <= stop_price and close > 0:
                 s["status"] = "stopped_out"
                 s["exit"] = {
                     "date": today,

@@ -1,41 +1,5 @@
 [
   {
-    "ts": "2026-06-04T22:21:31.571980",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
-    "ok": false
-  },
-  {
-    "ts": "2026-06-04T22:21:36.550388",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
-    "ok": false
-  },
-  {
-    "ts": "2026-06-04T22:23:47.003395",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=-1; silver_pipeline.py: rc=-1; gold_pipeline.py: rc=-1",
-    "ok": false
-  },
-  {
-    "ts": "2026-06-05T08:21:15.574431",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-05T08:21:23.696452",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-06T08:51:57.607506",
-    "action": "parliament_flow",
-    "detail": "rc=0",
-    "ok": true
-  },
-  {
     "ts": "2026-06-06T08:51:57.840818",
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
@@ -271,6 +235,66 @@
   },
   {
     "ts": "2026-06-10T22:16:16.114792",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T08:16:15.817429",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T08:16:16.184126",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T15:15:36.484900",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T15:15:36.846410",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T22:15:48.961354",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T22:15:49.335527",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T23:42:47.046698",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T23:43:06.142887",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T23:43:34.641497",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-11T23:43:54.131316",
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
     "ok": true

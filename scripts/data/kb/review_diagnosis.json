@@ -1,52 +1,46 @@
 {
-  "date": "20260610",
-  "diagnosis": "三链路断裂+候选源单一连续第6天，pool_rate=0%无改善。但昨日进化引擎已落地6项变更（涨幅阈值6→5%、涨幅数量50→60、市值上下限、竞价权重等），待明日观测效果。竞价学习器14样本维度全0需降阈值。侦察兵数据目录完全缺失→盘中异动检测链断裂。议会bias中性(2:2)符合沪指+1.28%趋势日。",
+  "date": "20260611",
+  "diagnosis": "观测期满：昨日6项进化变更(pool_rate 0%→0%)零改善。根因在候选源管道——8只推荐全source=announcement，mega_collector/kb_insights/auction_diagnosis三文件消失，侦察兵目录+target_pool持续缺失。系统处于'仅有推荐池无执行链'的第8天。唯一积极信号：推荐引擎产出质量提升(tech因子恢复、operation差异化)。涨幅数量60→72按计划递进第二步。",
   "module_scores": {
     "recommender": {
       "status": "warn",
-      "note": "8只推荐全source=announcement单一候选源，tech因子全None，operation_advice/risk_rating全空。pool_rate=0%连续6天(6/5-6/10)。天汽模sector误标'金融'(SECTOR_KEYWORDS bug未修)。好消息：昨日进化已降涨幅阈值6→5%、涨幅数量50→60、市值下限50→40亿、上限3000→2000——明日可观察捕获率是否回升。"
+      "note": "⏳观测期满——昨日涨幅阈值6→5%+涨幅数量50→60+市值30-2000亿，pool_rate仍0%(8天连0)。技术面有改善：tech因子从None恢复(70-85分)，operation从全空变为MA20偏离+止损差异化(创业板-7%已正确)。但候选源垄断未破——8只全source=announcement，hot_events/broker_views/资金流候选三源持续空白。mega_latest.json文件消失。data_sources声明5源实际仅1源生效。excluded正常：ST=8, lianban=4, 大市值=3, 小市值=14。"
     },
     "scout": {
       "status": "error",
-      "note": "侦察兵数据目录完全缺失(/data/scout_output和/scripts/data/scout均不存在)。盘中4次扫描(10:00/11:00/13:00/14:00)均未产出任何数据。双重确认+盘中异动检测链断裂。scout.py文件存在(2372行)，但产出目录从未创建，疑为scout.py内output_dir路径配置错误或脚本执行失败。"
+      "note": "侦察兵数据目录持续缺失第8天。盘中4次扫描(10:00/11:00/13:00/14:00)全无产出。scout.py存在但output_dir从未创建。双重确认+盘中异动检测链断裂。三链路中'侦察兵'段离线。"
     },
     "sniper": {
       "status": "error",
-      "note": "sniperd守护进程运行正常(Active 1周)，但0交易记录。根因：target_pool.json不存在→狙击手无入场标的可监控→扫描6610次0信号。上游断裂(推荐池不含实时异动股+侦察兵无产出)导致狙击手空转。"
+      "note": "sniperd.service Active正常，但target_pool.json不存在第8天→无入场标的→扫描0信号。上游断裂(推荐池不含实时异动+侦察兵无产出)致狙击手空转。"
     },
     "ammo": {
-      "status": "warn",
-      "note": "0持仓+净值100000初始状态。ammo_output无产出文件(无持仓则无报告产出属正常)。无风险暴露→当前无需调整风控参数。一旦有仓位入池需恢复弹药库每日更新和移动止盈跟踪。"
+      "status": "ok",
+      "note": "空仓。净值¥100,000。凯利0.2(默认保守)。R值¥832.5。无风险暴露→参数无需调整。注意：一旦建仓需恢复ammo_risk.py --update每日更新。"
     },
     "knowledge_base": {
-      "status": "ok",
-      "note": "kb_insights.json有今日14:05数据(37KB)，采集管道正常运作。但洞察未融入推荐池评分(pool中insight_score未体现)——KB→推荐引擎的桥接链路待验证。"
+      "status": "warn",
+      "note": "kb_insights.json文件今日消失(昨日有37KB 14:05数据)。mega_latest.json同样消失。每小时采集cron可能全部静默失败。KB→推荐引擎桥接链路断裂。需排查mega_collector cron和KB cron。"
     },
     "auction": {
-      "status": "warn",
-      "note": "14样本/6天，利用率0.16%，五维hits全0——先验驱动状态。核心问题：维度阈值0.6过高(auction_learner.py:301)，导致14个正确预测的样本也无法为具体维度加分(hits永远达不到dim_max×0.6)。auction_diagnosis建议降至0.35。昨日进化已调整五维权重，但阈值未动——建议分3步(0.6→0.48→0.38→0.35)渐进降低。"
+      "status": "error",
+      "note": "auction_diagnosis.json文件不存在——16:05竞价诊断cron未产出。竞价学习器全链路离线(采集→特征→诊断)。昨日diagnosis建议降维度阈值0.6→0.35但引擎未执行(auction参数不在review_diagnosis rule关键词列表中)。"
     },
     "review": {
       "status": "warn",
-      "note": "reflection_log有今日记录(6/10)，pool_rate=0%+missed=50。但5天来tips完全相同(板块集中+检查候选源)→复盘诊断陷入重复模式，未产生新洞察。建议复盘LLM融入今日议会结论(中性2:2+小市值红旗)和宏观环境(沪指+1.28%趋势日)做差异化分析。"
+      "note": "reflection_log有今日记录，pool_rate=0%+missed=50连续8天。tips已准确识别根因('候选源过度依赖公告事件')但无法触发推荐引擎级修复——因为修复不在参数空间而在代码层(候选源管线)。"
     },
     "parliament": {
       "status": "warn",
-      "note": "议会实际有产出：今日15:15 bias=中性(2:2)、conf=0.5，red_flags指出5只小市值风险(59-78亿)+2个数据过期误报。46条日志中28条为健康检查空壳污染(rounds=0, decision全空)——需修复健康检查写入逻辑避免污染议会日志。关键缺陷：daily_pool.json的parliament字段为空{}——议会结论未写入推荐池，导致瞭望塔/决策官看不到议会判断。"
+      "note": "49条日志中28条有rounds结构但0条含真实裁决(bias仅限于'中性'/'偏多'，confidence固定0.5)。实质仍是模板填充非真实辩论。今日15:15条目bull=2/bear=2/中性/conf=0.5与昨日完全相同。daily_pool.parliament={}持续为空。health_check污染已识别但未修复。"
     }
   },
   "rule_changes_suggested": [
     {
-      "rule": "涨幅阈值",
-      "change": "涨幅阈值已从6%降至5%(昨日进化引擎已落地)",
-      "reason": "已执行，本轮无需再调。观测明日pool_rate是否回升后再评估是否需要进一步降至4%。",
-      "confidence": "high"
-    },
-    {
       "rule": "涨幅数量",
-      "change": "涨幅数量已从50增至60(昨日进化引擎已落地，第1/2步目标80)",
-      "reason": "已执行第一步。50→60(20%)符合硬约束。如果明天pool_rate仍0%，第二步60→72(20%)。",
-      "confidence": "high"
+      "change": "涨幅数量从60增至72(第二步，目标80)",
+      "reason": "昨日预承诺：60→72(20%符合硬约束)为计划第二步。观测期满pool_rate仍0%→按计划递进。但需明确：此参数调整的是文工团捕获率统计口径，不影响推荐引擎候选源。真正的0%根因在mega_collector管线断裂，需代码级修复而非参数调整。",
+      "confidence": "medium"
     }
   ],
   "no_change": false

@@ -233,7 +233,7 @@ class BronzeCollector:
             # 获取全A代码列表
             codes = self._get_all_codes()
             if codes:
-                kline_data = get_stock_realtime(codes)  # 全量（Sina 批量支持~800只）
+                kline_data = get_stock_realtime(codes, force_refresh=True)  # 全量强制刷新
                 record = self.writer.write(
                     kline_data, 'sina', 'daily_kline', date,
                     fields=['code', 'close', 'change_pct', 'open', 'high', 'low', 'volume'],

@@ -29,26 +29,26 @@
     "archived_at": null,
     "created_at": "2026-05-24T05:27:22.369295+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-06-10T09:14:43.280602+00:00",
-    "last_used_at": "2026-06-10T19:05:51.399422+00:00",
-    "last_viewed_at": "2026-06-10T09:13:00.541906+00:00",
-    "patch_count": 498,
+    "last_patched_at": "2026-06-11T15:48:05.563293+00:00",
+    "last_used_at": "2026-06-11T19:05:56.291415+00:00",
+    "last_viewed_at": "2026-06-11T17:05:21.049722+00:00",
+    "patch_count": 510,
     "pinned": false,
     "state": "active",
-    "use_count": 560,
-    "view_count": 261
+    "use_count": 602,
+    "view_count": 273
   },
   "strategy-trading": {
     "archived_at": null,
     "created_at": "2026-05-27T13:08:35.623721+00:00",
     "created_by": null,
-    "last_patched_at": "2026-06-08T08:04:38.814055+00:00",
-    "last_used_at": "2026-06-10T09:30:30.742882+00:00",
-    "last_viewed_at": "2026-06-09T00:43:40.979455+00:00",
-    "patch_count": 60,
+    "last_patched_at": "2026-06-11T15:48:15.660800+00:00",
+    "last_used_at": "2026-06-11T09:33:13.951182+00:00",
+    "last_viewed_at": "2026-06-11T09:33:13.945677+00:00",
+    "patch_count": 61,
     "pinned": false,
     "state": "active",
-    "use_count": 70,
-    "view_count": 51
+    "use_count": 73,
+    "view_count": 52
   }
 }

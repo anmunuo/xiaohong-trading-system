@@ -440,7 +440,36 @@ python3 scripts/ammo_risk.py --update
 
 决策官报告应使用 P0/P1/P2 优先级标注行动项。
 
-## 常见陷阱
+## 全流程架构审计工作流 🆕 v9.1
+
+> 完整参考 → `stock-research` → `references/architecture-audit-workflow.md`
+
+采用 Phase-Gate 模式执行系统稳定性诊断与修复：
+
+```
+Phase 0: P0修复  → Gate(语法验证) → Phase 1: P1加固 → Gate → Phase 2: 缝合 → ...
+```
+
+**每Phase结束硬性验证，不通过不前进。** 同Phase内独立任务可用 `delegate_task` 并行。
+
+### 标准流程
+
+```
+1. 系统健康检查 (system_health_check.py) → 拿到真实状态
+2. Cron执行取证 (cron output目录扫描) → 抓脚本失败根因  
+3. 按P0→P2分级修复 (不先问用户，直接深入修复)
+4. 每Phase加自动检查机制 (check_data_health + 语法编译验证)
+5. 最终全量健康扫描 → 确认问题归零
+```
+
+### 常用诊断命令速查
+
+| 诊断目标 | 命令 |
+|----------|------|
+| 全量健康 | `python3 system_health_check.py` |
+| Bronze 采样 | `python3 -c "import json,gzip; d=json.loads(gzip.decompress(open('data/bronze/daily_kline/.../sina.json.gz','rb').read())); print(len(d))"` |
+| Cron失败 | `grep -rl 'script failed\|exited with code' cron/output/*/` |
+| 语法验证 | `python3 -m py_compile <file>` |
 
 - **弹药库双重净值**：`accountInfo.currentNetValue` 和 `riskManagement.currentNetValue` 必须一致。v4.1 统一到前者，`set_net_value()` 同步两处。如果发现不一致，运行 `python3 ammo_risk.py --update` 自动修复。
 - **弹药库 R 值停滞**：v4.0 及以前 R 值永不自动计算。v4.1 每次 --update 重新计算并写入。检查：`grep currentRValue data/holdings.json`

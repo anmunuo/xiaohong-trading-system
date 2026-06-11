@@ -984,6 +984,7 @@ def main():
     p = argparse.ArgumentParser(description='侦察兵 v4.0 · 开盘确认 + 盘中池更新')
     p.add_argument('--push', action='store_true', help='推送飞书')
     p.add_argument('--auction', action='store_true', help='叠加竞价信号分析')
+    p.add_argument('--once', action='store_true', help='单次扫描（等同于默认模式）')
     p.add_argument('--intraday', action='store_true', help='盘中模式：扫描+自动更新推荐池')
     args = p.parse_args()
 
