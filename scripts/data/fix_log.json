@@ -1,29 +1,5 @@
 [
   {
-    "ts": "2026-06-06T08:51:57.840818",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-06T08:52:16.880709",
-    "action": "parliament_flow",
-    "detail": "rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-06T08:52:17.120520",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-06T15:15:45.367984",
-    "action": "parliament_flow",
-    "detail": "rc=0",
-    "ok": true
-  },
-  {
     "ts": "2026-06-06T15:15:45.595579",
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
@@ -298,5 +274,29 @@
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
     "ok": true
+  },
+  {
+    "ts": "2026-06-12T08:15:20.773722",
+    "action": "parliament_flow",
+    "detail": "rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-12T08:15:21.185200",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-12T15:15:26.056779",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-12T22:15:57.470881",
+    "action": "data_pipeline",
+    "detail": "cleared 0 cache files",
+    "ok": false
   }
 ]

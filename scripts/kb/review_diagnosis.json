@@ -1,46 +1,52 @@
 {
-  "date": "20260611",
-  "diagnosis": "观测期满：昨日6项进化变更(pool_rate 0%→0%)零改善。根因在候选源管道——8只推荐全source=announcement，mega_collector/kb_insights/auction_diagnosis三文件消失，侦察兵目录+target_pool持续缺失。系统处于'仅有推荐池无执行链'的第8天。唯一积极信号：推荐引擎产出质量提升(tech因子恢复、operation差异化)。涨幅数量60→72按计划递进第二步。",
+  "date": "20260612",
+  "diagnosis": "【转折信号】池内2/8只涨6%+（美能能源+9.98%涨停、弘信电子+6.57%）→ 实际命中25%，首板纳入+市值放宽开始见效。但P2 bug导致pool_rate仍报0%——系统自欺第9天。auction_diagnosis恢复产出，竞价诊断切换「趋势多头跟随」模式合理。侦察兵/狙击手/议会三链仍断裂。",
   "module_scores": {
     "recommender": {
-      "status": "warn",
-      "note": "⏳观测期满——昨日涨幅阈值6→5%+涨幅数量50→60+市值30-2000亿，pool_rate仍0%(8天连0)。技术面有改善：tech因子从None恢复(70-85分)，operation从全空变为MA20偏离+止损差异化(创业板-7%已正确)。但候选源垄断未破——8只全source=announcement，hot_events/broker_views/资金流候选三源持续空白。mega_latest.json文件消失。data_sources声明5源实际仅1源生效。excluded正常：ST=8, lianban=4, 大市值=3, 小市值=14。"
+      "status": "ok",
+      "note": "⚠️ 实际改善被bug隐藏：8只推荐中2只涨6%+（美能能源+9.98%、弘信电子+6.57%）→真实命中率25%。首板纳入生效（川金诺/莱克电气 source=limit_up_first）。候选源仍偏窄（6/8=announcement），hot_events/broker_views/资金流三源空白。市值下限40亿+上限2400亿（6/4调整）已过7天观测期，建议下一步递进。"
     },
     "scout": {
       "status": "error",
-      "note": "侦察兵数据目录持续缺失第8天。盘中4次扫描(10:00/11:00/13:00/14:00)全无产出。scout.py存在但output_dir从未创建。双重确认+盘中异动检测链断裂。三链路中'侦察兵'段离线。"
+      "note": "🔴 第9天离线。scout_output/目录不存在，盘中4次扫描（10/11/13/14:00）全无产出。双重确认+盘中异动检测链断裂。非参数问题——需代码/部署修复。"
     },
     "sniper": {
       "status": "error",
-      "note": "sniperd.service Active正常，但target_pool.json不存在第8天→无入场标的→扫描0信号。上游断裂(推荐池不含实时异动+侦察兵无产出)致狙击手空转。"
+      "note": "🔴 sniperd.service Active正常但空转第9天——target_pool.json不存在→无入场标的→零信号。上游断裂（侦察兵无产出）致狙击手无目标。非参数问题。"
     },
     "ammo": {
       "status": "ok",
-      "note": "空仓。净值¥100,000。凯利0.2(默认保守)。R值¥832.5。无风险暴露→参数无需调整。注意：一旦建仓需恢复ammo_risk.py --update每日更新。"
+      "note": "空仓。净值¥100,000。凯利0.2(默认保守)。无风险暴露。一旦建仓需恢复ammo_risk.py --update。"
     },
     "knowledge_base": {
       "status": "warn",
-      "note": "kb_insights.json文件今日消失(昨日有37KB 14:05数据)。mega_latest.json同样消失。每小时采集cron可能全部静默失败。KB→推荐引擎桥接链路断裂。需排查mega_collector cron和KB cron。"
+      "note": "kb_insights.json+mega_latest.json双缺。每小时采集cron可能静默失败。KB→推荐引擎桥接链路断裂——推荐引擎候选源缺少hot_events/broker_views正是此链断裂的直接后果。"
     },
     "auction": {
-      "status": "error",
-      "note": "auction_diagnosis.json文件不存在——16:05竞价诊断cron未产出。竞价学习器全链路离线(采集→特征→诊断)。昨日diagnosis建议降维度阈值0.6→0.35但引擎未执行(auction参数不在review_diagnosis rule关键词列表中)。"
+      "status": "ok",
+      "note": "✅ 今日恢复产出！auction_diagnosis.json生成于16:05。市场切换「trending多头市」（主力+106亿+全球共振）。诊断正确：权重需从「背离市侦察」切换「趋势市跟随」——price_slope 0.29→0.32, volume_accel 0.23→0.30, 压缩premium/sector_dev。竞价五维权重由auction_diagnosis独立处理，不在此处重复建议。"
     },
     "review": {
       "status": "warn",
-      "note": "reflection_log有今日记录，pool_rate=0%+missed=50连续8天。tips已准确识别根因('候选源过度依赖公告事件')但无法触发推荐引擎级修复——因为修复不在参数空间而在代码层(候选源管线)。"
+      "note": "🔴 P2 bug未修复：美能能源+9.98%+弘信电子+6.57%均在池内，但reflection_log仍报pool_rate=0%。review.py的pool_codes匹配逻辑与daily_pool真值不一致——系统连续9天基于假零数据做决策。GAINER_TOP_N=72（6/11从60调至），⏳观测中。涨幅阈值5%（6/10从6%调至），⏳观测中。"
     },
     "parliament": {
       "status": "warn",
-      "note": "49条日志中28条有rounds结构但0条含真实裁决(bias仅限于'中性'/'偏多'，confidence固定0.5)。实质仍是模板填充非真实辩论。今日15:15条目bull=2/bear=2/中性/conf=0.5与昨日完全相同。daily_pool.parliament={}持续为空。health_check污染已识别但未修复。"
+      "note": "🟡 第10天停摆。parliament_log今日3条全为rounds=0空壳（健康检查污染）。上次真实议会2026-06-02。crontab缺少researchers.py --parliament调度。非参数问题。"
     }
   },
   "rule_changes_suggested": [
     {
-      "rule": "涨幅数量",
-      "change": "涨幅数量从60增至72(第二步，目标80)",
-      "reason": "昨日预承诺：60→72(20%符合硬约束)为计划第二步。观测期满pool_rate仍0%→按计划递进。但需明确：此参数调整的是文工团捕获率统计口径，不影响推荐引擎候选源。真正的0%根因在mega_collector管线断裂，需代码级修复而非参数调整。",
-      "confidence": "medium"
+      "rule": "市值下限",
+      "change": "市值下限从40亿降低到32亿（第2/3步，目标30亿）",
+      "reason": "6/4第一步50→40后已过7个交易日观测期。今日池内2/8涨6%+（实际25%命中率），首板纳入生效（2只limit_up_first），说明放宽市值门槛有效。excluded.small_cap仅3只，空间充足。PE分位高企下中小盘弹性更大。",
+      "confidence": "high"
+    },
+    {
+      "rule": "市值上限",
+      "change": "市值上限从2400亿降低到2000亿（第2/3步，目标1000亿）",
+      "reason": "6/4第一步3000→2400后已过7个交易日。今日excluded.large_cap=0说明上限过滤已不再误杀（当前无>2400亿标的入候选）。继续收紧至2000亿向目标1000亿递进，聚焦中小盘弹性标的。",
+      "confidence": "high"
     }
   ],
   "no_change": false

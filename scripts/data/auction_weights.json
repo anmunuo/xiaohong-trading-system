@@ -1,12 +1,12 @@
 {
   "version": "2.0.0",
-  "updated_at": "2026-06-11T16:01:35.708343",
-  "total_samples": 15,
+  "updated_at": "2026-06-12T16:00:59.702203",
+  "total_samples": 18,
   "dimensions": {
     "price_slope": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.2525,
+      "weight": 0.2887,
       "hits": 0,
       "misses": 0,
       "accuracy": 0.5
@@ -14,7 +14,7 @@
     "volume_accel": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.2828,
+      "weight": 0.2268,
       "hits": 0,
       "misses": 0,
       "accuracy": 0.5
@@ -22,23 +22,23 @@
     "imbalance": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.202,
+      "weight": 0.2062,
       "hits": 0,
       "misses": 0,
       "accuracy": 0.5
     },
     "premium": {
       "alpha": 1,
-      "beta": 2,
-      "weight": 0.0808,
+      "beta": 3,
+      "weight": 0.0722,
       "hits": 0,
-      "misses": 1,
-      "accuracy": 0.3333
+      "misses": 2,
+      "accuracy": 0.25
     },
     "sector_dev": {
       "alpha": 1,
       "beta": 1,
-      "weight": 0.1818,
+      "weight": 0.2062,
       "hits": 0,
       "misses": 0,
       "accuracy": 0.5

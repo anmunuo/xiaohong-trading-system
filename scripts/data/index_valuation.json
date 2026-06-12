@@ -1,33 +1,33 @@
 {
-  "generated_at": "2026-06-11T23:42:24.360085",
+  "generated_at": "2026-06-12T08:28:26.473127",
   "indices": {
     "000016.SH": {
       "name": "上证50",
       "pe_ttm": 11.2,
-      "percentile": 67.4,
+      "percentile": 67.3,
       "signal": "🟠 合理偏高",
-      "history_points": 726
+      "history_points": 725
     },
     "000300.SH": {
       "name": "沪深300",
       "pe_ttm": 14.2,
-      "percentile": 90.4,
+      "percentile": 90.3,
       "signal": "🔴 偏贵",
-      "history_points": 726
+      "history_points": 725
     },
     "000905.SH": {
       "name": "中证500",
       "pe_ttm": 35.1,
       "percentile": 86.8,
       "signal": "🔴 偏贵",
-      "history_points": 726
+      "history_points": 725
     },
     "399006.SZ": {
       "name": "创业板指",
       "pe_ttm": 45.3,
       "percentile": 95.9,
       "signal": "🔴 偏贵",
-      "history_points": 726
+      "history_points": 725
     }
   },
   "summary": {

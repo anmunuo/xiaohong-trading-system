@@ -27,10 +27,10 @@ DB_PATH = Path(__file__).resolve().parent / 'data' / 'auction.db'
 # 五维权重（初始等权，后续由 learner 动态调整）
 DEFAULT_WEIGHTS = {
     'price_slope': 0.28,
-    'volume_accel': 0.22,
-    'imbalance': 0.20,
+    'volume_accel': 0.3,
+    'imbalance': 0.180,
     'premium': 0.14,
-    'sector_dev': 0.20,
+    'sector_dev': 0.130,
 }
 
 

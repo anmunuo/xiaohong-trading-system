@@ -136,14 +136,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": []
       }
     },
     {
@@ -281,14 +273,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": []
       }
     },
     {
@@ -425,16 +409,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": [
-          "美能能源: 小市值(32亿)，流动性风险"
-        ]
       }
     },
     {
@@ -572,14 +546,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": []
       }
     },
     {
@@ -715,14 +681,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": []
       }
     },
     {
@@ -858,16 +816,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": [
-          "川金诺: 小市值(62亿)，流动性风险"
-        ]
       }
     },
     {
@@ -1005,14 +953,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": []
       }
     },
     {
@@ -1148,14 +1088,6 @@
           "consensus_findings": [],
           "data_errors": []
         }
-      },
-      "parliament": {
-        "rounds": 3,
-        "bias": "中性",
-        "confidence": 0.5,
-        "bull_strength": 2,
-        "bear_strength": 2,
-        "critical_flags": []
       }
     }
   ],
@@ -1169,20 +1101,7 @@
   },
   "scout_additions": [],
   "scout_last_update": null,
-  "parliament": {
-    "bias": "中性",
-    "confidence": 0.5,
-    "bull_signals": 2,
-    "bear_signals": 2,
-    "red_flags": [
-      "review_diagnosis.json 严重过期 (15.3h)",
-      "auction_diagnosis.json 严重过期 (16.3h)",
-      "美能能源: 小市值(32亿)，流动性风险",
-      "川金诺: 小市值(62亿)，流动性风险",
-      "主力出货散户接盘——危险信号"
-    ],
-    "timestamp": "2026-06-12T08:27:01.882094"
-  },
+  "parliament": {},
   "methodology": {
     "factors": {
       "event": 0.35,

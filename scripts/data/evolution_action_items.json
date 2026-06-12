@@ -341,5 +341,41 @@
     "change_pct": "+20.0%",
     "processed_at": "2026-06-11T17:32:31.163894",
     "note": "观测期中。昨日6项进化变更(含涨幅6→5%)观测期满但pool_rate未改善——因根因在数据管线断裂非参数层。此变更继续既定分步计划。"
+  },
+  {
+    "id": "evol_20260612_001",
+    "date": "20260612",
+    "module": "recommender",
+    "param_id": "recommender_market_cap_min",
+    "rule": "市值下限",
+    "action": "市值下限 NOOP: 建议40→32(step2/3)，但实际代码值=30已低于目标30",
+    "current_value": 30,
+    "target_value": 30,
+    "review_suggested": "40→32",
+    "actual_status": "already_at_target",
+    "status": "noop",
+    "reason": "代码实际值30已到达分步目标，无需变更",
+    "source": "llm_review",
+    "confidence": "high",
+    "noop_reason": "code_value_already_equals_target",
+    "created_at": "2026-06-12T17:30:00"
+  },
+  {
+    "id": "evol_20260612_002",
+    "date": "20260612",
+    "module": "recommender",
+    "param_id": "recommender_market_cap_max",
+    "rule": "市值上限",
+    "action": "市值上限 NOOP: 建议2400→2000(step2/3)，但实际代码值=2000已等于建议值",
+    "current_value": 2000,
+    "target_value": 1000,
+    "review_suggested": "2400→2000",
+    "actual_status": "already_at_suggested_value",
+    "status": "noop",
+    "reason": "代码实际值2000已等于review建议值，无需变更。下一步2000→1000(-50%)需跨日渐进。",
+    "source": "llm_review",
+    "confidence": "high",
+    "noop_reason": "code_value_already_equals_suggested",
+    "created_at": "2026-06-12T17:30:00"
   }
 ]

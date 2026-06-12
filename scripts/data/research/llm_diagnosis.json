@@ -1,45 +1,92 @@
 {
-  "timestamp": "2026-06-12T02:07:45.648185",
+  "timestamp": "2026-06-13T02:10:00",
+  "context": "周六凌晨 — 市场休市，周末诊断模式",
   "scores": {
-    "data_integrity": 7,
+    "data_integrity": 6,
     "signal_quality": 8,
-    "execution_health": 7,
+    "execution_health": 6,
     "recommendation_quality": 5,
     "gap_risk": 5
   },
   "top_actions": [
     {
-      "priority": "P1",
-      "action": "接入 volatility_index（波指/VIX）— 市场恐慌指标可触发行情冷却机制保护持仓",
-      "rationale": "当前创业板指 PE 分位 95.9%、全市场估值偏贵，无恐慌指数意味着高位回落时无法自动触发防御。market_snapshot 已有指数 PE 分位数据，但缺波动率维度。可用 50ETF 波指替代。"
+      "priority": "P0",
+      "action": "排查 4 个 cron job 失败根因 — 582f5c3b/71c75c2f/aa6bc5ed(ea214c0b exit=1)",
+      "rationale": "连续 2 天出现 4 个 cron job 退出异常。虽为周末不会影响交易，但若周一不修复将导致 08:25 推荐引擎/09:15 竞价采集等关键任务仍失败。需在周一 07:00 前完成排查。"
     },
     {
       "priority": "P1",
-      "action": "修复 hot_events 数据质量 — 当前不稳定，影响推荐引擎 sentiment 因子评分的可靠性",
-      "rationale": "数据缺口扫描标记 P0，影响链路为 推荐引擎→daily_pool→瞭望塔/决策官。建议双通道（东方财富热度+百度搜索指数）交叉验证。"
+      "action": "修复 hot_events 数据质量 — 数据缺口扫描标记 P0，当前不稳定影响推荐引擎 sentiment 因子",
+      "rationale": "已连续标记 2 天未修复。影响链路为 推荐引擎→daily_pool→瞭望塔/决策官。建议双通道（东方财富热度+百度搜索指数）交叉验证。"
+    },
+    {
+      "priority": "P1",
+      "action": "接入 volatility_index（50ETF波指）— 创业板 96%分位无恐慌指标保护",
+      "rationale": "创业板 PE 45.3/分位 95.9%，20cm 涨停频现。缺失恐慌指数意味着高位回落时无法自动触发防御。market_snapshot 已有 PE 分位，缺波动率维度。"
     },
     {
       "priority": "P2",
-      "action": "推荐引擎候选源多元化 — 当前 8 只推荐全部来自 announcement 单一来源",
-      "rationale": "daily_pool 中 source=announcement 占比 100%，无 broker_views/hot_events/fund_flow 来源标的。08:25 推荐引擎运行时应检查多源候选覆盖。"
+      "action": "推荐引擎候选源多元化 — broker_views/hot_events/fund_flow 三源持续空产出",
+      "rationale": "daily_pool 6/12 8只 100% 来自 announcement 单一来源。连续 2 天同一问题。需检查 broker_views 采集链路是否断连、hot_events 是否被静默吞掉。"
     },
     {
       "priority": "P2",
-      "action": "接入 short_selling（融券余量）— 对高估值/创业板预警价值高",
-      "rationale": "创业板 PE 95.9% 分位 + 20cm 涨停频现，做空信号可辅助识别筹码过热。tushare margin_detail 可用。"
+      "action": "pool_rate=0% 连续 12 天 — 区分真实性能 vs 测量 artifact",
+      "rationale": "已知 P2 bug（review.py 盘前计算捕获率而非盘后），但连续 12 天 0% 需验证。建议次日手动交叉核对 daily_pool codes × 6%涨幅榜 codes 求交集。"
     }
   ],
   "trend": {
-    "vs_last_week": "improving",
-    "key_change": "KB 信号层从全空壳恢复为富内容（昨日 P0 修复生效），signal_quality 3→8；核心管线全线健康，cron 零故障",
-    "persistent_gaps": "4 项数据缺口持续未接入（volatility_index/hot_events/short_selling/institutional_holdings），其中 hot_events 影响推荐引擎评分"
+    "vs_last_week": "stable",
+    "vs_yesterday": "slightly_declining",
+    "key_change": "execution_health 7→6（4 cron failures 连续第二天出现）；market breadth 显著改善（龙虎榜涨跌比 22:23→39:19）但系统内部未受益",
+    "persistent_gaps": "4 项数据缺口持续未接入（volatility_index/hot_events/short_selling/institutional_holdings），6/12 诊断标记的 P0 hot_events 未修复",
+    "bright_spot": "KB 洞察层产出丰富且稳定（3批次 14+条实质洞察，四维全覆盖），signal_quality 在 8 分高位维持"
   },
   "diagnostic_detail": {
-    "kb_insights": "每小时消化 cron 正常产出，最近 3 批次含 14 条实质性洞察（外盘/板块/资金/风险四维全覆盖），置信度标注 medium-high",
-    "market_context": "指数估值整体偏贵（沪深300 90%分位/创业板 96%分位），但北向连续净流入（34.99亿）+ 外盘强势反弹，内外资信号共振偏多。矛盾点：估值说防御，情绪说进攻。",
-    "sector_signals": "溅射靶材四股 +20% → 半导体材料全链传导；合同签订 9.2% 占比回升 → 回购到产业落地的传导链初现；机器人+AI 新方向首次入池",
-    "risk_signals": "高位回落（凡拓数创-20%）+ ST 退市持续出清。主力净流出-694亿 vs 散户+536亿，短期资金面分歧。中国 5 月金融数据待发布，M1/M2 为本周最大宏观催化剂。",
-    "daily_pool_status": "8 只标的 scores 71.5-77.4，来源全为 announcement。fund 因子 57-82 有区分度，sentiment 因子 45-55 集中。age=18h 待 08:25 刷新。",
-    "sniperd": "active(running) since 6/1，1周3天无重启，PID 315353，内存 22.5M 健康"
+    "weekend_note": "周六 02:10 CST，市场休市。Silver/Gold/Factor IC/Parliament 等交易日管线「未产出」属预期行为，不在此次诊断中标记为异常。",
+    "kb_insights": {
+      "status": "healthy",
+      "batches_24h": 3,
+      "total_insights": 14,
+      "latest": "2026-06-13T00:09 — 龙虎榜涨跌比39:19逆转 / 北向49.1亿 / 回购密度27.3%边际回落 / 财达证券+10%首登龙虎榜",
+      "dimensions": ["sentiment_shift", "fund_signal", "risk_alert", "sector_anomaly"],
+      "confidence_range": "medium-high"
+    },
+    "market_context": {
+      "last_trading": "6/12 周五",
+      "north_flow": "49.1亿净流入（沪23.9+深25.2，T-1日终，_quality=T-1）",
+      "dragon_tiger": "涨跌比39:19（vs 昨日22:23），市场宽度显著回暖",
+      "index_valuation": "沪深300 PE 14.2/分位90.3%、创业板 PE 45.3/分位95.9% — 整体偏贵",
+      "main_flow": "主力净流出-298亿 vs 散户+238亿 — 短期资金面分歧",
+      "margin": "融资余额14537亿，5日趋势+0.38%，平稳",
+      "external": "美股外盘动能衰减（道指+0.48%、纳指-0.21%），周一A股缺乏强力顺风",
+      "key_narrative": "金融+军工双线崛起，半导体靶材全链爆发。估值说防御、情绪说进攻——矛盾未解"
+    },
+    "daily_pool_status": {
+      "generated": "2026-06-12T08:04",
+      "count": 8,
+      "top3": ["688550 瑞联新材 78.1", "600779 水井坊 67.7", "001299 美能能源 64.4"],
+      "source_distribution": {"announcement": 8},
+      "parliament": "bias=中性 confidence=0.5",
+      "age_hours": 18.1,
+      "note": "待周一 08:25 刷新"
+    },
+    "sniperd": {
+      "status": "active(running)",
+      "since": "2026-06-01",
+      "pid": 315353,
+      "memory_mb": 22.7,
+      "state": "等待开盘 — 周一 09:29 (约55小时后)"
+    },
+    "cron_errors": {
+      "failed_jobs": ["582f5c3b", "71c75c2f", "aa6bc5ed", "ea214c0b(exit=1)"],
+      "diagnosis": "4 个 cron job 脚本执行失败，缺少 job ID→脚本名映射，难以定位具体失败模块",
+      "suggestion": "使用 hermes cronjob list 获取 job ID 到脚本的映射，逐一检查对应 output 文件"
+    },
+    "index_trust_degraded": {
+      "detail": "index_data 信任度 DEGRADED（1/5 gate 失败，★☆☆☆☆）",
+      "impact": "瞭望塔/决策官 LLM 使用的指数数据可能不可靠",
+      "suggestion": "交叉验证 — 手动对比东方财富/同花顺实时指数 vs 当前 market_snapshot 中数值"
+    }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "2.2.0",
-  "updated_at": "2026-06-12T02:01:20.188785",
+  "updated_at": "2026-06-13T02:01:26.159600",
   "hypotheses": {
     "data_20260604220204_001": {
       "id": "data_20260604220204_001",
@@ -966,9 +966,9 @@
       "id": "flow_20260607020112_011",
       "statement": "北向单日流入36亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.2857,
+      "confidence": 0.2,
       "alpha": 2,
-      "beta": 5,
+      "beta": 8,
       "evidence_for": [
         "上证+1.28%"
       ],
@@ -976,12 +976,15 @@
         "上证-0.74%",
         "上证-1.70%",
         "上证-0.42%",
+        "上证-0.16%",
+        "上证-0.16%",
+        "上证-0.16%",
         "上证-0.16%"
       ],
       "created_at": "2026-06-07 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
-      "status": "active",
+      "updated_at": "2026-06-12 08:12",
+      "verified_at": "2026-06-12 08:12",
+      "status": "rejected",
       "related_symbols": [],
       "source": "flow"
     },
@@ -1171,20 +1174,24 @@
       "id": "flow_20260608020131_011",
       "statement": "北向单日流入42亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.3333,
-      "alpha": 2,
-      "beta": 4,
+      "confidence": 0.3,
+      "alpha": 3,
+      "beta": 7,
       "evidence_for": [
-        "上证+1.28%"
+        "上证+1.28%",
+        "上证+1.12%"
       ],
       "evidence_against": [
         "上证-1.70%",
         "上证-0.42%",
+        "上证-0.16%",
+        "上证-0.16%",
+        "上证-0.16%",
         "上证-0.16%"
       ],
       "created_at": "2026-06-08 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -1357,19 +1364,23 @@
       "id": "flow_20260609020140_010",
       "statement": "北向单日流入37亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.4,
-      "alpha": 2,
-      "beta": 3,
+      "confidence": 0.3333,
+      "alpha": 3,
+      "beta": 6,
       "evidence_for": [
-        "上证+1.28%"
+        "上证+1.28%",
+        "上证+1.12%"
       ],
       "evidence_against": [
         "上证-0.42%",
+        "上证-0.16%",
+        "上证-0.16%",
+        "上证-0.16%",
         "上证-0.16%"
       ],
       "created_at": "2026-06-09 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
       "status": "active",
       "related_symbols": [],
       "source": "flow"
@@ -1378,18 +1389,19 @@
       "id": "data_20260610020116_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
-      "status": "active",
+      "updated_at": "2026-06-12 08:11",
+      "verified_at": "2026-06-12 08:11",
+      "status": "rejected",
       "related_symbols": [],
       "source": "data"
     },
@@ -1642,18 +1654,19 @@
       "id": "flow_20260610020119_015",
       "statement": "北向单日流入36亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.25,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 3,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
         "上证-0.42%",
+        "上证-0.16%",
         "上证-0.16%"
       ],
       "created_at": "2026-06-10 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
-      "status": "active",
+      "updated_at": "2026-06-12 08:11",
+      "verified_at": "2026-06-12 08:11",
+      "status": "rejected",
       "related_symbols": [],
       "source": "flow"
     },
@@ -1661,17 +1674,19 @@
       "id": "data_20260611020148_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.3333,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 2,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "当前过期数据源: 2个",
+        "当前过期数据源: 2个",
         "当前过期数据源: 2个"
       ],
       "created_at": "2026-06-11 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
-      "status": "active",
+      "updated_at": "2026-06-12 08:12",
+      "verified_at": "2026-06-12 08:12",
+      "status": "rejected",
       "related_symbols": [],
       "source": "data"
     },
@@ -1897,17 +1912,19 @@
       "id": "flow_20260611020151_014",
       "statement": "北向单日流入35亿，次日上证上涨概率>60%",
       "category": "market",
-      "confidence": 0.3333,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 2,
+      "beta": 4,
       "evidence_for": [],
       "evidence_against": [
+        "上证-0.16%",
+        "上证-0.16%",
         "上证-0.16%"
       ],
       "created_at": "2026-06-11 02:01",
-      "updated_at": "2026-06-12 02:01",
-      "verified_at": "2026-06-12 02:01",
-      "status": "active",
+      "updated_at": "2026-06-12 08:12",
+      "verified_at": "2026-06-12 08:12",
+      "status": "rejected",
       "related_symbols": [],
       "source": "flow"
     },
@@ -1915,15 +1932,19 @@
       "id": "data_20260612020116_001",
       "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
       "category": "data",
-      "confidence": 0.55,
+      "confidence": 0.2,
       "alpha": 1,
-      "beta": 1,
+      "beta": 4,
       "evidence_for": [],
-      "evidence_against": [],
+      "evidence_against": [
+        "当前过期数据源: 2个",
+        "当前过期数据源: 2个",
+        "当前过期数据源: 2个"
+      ],
       "created_at": "2026-06-12 02:01",
-      "updated_at": "",
-      "verified_at": "",
-      "status": "active",
+      "updated_at": "2026-06-12 08:12",
+      "verified_at": "2026-06-12 08:12",
+      "status": "rejected",
       "related_symbols": [],
       "source": "data"
     },
@@ -2147,12 +2168,974 @@
       "id": "flow_20260612020120_014",
       "statement": "北向单日流入34亿，次日上证上涨概率>60%",
       "category": "market",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "上证-0.16%",
+        "上证-0.16%",
+        "上证-0.16%"
+      ],
+      "created_at": "2026-06-12 02:01",
+      "updated_at": "2026-06-12 08:12",
+      "verified_at": "2026-06-12 08:12",
+      "status": "rejected",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260612081134_001": {
+      "id": "data_20260612081134_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "当前过期数据源: 2个",
+        "当前过期数据源: 2个",
+        "当前过期数据源: 2个"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260612081138_002": {
+      "id": "technical_20260612081138_002",
+      "statement": "瑞联新材(688550) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "688550 MA20偏离+0.0%",
+        "688550 MA20偏离+0.0%",
+        "688550 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "688550"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_003": {
+      "id": "technical_20260612081138_003",
+      "statement": "水井坊(600779) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "600779 MA20偏离+0.0%",
+        "600779 MA20偏离+0.0%",
+        "600779 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "600779"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_004": {
+      "id": "technical_20260612081138_004",
+      "statement": "美能能源(001299) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "001299 MA20偏离+0.0%",
+        "001299 MA20偏离+0.0%",
+        "001299 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_005": {
+      "id": "technical_20260612081138_005",
+      "statement": "弘信电子(300657) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "300657 MA20偏离+0.0%",
+        "300657 MA20偏离+0.0%",
+        "300657 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "300657"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_006": {
+      "id": "technical_20260612081138_006",
+      "statement": "汇顶科技(603160) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "603160 MA20偏离+0.0%",
+        "603160 MA20偏离+0.0%",
+        "603160 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "603160"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_007": {
+      "id": "technical_20260612081138_007",
+      "statement": "川金诺(300505) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "300505 MA20偏离+0.0%",
+        "300505 MA20偏离+0.0%",
+        "300505 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_008": {
+      "id": "technical_20260612081138_008",
+      "statement": "中集车辆(301039) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "301039 MA20偏离+0.0%",
+        "301039 MA20偏离+0.0%",
+        "301039 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "301039"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081138_009": {
+      "id": "technical_20260612081138_009",
+      "statement": "莱克电气(603355) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "603355 MA20偏离+0.0%",
+        "603355 MA20偏离+0.0%",
+        "603355 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "603355"
+      ],
+      "source": "technical"
+    },
+    "bear_20260612081138_010": {
+      "id": "bear_20260612081138_010",
+      "statement": "美能能源(001299) 小市值(32亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.2,
+      "alpha": 1,
+      "beta": 4,
+      "evidence_for": [],
+      "evidence_against": [
+        "001299 波动0.0%",
+        "001299 波动0.0%",
+        "001299 波动0.0%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "rejected",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "bear"
+    },
+    "bear_20260612081138_011": {
+      "id": "bear_20260612081138_011",
+      "statement": "川金诺(300505) 小市值(62亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.8,
+      "alpha": 4,
+      "beta": 1,
+      "evidence_for": [
+        "300505 波动10.0%",
+        "300505 波动10.0%",
+        "300505 波动10.0%"
+      ],
+      "evidence_against": [],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "confirmed",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "bear"
+    },
+    "flow_20260612081138_012": {
+      "id": "flow_20260612081138_012",
+      "statement": "北向单日流入34亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.4,
+      "alpha": 2,
+      "beta": 3,
+      "evidence_for": [
+        "上证+1.12%"
+      ],
+      "evidence_against": [
+        "上证-0.16%",
+        "上证-0.16%"
+      ],
+      "created_at": "2026-06-12 08:11",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260612081215_001": {
+      "id": "data_20260612081215_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "当前过期数据源: 2个",
+        "当前过期数据源: 2个"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260612081219_002": {
+      "id": "technical_20260612081219_002",
+      "statement": "瑞联新材(688550) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "688550 MA20偏离+0.0%",
+        "688550 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "688550"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_003": {
+      "id": "technical_20260612081219_003",
+      "statement": "水井坊(600779) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "600779 MA20偏离+0.0%",
+        "600779 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "600779"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_004": {
+      "id": "technical_20260612081219_004",
+      "statement": "美能能源(001299) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "001299 MA20偏离+0.0%",
+        "001299 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_005": {
+      "id": "technical_20260612081219_005",
+      "statement": "弘信电子(300657) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "300657 MA20偏离+0.0%",
+        "300657 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "300657"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_006": {
+      "id": "technical_20260612081219_006",
+      "statement": "汇顶科技(603160) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "603160 MA20偏离+0.0%",
+        "603160 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "603160"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_007": {
+      "id": "technical_20260612081219_007",
+      "statement": "川金诺(300505) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "300505 MA20偏离+0.0%",
+        "300505 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_008": {
+      "id": "technical_20260612081219_008",
+      "statement": "中集车辆(301039) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "301039 MA20偏离+0.0%",
+        "301039 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "301039"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081219_009": {
+      "id": "technical_20260612081219_009",
+      "statement": "莱克电气(603355) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "603355 MA20偏离+0.0%",
+        "603355 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "603355"
+      ],
+      "source": "technical"
+    },
+    "bear_20260612081219_010": {
+      "id": "bear_20260612081219_010",
+      "statement": "美能能源(001299) 小市值(32亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.25,
+      "alpha": 1,
+      "beta": 3,
+      "evidence_for": [],
+      "evidence_against": [
+        "001299 波动0.0%",
+        "001299 波动0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "bear"
+    },
+    "bear_20260612081219_011": {
+      "id": "bear_20260612081219_011",
+      "statement": "川金诺(300505) 小市值(62亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.75,
+      "alpha": 3,
+      "beta": 1,
+      "evidence_for": [
+        "300505 波动10.0%",
+        "300505 波动10.0%"
+      ],
+      "evidence_against": [],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "bear"
+    },
+    "flow_20260612081219_012": {
+      "id": "flow_20260612081219_012",
+      "statement": "北向单日流入34亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.5,
+      "alpha": 2,
+      "beta": 2,
+      "evidence_for": [
+        "上证+1.12%"
+      ],
+      "evidence_against": [
+        "上证-0.16%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260612081254_001": {
+      "id": "data_20260612081254_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "当前过期数据源: 2个"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260612081257_002": {
+      "id": "technical_20260612081257_002",
+      "statement": "瑞联新材(688550) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "688550 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "688550"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_003": {
+      "id": "technical_20260612081257_003",
+      "statement": "水井坊(600779) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "600779 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "600779"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_004": {
+      "id": "technical_20260612081257_004",
+      "statement": "美能能源(001299) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "001299 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_005": {
+      "id": "technical_20260612081257_005",
+      "statement": "弘信电子(300657) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "300657 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "300657"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_006": {
+      "id": "technical_20260612081257_006",
+      "statement": "汇顶科技(603160) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "603160 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "603160"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_007": {
+      "id": "technical_20260612081257_007",
+      "statement": "川金诺(300505) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "300505 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_008": {
+      "id": "technical_20260612081257_008",
+      "statement": "中集车辆(301039) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "301039 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "301039"
+      ],
+      "source": "technical"
+    },
+    "technical_20260612081257_009": {
+      "id": "technical_20260612081257_009",
+      "statement": "莱克电气(603355) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "603355 MA20偏离+0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "603355"
+      ],
+      "source": "technical"
+    },
+    "bear_20260612081257_010": {
+      "id": "bear_20260612081257_010",
+      "statement": "美能能源(001299) 小市值(32亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.3333,
+      "alpha": 1,
+      "beta": 2,
+      "evidence_for": [],
+      "evidence_against": [
+        "001299 波动0.0%"
+      ],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "bear"
+    },
+    "bear_20260612081257_011": {
+      "id": "bear_20260612081257_011",
+      "statement": "川金诺(300505) 小市值(62亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.6667,
+      "alpha": 2,
+      "beta": 1,
+      "evidence_for": [
+        "300505 波动10.0%"
+      ],
+      "evidence_against": [],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "bear"
+    },
+    "flow_20260612081257_012": {
+      "id": "flow_20260612081257_012",
+      "statement": "北向单日流入34亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.6667,
+      "alpha": 2,
+      "beta": 1,
+      "evidence_for": [
+        "上证+1.12%"
+      ],
+      "evidence_against": [],
+      "created_at": "2026-06-12 08:12",
+      "updated_at": "2026-06-13 02:01",
+      "verified_at": "2026-06-13 02:01",
+      "status": "active",
+      "related_symbols": [],
+      "source": "flow"
+    },
+    "data_20260613020122_001": {
+      "id": "data_20260613020122_001",
+      "statement": "多个数据源(2个)时效性下降，可能是上游API变更",
+      "category": "data",
       "confidence": 0.55,
       "alpha": 1,
       "beta": 1,
       "evidence_for": [],
       "evidence_against": [],
-      "created_at": "2026-06-12 02:01",
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [],
+      "source": "data"
+    },
+    "technical_20260613020126_002": {
+      "id": "technical_20260613020126_002",
+      "statement": "瑞联新材(688550) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "688550"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_003": {
+      "id": "technical_20260613020126_003",
+      "statement": "水井坊(600779) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "600779"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_004": {
+      "id": "technical_20260613020126_004",
+      "statement": "美能能源(001299) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_005": {
+      "id": "technical_20260613020126_005",
+      "statement": "弘信电子(300657) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "300657"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_006": {
+      "id": "technical_20260613020126_006",
+      "statement": "汇顶科技(603160) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603160"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_007": {
+      "id": "technical_20260613020126_007",
+      "statement": "川金诺(300505) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_008": {
+      "id": "technical_20260613020126_008",
+      "statement": "中集车辆(301039) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "301039"
+      ],
+      "source": "technical"
+    },
+    "technical_20260613020126_009": {
+      "id": "technical_20260613020126_009",
+      "statement": "莱克电气(603355) MA20附近盘整，预计5日内选择向上突破",
+      "category": "stock",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "603355"
+      ],
+      "source": "technical"
+    },
+    "bear_20260613020126_010": {
+      "id": "bear_20260613020126_010",
+      "statement": "美能能源(001299) 小市值(32亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "001299"
+      ],
+      "source": "bear"
+    },
+    "bear_20260613020126_011": {
+      "id": "bear_20260613020126_011",
+      "statement": "川金诺(300505) 小市值(62亿)流动性风险将导致日内波动>5%",
+      "category": "risk",
+      "confidence": 0.5,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
+      "updated_at": "",
+      "verified_at": "",
+      "status": "active",
+      "related_symbols": [
+        "300505"
+      ],
+      "source": "bear"
+    },
+    "flow_20260613020126_012": {
+      "id": "flow_20260613020126_012",
+      "statement": "北向单日流入49亿，次日上证上涨概率>60%",
+      "category": "market",
+      "confidence": 0.55,
+      "alpha": 1,
+      "beta": 1,
+      "evidence_for": [],
+      "evidence_against": [],
+      "created_at": "2026-06-13 02:01",
       "updated_at": "",
       "verified_at": "",
       "status": "active",
@@ -2163,10 +3146,10 @@
   "agenda": [],
   "gaps": [],
   "stats": {
-    "total_hypotheses": 113,
-    "confirmed": 0,
-    "rejected": 12,
-    "total_verifications": 100,
+    "total_hypotheses": 161,
+    "confirmed": 1,
+    "rejected": 29,
+    "total_verifications": 195,
     "accuracy": 0.0
   }
 }

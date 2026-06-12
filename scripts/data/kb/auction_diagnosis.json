@@ -1,31 +1,38 @@
 {
-  "timestamp": "2026-06-11T16:09:46",
-  "market_condition": "volatile",
+  "timestamp": "2026-06-12T16:05:00",
+  "market_condition": "trending",
   "market_context": {
     "shanghai": {
-      "close": 3987.01,
-      "change_pct": -0.16
+      "close": 4031.51,
+      "change_pct": 1.12
+    },
+    "shenzhen": {
+      "close": 14963.41,
+      "change_pct": 0.75
     },
     "us_dow": {
-      "change_pct": -1.87
+      "change_pct": 1.86
     },
     "us_nasdaq": {
-      "change_pct": -1.98
+      "change_pct": 2.54
     },
-    "main_net_flow_billion": -694.46,
-    "narrative": "指数维稳+主力巨量撤退——典型背离市"
+    "nikkei": {
+      "change_pct": 2.73
+    },
+    "main_net_flow_billion": 106.64,
+    "narrative": "全球共振上涨——美股+1.75~2.54%、日经+2.73%、上证+1.12%，主力净流入+106亿，典型趋势多头市"
   },
   "data_quality": {
-    "total_samples": 15,
+    "total_samples": 18,
     "dimensions_with_feedback": 1,
-    "warning": "样本极度不足，本次建议基于市场结构推理而非统计收敛"
+    "warning": "样本量18，仅premium维度有2次实际反馈。其余四维仍处于Bayesian先验状态(alpha=1,beta=1,accuracy=0.5)。权重调整依赖市场结构推理而非统计收敛。"
   },
   "weights_current": {
-    "price_slope": 0.2525,
-    "volume_accel": 0.2828,
-    "imbalance": 0.202,
-    "premium": 0.0808,
-    "sector_dev": 0.1818
+    "price_slope": 0.2887,
+    "volume_accel": 0.2268,
+    "imbalance": 0.2062,
+    "premium": 0.0722,
+    "sector_dev": 0.2062
   },
   "accuracy_trend": {
     "price_slope": "stable",
@@ -34,13 +41,13 @@
     "premium": "declining",
     "sector_dev": "stable"
   },
-  "diagnosis": "【数据饥渴】Bayesian学习器仅积累15个样本、1次实际反馈（premium维度1次miss）。 当前权重本质是均匀先验+单一噪声事件驱动——premium因1次miss被从~0.20锤至0.08（-55%），过度反应。 volume_accel以0.283居首但零证据支撑；price_slope和imbalance在「指数微跌+主力巨量流出(-694亿)」的背离市中本应更有判别力，却被压在低位。 结论：权重配置未反映当前市场结构，需向量价真实性维度倾斜。",
+  "diagnosis": "【市场切换·趋势多头】昨日volatile背离市(主力-694亿)已被今日trending共振市(主力+106亿+全球齐涨)彻底翻转。当前权重延续昨日背离市逻辑——price_slope(0.29)和volume_accel(0.23)在趋势市中偏低，imbalance(0.21)和sector_dev(0.21)偏高。premium从2次miss持续被罚(α=1,β=3,acc=0.25)，在趋势市中这是正确的——溢价信号趋势市中噪音化，不应像昨日诊断建议那样回调至0.14。结论：权重需从「背离市侦察」模式切换到「趋势市跟随」模式——向价量方向性维度倾斜，压缩噪音维度。",
   "recommendation": {
-    "price_slope": 0.28,
-    "volume_accel": 0.22,
-    "imbalance": 0.25,
-    "premium": 0.14,
-    "sector_dev": 0.11
+    "price_slope": 0.32,
+    "volume_accel": 0.3,
+    "imbalance": 0.18,
+    "premium": 0.07,
+    "sector_dev": 0.13
   },
-  "reasoning": "1. premium(0.08→0.14): 仅1次miss就剥夺55%权重过于激进。Bayesian学习在样本<50时的beta更新应更保守。\n2. volume_accel(0.28→0.22): 当前最高权重完全来自均匀先验，无任何实证。在主力净流出694亿的背离日，竞价量能放大更可能是恐慌盘而非真实方向。\n3. price_slope(0.25→0.28)+imbalance(0.20→0.25): 背离市的核心特征是「指数不跌但钱在跑」——竞价阶段的价格斜率和买卖不平衡比量能更真实反映主力意图。\n4. sector_dev(0.18→0.11): 系统性资金流出时板块偏离的信号被淹没，降低权重避免噪音。\n5. 市场环境: 上证-0.16%表面平稳，但主力净流出694亿+美股隔夜大跌(DOW-1.87%/NASDAQ-1.98%)→判定为volatile背离市。"
+  "reasoning": "1. price_slope(0.29→0.32,+0.03): 趋势市的价格方向是竞价阶段最直接的信号。昨收→竞价价的方向偏差在多头市中判别力显著提升。\n2. volume_accel(0.23→0.30,+0.07): 趋势市最关键的确认维度。竞价量能放大+价格同向=真实资金进场，假突破少。今日主力净流入+106亿佐证量能可信度。\n3. imbalance(0.21→0.18,-0.03): 趋势市中买卖盘不平衡的边际信息量下降——大家都在买，盘口深度不再稀缺信号。\n4. premium(0.07→0.07,不变): 维持惩罚状态。2次miss验证了溢价在竞价阶段高度噪音化。昨日诊断建议回调至0.14的判断被今日趋势环境证伪——趋势市中溢价更不可靠。\n5. sector_dev(0.21→0.13,-0.08): 全球共振上涨→板块齐涨削弱了板块偏离的判别力。当95%板块都涨时，sector_dev区分度归零。\n6. 前瞻：若明日趋势延续，volume_accel可进一步升至0.33；若趋势反转回volatile，需回退至昨日配置(price_slope+imbalance主导)。"
 }

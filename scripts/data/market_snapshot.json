@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-06-11 23:42:20",
+  "generated_at": "2026-06-12 08:28:22",
   "generated_by": "market_snapshot.py v1.0",
   "global_indices": {
     "us": {
       "dow": [
-        50074.74,
-        0.31
+        50848.75,
+        1.86
       ],
       "sp500": [
-        7259.97,
-        -0.1
+        7394.3,
+        1.75
       ],
       "nasdaq": [
-        25116.35,
-        -0.21
+        25809.66,
+        2.54
       ]
     },
     "europe": {
@@ -42,17 +42,17 @@
     }
   },
   "north_flow": {
-    "net_flow": 34.99,
-    "status": "🟢 35.0亿元 净流入",
-    "detail": "沪股通:16.6亿, 深股通:18.3亿",
-    "date": "20260610",
+    "net_flow": 33.93,
+    "status": "🟢 33.9亿元 净流入",
+    "detail": "沪股通:16.0亿, 深股通:18.0亿",
+    "date": "20260611",
     "data_type": "T-1日终（非实时） (滞后1天)",
     "data_source": "tushare_pro",
     "_quality": "T-1",
     "_quality_stamp": {
       "data_type": "north_flow",
       "source": "get_north_flow",
-      "collected_at": "2026-06-11T23:01:52.812492",
+      "collected_at": "2026-06-12T08:01:01.798313",
       "freshness": "T-0",
       "trust": "VERIFIED",
       "passed_gates": [
@@ -63,16 +63,14 @@
         "trend"
       ],
       "failed_gates": [],
-      "warnings": [
-        "与tushare原始值偏差1.1亿"
-      ],
+      "warnings": [],
       "repair_hint": "",
       "stars": "★★★☆☆"
     }
   },
   "market_money": {
-    "main_net": -694.46,
-    "retail_net": 536.24
+    "main_net": -298.16,
+    "retail_net": 238.11
   },
   "index_valuation": {
     "avg_pe_ttm": 26.4,
@@ -84,30 +82,30 @@
       "000016.SH": {
         "name": "上证50",
         "pe_ttm": 11.2,
-        "percentile": 67.4,
+        "percentile": 67.3,
         "signal": "🟠 合理偏高",
-        "history_points": 726
+        "history_points": 725
       },
       "000300.SH": {
         "name": "沪深300",
         "pe_ttm": 14.2,
-        "percentile": 90.4,
+        "percentile": 90.3,
         "signal": "🔴 偏贵",
-        "history_points": 726
+        "history_points": 725
       },
       "000905.SH": {
         "name": "中证500",
         "pe_ttm": 35.1,
         "percentile": 86.8,
         "signal": "🔴 偏贵",
-        "history_points": 726
+        "history_points": 725
       },
       "399006.SZ": {
         "name": "创业板指",
         "pe_ttm": 45.3,
         "percentile": 95.9,
         "signal": "🔴 偏贵",
-        "history_points": 726
+        "history_points": 725
       }
     }
   },
@@ -116,11 +114,11 @@
     "buy_amount": 1196.0,
     "short_balance": 133.0,
     "buy_ratio": 8.2,
-    "trend_5d_pct": 0.4,
+    "trend_5d_pct": 0.38,
     "signal": "🟡 平稳"
   },
   "sector_flow_top5": [],
   "external_futures": {},
-  "narrative": "亚太: nikkei+0.1% | hangseng-0.7% | shanghai-0.2% | 美股: dow+0.31% | 北向净流入35.0亿 | 估值: 轻仓/防御（整体偏贵）(分位85.1%) | 融资: 🟡 平稳 (+0.4%)",
+  "narrative": "亚太: nikkei+0.1% | hangseng-0.7% | shanghai-0.2% | 美股: dow+1.86% | sp500+1.75% | nasdaq+2.54% | 北向净流入33.9亿 | 估值: 轻仓/防御（整体偏贵）(分位85.1%) | 融资: 🟡 平稳 (+0.4%)",
   "alerts": []
 }

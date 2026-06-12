@@ -1,0 +1,10 @@
+{
+  "date": "2026-06-12",
+  "n_stocks": 5198,
+  "n_clean": 0,
+  "n_suspended": 0,
+  "n_outliers": 7,
+  "n_missing": 0,
+  "quality_issues": [],
+  "generated_at": "2026-06-12T15:45:03.174786"
+}

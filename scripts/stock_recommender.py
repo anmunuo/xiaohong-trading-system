@@ -184,11 +184,10 @@ class StockRecommender:
             context = parliament.load_context()
             context["topic"] = f"推荐引擎选股验证 ({len(self.recommendations)}只)"
             context["pool_stocks"] = self.recommendations
-            result = parliament.execute(topic=context["topic"])
-            # 将议会结论注入推荐池元数据
-            verdict = result.get("round3", {}).get("verdict", {})
-            self._parliament_verdict = verdict
-        except Exception:
+            result = parliament.debate(topic=context["topic"])
+            # verdict 是 debate() 返回的顶层 dict，含 bias/confidence/bull_signals 等
+            self._parliament_verdict = result
+        except Exception as e:
             pass  # 议会失败不影响选股流程
 
     # ═══════════════════════════════════════════
@@ -1235,11 +1234,10 @@ class StockRecommender:
         if parliament_verdict:
             parliament_field = {
                 'bias': parliament_verdict.get('bias', 'neutral'),
-                'confidence': parliament_verdict.get('overall_confidence', 0.5),
-                'bull_signals': parliament_verdict.get('bull_strength', 0),
-                'bear_signals': parliament_verdict.get('bear_strength', 0),
-                'red_flags': parliament_verdict.get('critical_flags', []),
-                'recommendation': parliament_verdict.get('recommendation', ''),
+                'confidence': parliament_verdict.get('confidence', 0.5),
+                'bull_signals': parliament_verdict.get('bull_signals', 0),
+                'bear_signals': parliament_verdict.get('bear_signals', 0),
+                'red_flags': parliament_verdict.get('red_flags', []),
                 'timestamp': parliament_verdict.get('timestamp', '')
             }
 

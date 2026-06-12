@@ -1996,7 +1996,50 @@ def run_parliament():
     report_path.write_text('\n'.join(lines))
     print(f"📁 议会报告: {report_path}")
 
+    # 🆕 v2.0: 将议会结论写入 daily_pool.json
+    _inject_parliament_to_pool(verdict)
+
     return verdict
+
+
+def _inject_parliament_to_pool(verdict: Dict) -> None:
+    """将议会结论注入 daily_pool.json 的 parliament 字段"""
+    pool_path = SCRIPT_DIR / "data" / "daily_pool.json"
+    if not pool_path.exists():
+        return
+    try:
+        pool = json.loads(pool_path.read_text())
+        # 全局议会字段
+        pool['parliament'] = {
+            'bias': verdict.get('bias', '?'),
+            'confidence': verdict.get('confidence', 0),
+            'bull_signals': verdict.get('bull_signals', 0),
+            'bear_signals': verdict.get('bear_signals', 0),
+            'red_flags': verdict.get('red_flags', [])[:5],
+            'timestamp': verdict.get('timestamp', ''),
+        }
+        # 逐只标的注入议会交叉验证结论
+        reports = verdict.get('reports', [])
+        for rec in pool.get('recommendations', []):
+            code = rec.get('code', '')
+            # 从研究员报告中提取该标的的结论
+            stock_flags = []
+            for rpt in reports:
+                for f in rpt.red_flags:
+                    if code in str(f) or rec.get('name', '') in str(f):
+                        stock_flags.append(f)
+            rec['parliament'] = {
+                'rounds': 3,
+                'bias': verdict.get('bias', '?'),
+                'confidence': verdict.get('confidence', 0),
+                'bull_strength': verdict.get('bull_signals', 0),
+                'bear_strength': verdict.get('bear_signals', 0),
+                'critical_flags': stock_flags[:3],
+            }
+        pool_path.write_text(json.dumps(pool, ensure_ascii=False, indent=2))
+        print(f"📥 议会结论已注入 daily_pool.json (bias={verdict.get('bias','?')})")
+    except Exception as e:
+        print(f"⚠️ 议会注入 daily_pool 失败: {e}")
 
 
 def run_verify_only():

@@ -169,6 +169,20 @@
         "603987",
         "300827"
       ]
+    },
+    {
+      "date": "20260612",
+      "stock_count": 8,
+      "stocks": [
+        "688550",
+        "600779",
+        "001299",
+        "300657",
+        "603160",
+        "300505",
+        "301039",
+        "603355"
+      ]
     }
   ],
   "stocks": [
@@ -285,6 +299,13 @@
           "change_pct": 27.35,
           "vs_entry_pct": 43.51,
           "volume": 54700343.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 31.96,
+          "change_pct": 2.44,
+          "vs_entry_pct": 47.01,
+          "volume": 143926029.0
         }
       ],
       "exit": {}
@@ -341,6 +362,13 @@
           "change_pct": -6.82,
           "vs_entry_pct": -3.28,
           "volume": 3228145.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 53.4,
+          "change_pct": -1.13,
+          "vs_entry_pct": -4.37,
+          "volume": 3621100.0
         }
       ],
       "exit": {}
@@ -458,6 +486,13 @@
           "change_pct": 2.77,
           "vs_entry_pct": 9.03,
           "volume": 15392194.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 38.35,
+          "change_pct": -4.32,
+          "vs_entry_pct": 4.33,
+          "volume": 14519212.0
         }
       ],
       "exit": {}
@@ -791,6 +826,13 @@
           "change_pct": 0.25,
           "vs_entry_pct": 1.6,
           "volume": 3916018.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 16.18,
+          "change_pct": 1.83,
+          "vs_entry_pct": 3.45,
+          "volume": 7321707.0
         }
       ],
       "exit": {}
@@ -840,6 +882,13 @@
           "change_pct": 2.94,
           "vs_entry_pct": -0.68,
           "volume": 3161139.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 50.48,
+          "change_pct": 0.9,
+          "vs_entry_pct": 0.22,
+          "volume": 6253684.0
         }
       ],
       "exit": {}
@@ -889,6 +938,13 @@
           "change_pct": -1.43,
           "vs_entry_pct": -4.56,
           "volume": 2377289.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 27.99,
+          "change_pct": 1.23,
+          "vs_entry_pct": -3.38,
+          "volume": 3178966.0
         }
       ],
       "exit": {}
@@ -938,6 +994,13 @@
           "change_pct": -8.33,
           "vs_entry_pct": 1.81,
           "volume": 892782828.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 4.55,
+          "change_pct": 0.89,
+          "vs_entry_pct": 2.71,
+          "volume": 1201376692.0
         }
       ],
       "exit": {}
@@ -987,6 +1050,13 @@
           "change_pct": -0.89,
           "vs_entry_pct": -2.65,
           "volume": 4680015.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 30.48,
+          "change_pct": 0.99,
+          "vs_entry_pct": -1.68,
+          "volume": 6518310.0
         }
       ],
       "exit": {}
@@ -1056,7 +1126,7 @@
       "entry_sector": "电气设备",
       "stop_loss_price": 10.7,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260603",
@@ -1078,9 +1148,21 @@
           "change_pct": -2.98,
           "vs_entry_pct": -4.62,
           "volume": 18297732.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 10.69,
+          "change_pct": -0.47,
+          "vs_entry_pct": -5.06,
+          "volume": 14127108.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-12",
+        "close": 10.69,
+        "return_pct": -5.06,
+        "reason": "触发止损价 10.7（收盘 10.69）"
+      }
     },
     {
       "code": "301376",
@@ -1258,6 +1340,13 @@
           "change_pct": 0.86,
           "vs_entry_pct": -1.69,
           "volume": 3424724.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 22.58,
+          "change_pct": 1.85,
+          "vs_entry_pct": 0.13,
+          "volume": 5859808.0
         }
       ],
       "exit": {}
@@ -1568,6 +1657,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 8606383.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 617.43,
+          "change_pct": -2.36,
+          "vs_entry_pct": 0,
+          "volume": 15245825.0
         }
       ],
       "exit": {}
@@ -1604,6 +1700,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 5243900.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 5.81,
+          "change_pct": 1.57,
+          "vs_entry_pct": 0,
+          "volume": 6159900.0
         }
       ],
       "exit": {}
@@ -1640,6 +1743,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 4141310.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 45.28,
+          "change_pct": -1.76,
+          "vs_entry_pct": 0,
+          "volume": 2781440.0
         }
       ],
       "exit": {}
@@ -1676,6 +1786,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 10827774.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 16.98,
+          "change_pct": 2.85,
+          "vs_entry_pct": 0,
+          "volume": 12152515.0
         }
       ],
       "exit": {}
@@ -1712,6 +1829,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 98731134.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 8.7,
+          "change_pct": 0.35,
+          "vs_entry_pct": 0,
+          "volume": 81669680.0
         }
       ],
       "exit": {}
@@ -1748,6 +1872,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 1786423.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 232.0,
+          "change_pct": 6.24,
+          "vs_entry_pct": 0,
+          "volume": 3573599.0
         }
       ],
       "exit": {}
@@ -1784,6 +1915,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 122484282.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 63.76,
+          "change_pct": -1.27,
+          "vs_entry_pct": 0,
+          "volume": 137189604.0
         }
       ],
       "exit": {}
@@ -1820,6 +1958,13 @@
           "change_pct": 0,
           "vs_entry_pct": 0,
           "volume": 32808126.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 67.16,
+          "change_pct": -2.96,
+          "vs_entry_pct": 0,
+          "volume": 51081997.0
         }
       ],
       "exit": {}
@@ -1897,6 +2042,13 @@
           "change_pct": 3.71,
           "vs_entry_pct": 3.71,
           "volume": 52143692.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 83.23,
+          "change_pct": -2.48,
+          "vs_entry_pct": 1.13,
+          "volume": 42935287.0
         }
       ],
       "exit": {}
@@ -1974,6 +2126,13 @@
           "change_pct": 1.11,
           "vs_entry_pct": 1.11,
           "volume": 8178716.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 28.9,
+          "change_pct": -3.99,
+          "vs_entry_pct": -2.92,
+          "volume": 8872136.0
         }
       ],
       "exit": {}
@@ -2036,7 +2195,7 @@
       "entry_sector": "金融",
       "stop_loss_price": 25.85,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260608",
@@ -2051,9 +2210,21 @@
           "change_pct": -3.93,
           "vs_entry_pct": -3.93,
           "volume": 5265120.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 25.12,
+          "change_pct": -3.9,
+          "vs_entry_pct": -7.68,
+          "volume": 3548520.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-12",
+        "close": 25.12,
+        "return_pct": -7.68,
+        "reason": "触发止损价 25.85（收盘 25.12）"
+      }
     },
     {
       "code": "300521",
@@ -2087,6 +2258,13 @@
           "change_pct": 13.0,
           "vs_entry_pct": 13.0,
           "volume": 5599912.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 28.64,
+          "change_pct": 4.91,
+          "vs_entry_pct": 18.54,
+          "volume": 9850120.0
         }
       ],
       "exit": {}
@@ -2123,6 +2301,13 @@
           "change_pct": -3.52,
           "vs_entry_pct": -3.52,
           "volume": 46067165.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 10.35,
+          "change_pct": 4.97,
+          "vs_entry_pct": 1.27,
+          "volume": 57044039.0
         }
       ],
       "exit": {}
@@ -2159,6 +2344,13 @@
           "change_pct": 8.79,
           "vs_entry_pct": 8.79,
           "volume": 32693810.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 6.67,
+          "change_pct": 1.68,
+          "vs_entry_pct": 10.61,
+          "volume": 82266002.0
         }
       ],
       "exit": {}
@@ -2180,7 +2372,7 @@
       "entry_sector": "通信",
       "stop_loss_price": 15.14,
       "target_period": 60,
-      "status": "active",
+      "status": "stopped_out",
       "snapshots": [
         {
           "date": "20260608",
@@ -2195,9 +2387,21 @@
           "change_pct": -3.7,
           "vs_entry_pct": -3.7,
           "volume": 37593142.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 15.1,
+          "change_pct": -1.63,
+          "vs_entry_pct": -5.27,
+          "volume": 33940473.0
         }
       ],
-      "exit": {}
+      "exit": {
+        "date": "2026-06-12",
+        "close": 15.1,
+        "return_pct": -5.27,
+        "reason": "触发止损价 15.14（收盘 15.1）"
+      }
     },
     {
       "code": "603020",
@@ -2231,6 +2435,13 @@
           "change_pct": 11.06,
           "vs_entry_pct": 11.06,
           "volume": 14519100.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 13.04,
+          "change_pct": 10.04,
+          "vs_entry_pct": 22.21,
+          "volume": 23846830.0
         }
       ],
       "exit": {}
@@ -2431,6 +2642,13 @@
           "change_pct": -4.74,
           "vs_entry_pct": -4.74,
           "volume": 4014500.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 26.41,
+          "change_pct": -0.34,
+          "vs_entry_pct": -5.07,
+          "volume": 4229627.0
         }
       ],
       "exit": {}
@@ -2467,6 +2685,13 @@
           "change_pct": 2.56,
           "vs_entry_pct": 2.56,
           "volume": 31230567.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 15.34,
+          "change_pct": 6.45,
+          "vs_entry_pct": 9.18,
+          "volume": 68596962.0
         }
       ],
       "exit": {}
@@ -2544,6 +2769,13 @@
           "change_pct": 1.17,
           "vs_entry_pct": 1.17,
           "volume": 3759073.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 39.98,
+          "change_pct": -1.26,
+          "vs_entry_pct": -0.1,
+          "volume": 11597833.0
         }
       ],
       "exit": {}
@@ -2580,6 +2812,13 @@
           "change_pct": 3.07,
           "vs_entry_pct": 3.07,
           "volume": 41588390.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 74.3,
+          "change_pct": -1.72,
+          "vs_entry_pct": 1.3,
+          "volume": 36130716.0
         }
       ],
       "exit": {}
@@ -2616,6 +2855,13 @@
           "change_pct": 0.11,
           "vs_entry_pct": 0.11,
           "volume": 32675544.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 9.32,
+          "change_pct": 1.97,
+          "vs_entry_pct": 2.08,
+          "volume": 36710304.0
         }
       ],
       "exit": {}
@@ -2652,6 +2898,13 @@
           "change_pct": 1.55,
           "vs_entry_pct": 1.55,
           "volume": 5199798.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 17.17,
+          "change_pct": 0.7,
+          "vs_entry_pct": 2.26,
+          "volume": 6679131.0
         }
       ],
       "exit": {}
@@ -2688,6 +2941,13 @@
           "change_pct": -3.46,
           "vs_entry_pct": -3.46,
           "volume": 4873371.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 13.51,
+          "change_pct": 2.89,
+          "vs_entry_pct": -0.66,
+          "volume": 4025916.0
         }
       ],
       "exit": {}
@@ -2806,6 +3066,13 @@
           "change_pct": 2.11,
           "vs_entry_pct": 2.11,
           "volume": 10631344.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 13.82,
+          "change_pct": 1.92,
+          "vs_entry_pct": 4.07,
+          "volume": 10766250.0
         }
       ],
       "exit": {}
@@ -2842,6 +3109,13 @@
           "change_pct": -3.27,
           "vs_entry_pct": -3.27,
           "volume": 3260148.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 24.34,
+          "change_pct": 0.25,
+          "vs_entry_pct": -3.03,
+          "volume": 2596486.0
         }
       ],
       "exit": {}
@@ -2878,6 +3152,13 @@
           "change_pct": 2.38,
           "vs_entry_pct": 2.38,
           "volume": 7313206.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 69.94,
+          "change_pct": 4.4,
+          "vs_entry_pct": 6.89,
+          "volume": 8404449.0
         }
       ],
       "exit": {}
@@ -2914,6 +3195,13 @@
           "change_pct": -0.49,
           "vs_entry_pct": -0.49,
           "volume": 581648.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 37.1,
+          "change_pct": 1.03,
+          "vs_entry_pct": 0.54,
+          "volume": 760370.0
         }
       ],
       "exit": {}
@@ -2950,6 +3238,13 @@
           "change_pct": 1.2,
           "vs_entry_pct": 1.2,
           "volume": 1682595.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 10.96,
+          "change_pct": -0.09,
+          "vs_entry_pct": 1.11,
+          "volume": 1090150.0
         }
       ],
       "exit": {}
@@ -2986,6 +3281,13 @@
           "change_pct": 6.79,
           "vs_entry_pct": 6.79,
           "volume": 14059779.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 11.45,
+          "change_pct": 2.51,
+          "vs_entry_pct": 9.46,
+          "volume": 11225914.0
         }
       ],
       "exit": {}
@@ -3022,6 +3324,13 @@
           "change_pct": -0.83,
           "vs_entry_pct": -0.83,
           "volume": 3746050.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 7.29,
+          "change_pct": 1.39,
+          "vs_entry_pct": 0.55,
+          "volume": 3977013.0
         }
       ],
       "exit": {}
@@ -3058,6 +3367,306 @@
           "change_pct": -2.07,
           "vs_entry_pct": -2.07,
           "volume": 18480048.0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 30.23,
+          "change_pct": 1.34,
+          "vs_entry_pct": -0.76,
+          "volume": 16524615.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "688550",
+      "name": "瑞联新材",
+      "entry_date": "20260612",
+      "entry_close": 46.25,
+      "entry_score": 78.1,
+      "entry_factors": {
+        "event": 55,
+        "fund": 71.0,
+        "sentiment": 65,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 9.8
+      },
+      "entry_sector": "基础化工",
+      "stop_loss_price": 43.94,
+      "target_period": 60,
+      "status": "stopped_out",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 46.25,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 42.1,
+          "change_pct": -8.97,
+          "vs_entry_pct": -8.97,
+          "volume": 9184796.0
+        }
+      ],
+      "exit": {
+        "date": "2026-06-12",
+        "close": 42.1,
+        "return_pct": -8.97,
+        "reason": "触发止损价 43.94（收盘 42.1）"
+      }
+    },
+    {
+      "code": "600779",
+      "name": "水井坊",
+      "entry_date": "20260612",
+      "entry_close": 28.5,
+      "entry_score": 67.7,
+      "entry_factors": {
+        "event": 60,
+        "fund": 72.2,
+        "sentiment": 55,
+        "technical": 60,
+        "research": 50,
+        "new_factors": 0.8
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 27.07,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 28.5,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 29.03,
+          "change_pct": 1.86,
+          "vs_entry_pct": 1.86,
+          "volume": 5257908.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "001299",
+      "name": "美能能源",
+      "entry_date": "20260612",
+      "entry_close": 10.22,
+      "entry_score": 64.4,
+      "entry_factors": {
+        "event": 55,
+        "fund": 64.2,
+        "sentiment": 55,
+        "technical": 65,
+        "research": 50,
+        "new_factors": 0.8
+      },
+      "entry_sector": "电力",
+      "stop_loss_price": 9.71,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 10.22,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 11.24,
+          "change_pct": 9.98,
+          "vs_entry_pct": 9.98,
+          "volume": 9294263.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300657",
+      "name": "弘信电子",
+      "entry_date": "20260612",
+      "entry_close": 44.01,
+      "entry_score": 63.7,
+      "entry_factors": {
+        "event": 55,
+        "fund": 45.400000000000006,
+        "sentiment": 65,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 40.93,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 44.01,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 46.9,
+          "change_pct": 6.57,
+          "vs_entry_pct": 6.57,
+          "volume": 82037588.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603160",
+      "name": "汇顶科技",
+      "entry_date": "20260612",
+      "entry_close": 57.11,
+      "entry_score": 63.2,
+      "entry_factors": {
+        "event": 55,
+        "fund": 53.0,
+        "sentiment": 55,
+        "technical": 65,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 54.25,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 57.11,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 55.99,
+          "change_pct": -1.96,
+          "vs_entry_pct": -1.96,
+          "volume": 8834692.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "300505",
+      "name": "川金诺",
+      "entry_date": "20260612",
+      "entry_close": 22.57,
+      "entry_score": 63.0,
+      "entry_factors": {
+        "event": 50,
+        "fund": 53.0,
+        "sentiment": 50,
+        "technical": 70,
+        "research": 50,
+        "new_factors": 4.5
+      },
+      "entry_sector": "有色金属",
+      "stop_loss_price": 20.99,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 22.57,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 22.85,
+          "change_pct": 1.24,
+          "vs_entry_pct": 1.24,
+          "volume": 71025139.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "301039",
+      "name": "中集车辆",
+      "entry_date": "20260612",
+      "entry_close": 7.67,
+      "entry_score": 62.8,
+      "entry_factors": {
+        "event": 55,
+        "fund": 70.6,
+        "sentiment": 55,
+        "technical": 50,
+        "research": 50,
+        "new_factors": 0.0
+      },
+      "entry_sector": "综合",
+      "stop_loss_price": 7.13,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 7.67,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 7.75,
+          "change_pct": 1.04,
+          "vs_entry_pct": 1.04,
+          "volume": 23980479.0
+        }
+      ],
+      "exit": {}
+    },
+    {
+      "code": "603355",
+      "name": "莱克电气",
+      "entry_date": "20260612",
+      "entry_close": 27.05,
+      "entry_score": 62.5,
+      "entry_factors": {
+        "event": 50,
+        "fund": 59.400000000000006,
+        "sentiment": 50,
+        "technical": 65,
+        "research": 50,
+        "new_factors": 3.0
+      },
+      "entry_sector": "电气设备",
+      "stop_loss_price": 25.7,
+      "target_period": 60,
+      "status": "active",
+      "snapshots": [
+        {
+          "date": "20260612",
+          "close": 27.05,
+          "change_pct": 0,
+          "vs_entry_pct": 0,
+          "volume": 0
+        },
+        {
+          "date": "2026-06-12",
+          "close": 27.4,
+          "change_pct": 1.29,
+          "vs_entry_pct": 1.29,
+          "volume": 4495267.0
         }
       ],
       "exit": {}

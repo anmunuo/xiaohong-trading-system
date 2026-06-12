@@ -926,5 +926,96 @@
       }
     ],
     "backups": "evolution_backups/auction_features_20260611_173000.py, review_20260611_173000.py"
+  },
+  {
+    "date": "2026-06-12 17:11:16",
+    "version": "#24",
+    "dry_run": true,
+    "changes_attempted": 7,
+    "changes_applied": 0,
+    "details": []
+  },
+  {
+    "date": "2026-06-12 17:11:18",
+    "version": "#25",
+    "dry_run": false,
+    "changes_attempted": 7,
+    "changes_applied": 3,
+    "details": [
+      {
+        "param": "auction_weight_volume_accel",
+        "description": "竞价量能加速度权重",
+        "old_value": 0.25,
+        "new_value": 0.3,
+        "reason": "【市场切换·趋势多头】昨日volatile背离市(主力-694亿)已被今日trending共振市(主力+106亿+全球齐涨)彻底翻转。当前权重延续昨日背离市逻辑——price_slope(0.29)和volume_accel(0.23)在趋势市中偏低，imbalance(0.21)和sector_dev(0.21)偏高。premium从2次miss持续被罚(α=1,β=3,acc=0.25)，在趋势市中这是正确的——溢价信号趋势市中噪音化，不应像昨日诊断建议那样回调至0.14。结论：权重需从「背离市侦察」模式切换到「趋势市跟随」模式——向价量方向性维度倾斜，压缩噪音维度。",
+        "test_result": {
+          "param": "auction_weight_volume_accel",
+          "old_value": 0.25,
+          "new_value": 0.3,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_imbalance",
+        "description": "竞价委托不平衡权重",
+        "old_value": 0.2,
+        "new_value": 0.18,
+        "reason": "【市场切换·趋势多头】昨日volatile背离市(主力-694亿)已被今日trending共振市(主力+106亿+全球齐涨)彻底翻转。当前权重延续昨日背离市逻辑——price_slope(0.29)和volume_accel(0.23)在趋势市中偏低，imbalance(0.21)和sector_dev(0.21)偏高。premium从2次miss持续被罚(α=1,β=3,acc=0.25)，在趋势市中这是正确的——溢价信号趋势市中噪音化，不应像昨日诊断建议那样回调至0.14。结论：权重需从「背离市侦察」模式切换到「趋势市跟随」模式——向价量方向性维度倾斜，压缩噪音维度。",
+        "test_result": {
+          "param": "auction_weight_imbalance",
+          "old_value": 0.2,
+          "new_value": 0.18,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      },
+      {
+        "param": "auction_weight_sector_dev",
+        "description": "竞价板块偏离权重",
+        "old_value": 0.15,
+        "new_value": 0.13,
+        "reason": "【市场切换·趋势多头】昨日volatile背离市(主力-694亿)已被今日trending共振市(主力+106亿+全球齐涨)彻底翻转。当前权重延续昨日背离市逻辑——price_slope(0.29)和volume_accel(0.23)在趋势市中偏低，imbalance(0.21)和sector_dev(0.21)偏高。premium从2次miss持续被罚(α=1,β=3,acc=0.25)，在趋势市中这是正确的——溢价信号趋势市中噪音化，不应像昨日诊断建议那样回调至0.14。结论：权重需从「背离市侦察」模式切换到「趋势市跟随」模式——向价量方向性维度倾斜，压缩噪音维度。",
+        "test_result": {
+          "param": "auction_weight_sector_dev",
+          "old_value": 0.15,
+          "new_value": 0.13,
+          "strategy": "reflection_log",
+          "passed": true,
+          "details": "近 3 天 pool_rate 趋势 +0.0%（稳定），允许调整"
+        }
+      }
+    ]
+  },
+  {
+    "date": "2026-06-12 17:30:00",
+    "version": "#26",
+    "dry_run": false,
+    "changes_attempted": 2,
+    "changes_applied": 0,
+    "changes_noop": 2,
+    "details": [
+      {
+        "param": "recommender_market_cap_min",
+        "description": "市值下限",
+        "review_suggested": "40 → 32 (step 2/3, target 30)",
+        "code_actual": 30,
+        "result": "NOOP — 代码值30已低于建议值32，已在目标值30",
+        "reason": "review_diagnosis 读的是 stale action_items 数据（40），但6/4进化引擎已一步到位从50→30"
+      },
+      {
+        "param": "recommender_market_cap_max",
+        "description": "市值上限",
+        "review_suggested": "2400 → 2000 (step 2/3, target 1000)",
+        "code_actual": 2000,
+        "result": "NOOP — 代码值2000已等于建议值2000",
+        "reason": "review_diagnosis 读的是 stale action_items 数据（2400），但6/4进化引擎已一步到位从3000→2000。下一步2000→1000(-50%)需跨日渐进",
+        "next_step": "建议 LLM 复盘先 grep 代码确认当前值再建议变更"
+      }
+    ],
+    "note": "竞价权重已在17:11进化引擎#25落地。侦察兵/狙击手/议会/KB断裂为非参数问题。P2 bug: pool_rate伪0%已9天（review.py匹配逻辑与daily_pool真值不一致）",
+    "backups": "无（无实际变更）"
   }
 ]
