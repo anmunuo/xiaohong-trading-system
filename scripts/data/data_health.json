@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-13 02:08:12",
+  "checked_at": "2026-06-14 02:07:16",
   "sources": {
     "mega_latest": {
       "ok": true,
@@ -7,19 +7,21 @@
       "module_count": 9,
       "empty_modules": [
         "hot_events",
-        "broker_views"
+        "policy_macro",
+        "broker_views",
+        "dragon_tiger"
       ],
       "error": ""
     },
     "daily_pool": {
-      "ok": true,
-      "age_hours": 17.7,
+      "ok": false,
+      "age_hours": 41.7,
       "stock_count": 8,
       "error": ""
     },
     "market_snapshot": {
-      "ok": true,
-      "age_hours": 17.7
+      "ok": false,
+      "age_hours": 41.6
     },
     "tracked_pool": {
       "ok": true,
@@ -28,9 +30,12 @@
     "kb_insights": {
       "ok": true,
       "age_hours": 0.0,
-      "entry_count": 9
+      "entry_count": 14
     }
   },
-  "overall_status": "healthy",
-  "issues": []
+  "overall_status": "degraded",
+  "issues": [
+    "daily_pool: ",
+    "market_snapshot: unknown"
+  ]
 }
