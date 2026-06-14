@@ -1,41 +1,5 @@
 [
   {
-    "ts": "2026-06-06T22:16:08.717793",
-    "action": "parliament_flow",
-    "detail": "rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-06T22:16:08.956599",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-07T08:15:36.129241",
-    "action": "parliament_flow",
-    "detail": "rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-07T08:15:36.129684",
-    "action": "data_pipeline",
-    "detail": "cleared 0 cache files",
-    "ok": false
-  },
-  {
-    "ts": "2026-06-07T08:15:36.348383",
-    "action": "pipeline_retry",
-    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
-    "ok": true
-  },
-  {
-    "ts": "2026-06-07T15:15:36.858869",
-    "action": "parliament_flow",
-    "detail": "rc=0",
-    "ok": true
-  },
-  {
     "ts": "2026-06-07T15:15:36.859310",
     "action": "data_pipeline",
     "detail": "cleared 0 cache files",
@@ -295,6 +259,42 @@
   },
   {
     "ts": "2026-06-13T22:15:14.042359",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-14T08:15:30.780483",
+    "action": "data_pipeline",
+    "detail": "cleared 0 cache files",
+    "ok": false
+  },
+  {
+    "ts": "2026-06-14T08:15:31.006262",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-14T15:16:14.524311",
+    "action": "data_pipeline",
+    "detail": "cleared 0 cache files",
+    "ok": false
+  },
+  {
+    "ts": "2026-06-14T15:16:14.737445",
+    "action": "pipeline_retry",
+    "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
+    "ok": true
+  },
+  {
+    "ts": "2026-06-14T22:15:19.002993",
+    "action": "data_pipeline",
+    "detail": "cleared 0 cache files",
+    "ok": false
+  },
+  {
+    "ts": "2026-06-14T22:15:19.218014",
     "action": "pipeline_retry",
     "detail": "bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0",
     "ok": true

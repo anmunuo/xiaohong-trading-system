@@ -1048,5 +1048,89 @@
       }
     ],
     "hint": ""
+  },
+  {
+    "ts": "2026-06-14T08:15:30.778109",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-14T15:16:14.521992",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-14T22:15:19.000690",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-15T02:07:48.283359",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-15T02:08:07.633744",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
+  },
+  {
+    "ts": "2026-06-15T02:08:22.049731",
+    "type": "index_data",
+    "trust": "DEGRADED",
+    "level": "warn",
+    "failed": [
+      {
+        "gate": "source",
+        "priority": "P1",
+        "detail": "缺少关键字段: ['asia.shanghai', 'us.nasdaq']"
+      }
+    ],
+    "hint": ""
   }
 ]

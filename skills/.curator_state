@@ -1,9 +1,9 @@
 {
-  "last_report_path": "/home/pc/.hermes/profiles/xiaohong/logs/curator/20260607-062957",
-  "last_run_at": "2026-06-07T06:29:57.479884+00:00",
-  "last_run_duration_seconds": 42.656842,
-  "last_run_summary": "auto: no changes; llm: This pass is straightforward but short — there are only **2 agent-created skills** in the collection, and they serve entirely different classes of work with zero content overlap.\n\n## Analysis\n\n| # | Skill | Category | Class | Scope |\n|---|-…",
+  "last_report_path": "/home/pc/.hermes/profiles/xiaohong/logs/curator/20260614-071052",
+  "last_run_at": "2026-06-14T07:10:52.226916+00:00",
+  "last_run_duration_seconds": 99.079743,
+  "last_run_summary": "auto: no changes; llm: ---\n\n## Curator Pass Summary\n\n**Candidates scanned**: 3 agent-created skills  \n**Clusters identified**: 1 (`research/` financial)  \n**Consolidations executed**: 1  \n**Skills left standalone**: 1 (`data-pipeline-automation` — no siblings, ge…\narchived 1 skill(s):\n  • otc-options-trading → stock-research\nfull report: hermes curator status\nkeep an umbrella stable: hermes curator pin stock-research",
   "last_run_summary_shown_at": null,
   "paused": false,
-  "run_count": 4
+  "run_count": 5
 }

@@ -380,15 +380,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 437
+        "completed": 424
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-27T23:06:44.694046+08:00",
-      "next_run_at": "2026-06-15T05:00:00+08:00",
-      "last_run_at": "2026-06-15T04:01:25.838609+08:00",
+      "next_run_at": "2026-06-14T16:00:00+08:00",
+      "last_run_at": "2026-06-14T15:01:41.116755+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -562,15 +562,15 @@
       "schedule_display": "5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 340
+        "completed": 328
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-31T23:36:27.500410+08:00",
-      "next_run_at": "2026-06-15T04:05:00+08:00",
-      "last_run_at": "2026-06-15T03:05:42.092790+08:00",
+      "next_run_at": "2026-06-14T16:05:00+08:00",
+      "last_run_at": "2026-06-14T15:06:52.188216+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -961,15 +961,15 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 14
+        "completed": 13
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-02T01:31:30.152922+08:00",
-      "next_run_at": "2026-06-16T02:00:00+08:00",
-      "last_run_at": "2026-06-15T02:01:37.414792+08:00",
+      "next_run_at": "2026-06-15T02:00:00+08:00",
+      "last_run_at": "2026-06-14T02:01:50.894468+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -1135,15 +1135,15 @@
       "schedule_display": "5 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 13
+        "completed": 12
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-02T11:30:01.688623+08:00",
-      "next_run_at": "2026-06-16T02:05:00+08:00",
-      "last_run_at": "2026-06-15T02:09:20.002410+08:00",
+      "next_run_at": "2026-06-15T02:05:00+08:00",
+      "last_run_at": "2026-06-14T02:09:42.011335+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -1188,7 +1188,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-02T22:49:33.051178+08:00",
-      "next_run_at": "2026-06-16T04:00:00+08:00",
+      "next_run_at": "2026-06-15T04:00:00+08:00",
       "last_run_at": "2026-06-14T04:01:04.832124+08:00",
       "last_status": "ok",
       "last_error": null,
@@ -1224,17 +1224,17 @@
       "schedule_display": "15 8,15,22 * * *",
       "repeat": {
         "times": null,
-        "completed": 36
+        "completed": 34
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-03T14:25:09.234197+08:00",
-      "next_run_at": "2026-06-15T08:15:00+08:00",
-      "last_run_at": "2026-06-14T22:15:20.408019+08:00",
+      "next_run_at": "2026-06-14T15:15:00+08:00",
+      "last_run_at": "2026-06-14T08:15:31.862492+08:00",
       "last_status": "error",
-      "last_error": "Script exited with code 1\nstdout:\n# \ud83d\udea8 \u4ea4\u6613\u7cfb\u7edf\u5065\u5eb7\u626b\u63cf  v1.3.0\n> 2026-06-14T22:15:19\n> \u7efc\u5408\u72b6\u6001: **critical**  |  \u95ee\u9898: 10 \u9879\n\n---\n\n### \u2753 \ud83d\udce6 \u6570\u636e\u65b0\u9c9c\u5ea6\n\n- \u2705 mega_latest: 0.2h\n- \u26a0\ufe0f daily_pool: 61.8h\n- \u2705 kb_insights: 0.2h\n- \u26a0\ufe0f holdings: 54.7h\n- \u26a0\ufe0f market_snapshot: \u7f3a\u5931\n\n### \u2753 \ud83d\udcb0 \u6301\u4ed3\u4f30\u503c\n\n- \u26a0\ufe0f \u65e0\u6301\u4ed3\u8bb0\u5f55\n\n### \u2705 \ud83c\udfdb\ufe0f \u8bae\u4f1a\u94fe\u8def\n\n- \u26a0\ufe0f parliament_log.json \u4e0d\u5b58\u5728\n- parliament_in_pool: True\n\n### \u26a0\ufe0f \ud83d\udee1\ufe0f \u5f39\u836f\u5e93\u98ce\u63a7\n\n- \u26a0\ufe0f R \u503c\u672a\u8bbe\u7f6e\uff08ammo_risk.py --update \u672a\u8fd0\u884c\uff1f\uff09\n- \u26a0\ufe0f \u56de\u64a4\u6570\u636e\u672a\u8ba1\u7b97\n\n### \u26a0\ufe0f \ud83d\udd0c \u6570\u636e\u7ba1\u7ebf\n\n- \ud83d\udd34 push2_list: down: Remote end closed connection without response\n- \ud83d\udd34 push2_gainers: down: Remote end closed connection without response\n- \u2705 sina_realtime: ok\n- \u26a0\ufe0f tushare_basic: degraded (\u65e0\u6570\u636e)\n- \u2705 baostock_klines: ok\n\n### \ud83d\udd34 \u2699\ufe0f Cron\u6267\u884c\n\n- \u26a0\ufe0f 1\u4e2acron job\u811a\u672c\u6267\u884c\u5931\u8d25: ea214c0b(exit=1)\n- cron_failures: {'status': 'down', 'count': 1, 'jobs': ['ea214c0b(exit=1)']}\n- scout: {'last_run_h': 60.8, 'status': 'ok'}\n- sniper: {'status': 'ok'}\n\n### \u26a0\ufe0f \ud83e\udde0 \u7814\u7a76\u5458\u8d28\u91cf\n\n- \u26a0\ufe0f \u4eca\u65e5\u8bae\u4f1a\u62a5\u544a\u672a\u751f\u6210\n\n### \u26a0\ufe0f \ud83d\udcca \u56e0\u5b50\u6709\u6548\u6027\n\n- \u26a0\ufe0f factor_ic.json \u672a\u751f\u6210\uff08\u9700\u8fd0\u884c factor_evaluator.py\uff09\n\n### \u2705 \ud83d\udee1\ufe0f \u7ec4\u5408\u98ce\u9669\n\n- criticals: 0\n- warnings: 0\n\n### \u26a0\ufe0f \ud83e\udd48 Silver\u8d28\u91cf\n\n- \u26a0\ufe0f Silver 2026-06-14 \u672a\u751f\u6210\n\n### \u2753 \ud83c\udfc5 Gold\u8d28\u91cf\n\n- \u26a0\ufe0f Gold \u56e0\u5b50\u9762\u677f 2026-06-14 \u4e0d\u5b58\u5728\n- \u26a0\ufe0f ML \u6570\u636e\u96c6\u672a\u751f\u6210 (\u6570\u636e\u91cf\u4e0d\u8db3\u6216\u9996\u6b21\u8fd0\u884c)\n- panel_exists: False\n- n_factors: 0\n- ml_ok: False\n- pool_ok: False\n\n### \u2705 \ud83d\udcdc Cron\u811a\u672c\n\n- total_checked: 29\n\n### \u26a0\ufe0f \ud83d\udd0d \u6570\u636e\u771f\u5b9e\u5ea6\n\n- results: {'north_flow': {'trust': 'VERIFIED', 'stars': '\u2605\u2605\u2605\u2606\u2606', 'passed': 5, 'failed': 0}, 'market_flow': {'trust': 'VERIFIED', 'stars': '\u2605\u2605\u2605\u2606\u2606', 'passed': 5, 'failed': 0}, 'index_data': {'trust': 'DEGRADED', 'stars': '\u2605\u2606\u2606\u2606\u2606', 'passed': 4, 'failed': 1}}\n\n---\n*system_health_check v1.3.0 \u00b7 2026-06-14 22:15*\n\n## \ud83e\ude7a \u81ea\u4e3b\u4fee\u590d\u62a5\u544a\n\n- \u274c **\u6570\u636e\u7ba1\u7ebf**: skip - \u7f13\u5b58\u6b63\u5e38\n- \u2705 **\u7814\u7a76\u5458\u8d28\u91cf**: skip - \u5df2\u5b58\u5728\u62a5\u544a\n- \u274c **Cron\u6267\u884c**: skip\n- \u2705 **\u5206\u5c42\u6570\u636e\u7ba1\u7ebf**: bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0\n\n> \u81ea\u4e3b\u4fee\u590d: 2/4 \u9879\u95ee\u9898\u5df2\u4fee\u590d\n\u274c \u672a\u627e\u5230 webhook",
+      "last_error": "Script exited with code 1\nstdout:\n# \ud83d\udea8 \u4ea4\u6613\u7cfb\u7edf\u5065\u5eb7\u626b\u63cf  v1.3.0\n> 2026-06-14T08:15:30\n> \u7efc\u5408\u72b6\u6001: **critical**  |  \u95ee\u9898: 10 \u9879\n\n---\n\n### \u2753 \ud83d\udce6 \u6570\u636e\u65b0\u9c9c\u5ea6\n\n- \u2705 mega_latest: 0.2h\n- \u26a0\ufe0f daily_pool: 47.8h\n- \u2705 kb_insights: 0.2h\n- \u26a0\ufe0f holdings: 40.7h\n- \u26a0\ufe0f market_snapshot: \u7f3a\u5931\n\n### \u2753 \ud83d\udcb0 \u6301\u4ed3\u4f30\u503c\n\n- \u26a0\ufe0f \u65e0\u6301\u4ed3\u8bb0\u5f55\n\n### \u2705 \ud83c\udfdb\ufe0f \u8bae\u4f1a\u94fe\u8def\n\n- \u26a0\ufe0f parliament_log.json \u4e0d\u5b58\u5728\n- parliament_in_pool: True\n\n### \u26a0\ufe0f \ud83d\udee1\ufe0f \u5f39\u836f\u5e93\u98ce\u63a7\n\n- \u26a0\ufe0f R \u503c\u672a\u8bbe\u7f6e\uff08ammo_risk.py --update \u672a\u8fd0\u884c\uff1f\uff09\n- \u26a0\ufe0f \u56de\u64a4\u6570\u636e\u672a\u8ba1\u7b97\n\n### \u26a0\ufe0f \ud83d\udd0c \u6570\u636e\u7ba1\u7ebf\n\n- \ud83d\udd34 push2_list: down: Remote end closed connection without response\n- \ud83d\udd34 push2_gainers: down: Remote end closed connection without response\n- \u2705 sina_realtime: ok\n- \ud83d\udd34 tushare_basic: down: HTTPConnectionPool(host='api.waditu.com', port=80): Max retries exceeded with url: /dataapi/daily_basic (Caused by NameResolutionError(\"HTTPConnection(host='api.waditu.com', port=80): Failed to resolve 'api.waditu.com' ([Errno -2] Name or service not known)\"))\n- \u2705 baostock_klines: ok\n\n### \ud83d\udd34 \u2699\ufe0f Cron\u6267\u884c\n\n- \u26a0\ufe0f 1\u4e2acron job\u811a\u672c\u6267\u884c\u5931\u8d25: ea214c0b(exit=1)\n- cron_failures: {'status': 'down', 'count': 1, 'jobs': ['ea214c0b(exit=1)']}\n- scout: {'last_run_h': 46.8, 'status': 'ok'}\n- sniper: {'status': 'ok'}\n\n### \u26a0\ufe0f \ud83e\udde0 \u7814\u7a76\u5458\u8d28\u91cf\n\n- \u26a0\ufe0f \u4eca\u65e5\u8bae\u4f1a\u62a5\u544a\u672a\u751f\u6210\n\n### \u26a0\ufe0f \ud83d\udcca \u56e0\u5b50\u6709\u6548\u6027\n\n- \u26a0\ufe0f factor_ic.json \u672a\u751f\u6210\uff08\u9700\u8fd0\u884c factor_evaluator.py\uff09\n\n### \u2705 \ud83d\udee1\ufe0f \u7ec4\u5408\u98ce\u9669\n\n- criticals: 0\n- warnings: 0\n\n### \u26a0\ufe0f \ud83e\udd48 Silver\u8d28\u91cf\n\n- \u26a0\ufe0f Silver 2026-06-14 \u672a\u751f\u6210\n\n### \u2753 \ud83c\udfc5 Gold\u8d28\u91cf\n\n- \u26a0\ufe0f Gold \u56e0\u5b50\u9762\u677f 2026-06-14 \u4e0d\u5b58\u5728\n- \u26a0\ufe0f ML \u6570\u636e\u96c6\u672a\u751f\u6210 (\u6570\u636e\u91cf\u4e0d\u8db3\u6216\u9996\u6b21\u8fd0\u884c)\n- panel_exists: False\n- n_factors: 0\n- ml_ok: False\n- pool_ok: False\n\n### \u2705 \ud83d\udcdc Cron\u811a\u672c\n\n- total_checked: 29\n\n### \u26a0\ufe0f \ud83d\udd0d \u6570\u636e\u771f\u5b9e\u5ea6\n\n- results: {'north_flow': {'trust': 'VERIFIED', 'stars': '\u2605\u2605\u2605\u2606\u2606', 'passed': 5, 'failed': 0}, 'market_flow': {'trust': 'VERIFIED', 'stars': '\u2605\u2605\u2605\u2606\u2606', 'passed': 5, 'failed': 0}, 'index_data': {'trust': 'DEGRADED', 'stars': '\u2605\u2606\u2606\u2606\u2606', 'passed': 4, 'failed': 1}}\n\n---\n*system_health_check v1.3.0 \u00b7 2026-06-14 08:15*\n\n## \ud83e\ude7a \u81ea\u4e3b\u4fee\u590d\u62a5\u544a\n\n- \u274c **\u6570\u636e\u7ba1\u7ebf**: skip - \u7f13\u5b58\u6b63\u5e38\n- \u2705 **\u7814\u7a76\u5458\u8d28\u91cf**: skip - \u5df2\u5b58\u5728\u62a5\u544a\n- \u274c **Cron\u6267\u884c**: skip\n- \u2705 **\u5206\u5c42\u6570\u636e\u7ba1\u7ebf**: bronze_ingest.py: rc=0; silver_pipeline.py: rc=0; gold_pipeline.py: rc=0\n\n> \u81ea\u4e3b\u4fee\u590d: 2/4 \u9879\u95ee\u9898\u5df2\u4fee\u590d\n\u274c \u672a\u627e\u5230 webhook",
       "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
@@ -1817,5 +1817,5 @@
       "profile": null
     }
   ],
-  "updated_at": "2026-06-15T04:01:25.839270+08:00"
+  "updated_at": "2026-06-14T15:06:52.189025+08:00"
 }
